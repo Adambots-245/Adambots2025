@@ -9,6 +9,10 @@ import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -17,7 +21,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import swervelib.SwerveInputStream;
+import swervelib.SwerveInputStream;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,9 +36,12 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  // private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(RobotMap.swerveModules, RobotMap.gyro);
-  private final SwerveSubsystem swerveSubsystem  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
-  // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  // private final DrivetrainSubsystem drivetrainSubsystem = new
+  // DrivetrainSubsystem(RobotMap.swerveModules, RobotMap.gyro);
+  private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
+      new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
+  // private final CANdleSubsystem candleSubsytem = new
+  // CANdleSubsystem(RobotMap.candleLEDs);
 
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
 
@@ -70,6 +80,32 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
+
+    if (Robot.isSimulation()) {
+      Buttons.XboxStartButton
+          .onTrue(Commands.runOnce(() -> swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+    }
+
+    if (DriverStation.isTest()) {
+      Buttons.XboxBButton.whileTrue(driveCommands.sysIdDriveMotorCommand());
+      Buttons.XboxXButton.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
+      Buttons.XboxYButton.whileTrue(driveCommands.driveToDistanceCommand(1.0, 0.2));
+      Buttons.XboxStartButton.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+      Buttons.XboxBackButton.whileTrue(driveCommands.centerModulesCommand());
+      Buttons.XboxLeftBumper.onTrue(Commands.none());
+      Buttons.XboxRightBumper.onTrue(Commands.none());
+    } else {
+      Buttons.XboxAButton.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+      Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
+      Buttons.XboxBButton.whileTrue(
+          driveCommands.driveToPose(
+              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+      Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
+      Buttons.XboxStartButton.whileTrue(Commands.none());
+      Buttons.XboxBackButton.whileTrue(Commands.none());
+      Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
+      Buttons.XboxRightBumper.onTrue(Commands.none());
+    }
 
   }
 
@@ -115,16 +151,74 @@ public class RobotContainer {
   }
 
   private void setupDefaultCommands() {
-    swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? driveCommands.driveFieldOriented() : driveFieldOrientedDirectAngleSim);
+    /**
+     * Converts driver input into a field-relative ChassisSpeeds that is controlled
+     * by angular velocity.
+     */
+    SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
+        Buttons.forwardSupplier,
+        Buttons.sidewaysSupplier)
+        .withControllerRotationAxis(Buttons.rotateSupplier)
+        .deadband(DriveConstants.kDeadZone)
+        .scaleTranslation(0.8);
+    // .allianceRelativeControl(true);
+
+    SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+        .withControllerHeadingAxis(Buttons.sidewaysSupplier, Buttons.forwardSupplier)
+        .headingWhile(true);
+
+    // Applies deadbands and inverts controls because joysticks
+    // are back-right positive while robot
+    // controls are front-left positive
+    // left stick controls translation
+    // right stick controls the desired angle NOT angular rotation
+    Command driveFieldOrientedDirectAngle = driveCommands.driveFieldOriented(driveDirectAngle);
+
+    // Applies deadbands and inverts controls because joysticks
+    // are back-right positive while robot
+    // controls are front-left positive
+    // left stick controls translation
+    // right stick controls the angular velocity of the robot
+    Command driveFieldOrientedAnglularVelocity = driveCommands.driveFieldOriented(driveAngularVelocity);
+
+    SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
+        Buttons.forwardSupplier,
+        Buttons.sidewaysSupplier)
+        .withControllerRotationAxis(Buttons.rotateSupplier)
+        .deadband(DriveConstants.kDeadZone)
+        .scaleTranslation(0.8);
+    // .allianceRelativeControl(true);
+
+    // Derive the heading axis with math!
+    SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
+        .withControllerHeadingAxis(() -> Math.sin(
+            Buttons.rotateSupplier.getAsDouble() * Math.PI)
+            * (Math.PI * 2),
+            () -> Math.cos(
+                Buttons.rotateSupplier.getAsDouble() * Math.PI)
+                *
+                (Math.PI * 2))
+        .headingWhile(true);
+
+    Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
+
+    swerveSubsystem.setDefaultCommand(
+        !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
+
+    if (DriverStation.isTest()) {
+      swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+    }
 
     // drivetrainSubsystem.setDefaultCommand(
-    //     new RunCommand(
-    //         () -> drivetrainSubsystem.drive(
-    //             Buttons.forwardSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-    //             Buttons.sidewaysSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-    //             Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
-    //             true),
-    //         drivetrainSubsystem));
+    // new RunCommand(
+    // () -> drivetrainSubsystem.drive(
+    // Buttons.forwardSupplier.getAsDouble() *
+    // DriveConstants.kMaxSpeedMetersPerSecond,
+    // Buttons.sidewaysSupplier.getAsDouble() *
+    // DriveConstants.kMaxSpeedMetersPerSecond,
+    // Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
+    // true),
+    // drivetrainSubsystem));
   }
 
   /**

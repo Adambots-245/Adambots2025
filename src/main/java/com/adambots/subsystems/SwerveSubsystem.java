@@ -5,7 +5,6 @@
 package com.adambots.subsystems;
 
 import java.io.File;
-import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Meter;
 
@@ -28,7 +27,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;

@@ -80,6 +80,7 @@ public class Buttons {
         public static final Trigger JoystickThumbRight = ex3dPro.povRight();
         public static final Trigger JoystickThumbCenter = ex3dPro.povCenter();
 
+
         /** 
         Return a value only if it is greater than a threshold, otherwise return 0
         <p> 

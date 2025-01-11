@@ -60,7 +60,7 @@ public class DriveCommands {
      * @param tolerance Tolerance in degrees within which the drive can stop
      * @return Command to turn the robot to the Tag.
      */
-    public Command aimAtSpeaker(int tagId, double tolerance) {
+    public Command aimAtAprilTag(int tagId, double tolerance) {
         return Commands.run(
                 () -> {
                     ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
