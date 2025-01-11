@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -90,18 +91,26 @@ public final class Constants {
         public static final double kDeadZone = 0.15;
 
         //Max speed of the robot in m/s, used in teleop and auton (should be set to real world value)
+        //Drive the robot on carpet and measure the speed with a stopwatch
         public static final double kMaxSpeedMetersPerSecond = 4.35; 
         //Rotational speed factor in rad/s of the robot to be used for the teleop drive command
         public static final double kTeleopRotationalSpeed = 10; 
     }
 
     public static final class ModuleConstants {
+        public static final double kMK4L1GearRatio = 1/8.14; // 1:8.14 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
+        public static final double kMK4L2GearRatio = 1/6.75; // 1:6.75 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
+        public static final double kMK4L3GearRatio = 1/6.12; // 1:6.12 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
+
+        //Define gear ratio as motor revolutions per wheel rotation
+        public static final double kSteeringGearRatio = 150/7; // 150/7:1 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909        
+
         public static final int kDriveCurrentLimit = 32; //Current limit in amps of drive motors, higher values mean faster acceleration but lower battery life
         public static final int kTurningCurrentLimit = 21; //Current limit in amps of turning motors
         public static final double kNominalVoltage = 12.6; //Nominal battery voltage for motor voltage compensation
 
         public static final double kWheelRadiusMeters = 0.0478; //0.047625 //Should be as precise as you can get it
-        public static final double kSwerveModuleFinalGearRatio = 1/6.75; //Google the swerve module model to find this value
+        public static final double kSwerveModuleFinalGearRatio = kMK4L2GearRatio; //Google the swerve module model to find this value
 
         // Convert drive motor rpm to linear wheel speed                  Motor RPM to Wheel RPM -> RPM to rad/s -> Wheel rad/s to linear m/s 
         public static final double kDriveEncoderVelocityConversionFactor = kSwerveModuleFinalGearRatio * (Math.PI/30) * kWheelRadiusMeters;

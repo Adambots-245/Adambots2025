@@ -2,9 +2,9 @@ package com.adambots.commands.driveCommands;
 
 import com.adambots.Constants.AutoConstants;
 import com.adambots.Constants.VisionConstants;
-import com.adambots.Robot;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.subsystems.DrivetrainSubsystem;
+import com.adambots.utils.Utils;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -40,7 +40,7 @@ public class DriveToWaypointCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (Robot.isOnRedAlliance()) {
+    if (Utils.isOnRedAlliance()) {
       xController.setSetpoint(VisionConstants.kFieldWidth - waypoint.getX());
     } else {
       xController.setSetpoint(waypoint.getX());
@@ -66,13 +66,13 @@ public class DriveToWaypointCommand extends Command {
       double yDrive = yController.calculate(yPos);
       
       if ((Math.abs(waypoint.getX()-xPos) > 1.25 || Math.abs(waypoint.getY()-yPos) > 0.7) && waypoint != AutoConstants.S2_POSE2D){
-        if (Robot.isOnRedAlliance()) { //If the robot is further than 1.25 meters in x, rotate to face the apriltags instead of the waypoint to maintain them in FOV
+        if (Utils.isOnRedAlliance()) { //If the robot is further than 1.25 meters in x, rotate to face the apriltags instead of the waypoint to maintain them in FOV
           thetaController.setSetpoint(Math.atan2(VisionConstants.aprilTagPos.getY()-yPos, VisionConstants.aprilTagPos.getX()+VisionConstants.kFieldWidth-xPos) + Math.PI);
         } else {
           thetaController.setSetpoint(Math.atan2(VisionConstants.aprilTagPos.getY()-yPos, VisionConstants.aprilTagPos.getX()-xPos) + Math.PI);
         }
       } else {
-        if (Robot.isOnRedAlliance()) {
+        if (Utils.isOnRedAlliance()) {
           thetaController.setSetpoint(waypoint.getRotation().getRadians() + Math.PI);
         } else {
           thetaController.setSetpoint(waypoint.getRotation().getRadians());
@@ -88,7 +88,7 @@ public class DriveToWaypointCommand extends Command {
         yDrive = MathUtil.clamp(yDrive, -AutoConstants.kMinWaypointTranslateSpeed, AutoConstants.kMinWaypointTranslateSpeed);
       }
       
-      if (Robot.isOnRedAlliance()) {
+      if (Utils.isOnRedAlliance()) {
         drivetrainSubsystem.drive(-xDrive, -yDrive, thetaDrive, true);
       } else {
         drivetrainSubsystem.drive(xDrive, yDrive, thetaDrive, true);

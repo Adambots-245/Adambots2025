@@ -1,12 +1,18 @@
 package com.adambots;
 
+import java.io.File;
+
 import com.adambots.Constants.DriveConstants;
+import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.subsystems.DrivetrainSubsystem;
+import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,10 +29,11 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(RobotMap.swerveModules,
-      RobotMap.gyro);
-  // private final CANdleSubsystem candleSubsytem = new
-  // CANdleSubsystem(RobotMap.candleLEDs);
+  // private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(RobotMap.swerveModules, RobotMap.gyro);
+  private final SwerveSubsystem swerveSubsystem  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
+  // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+
+  private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -108,14 +115,16 @@ public class RobotContainer {
   }
 
   private void setupDefaultCommands() {
-    drivetrainSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> drivetrainSubsystem.drive(
-                Buttons.forwardSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-                Buttons.sidewaysSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-                Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
-                true),
-            drivetrainSubsystem));
+    swerveSubsystem.setDefaultCommand(!RobotBase.isSimulation() ? driveCommands.driveFieldOriented() : driveFieldOrientedDirectAngleSim);
+
+    // drivetrainSubsystem.setDefaultCommand(
+    //     new RunCommand(
+    //         () -> drivetrainSubsystem.drive(
+    //             Buttons.forwardSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
+    //             Buttons.sidewaysSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
+    //             Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
+    //             true),
+    //         drivetrainSubsystem));
   }
 
   /**

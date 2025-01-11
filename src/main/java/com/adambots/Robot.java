@@ -133,16 +133,4 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {}
 
-  /**
-   * Returns {@code True} if the robot is on the red alliance according to driverstation, {@code False} otherwise
-   *
-   * @return Whether the robot is on the red alliance
-   */
-  public static boolean isOnRedAlliance(){
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()) {
-      return alliance.get() == DriverStation.Alliance.Red;
-    }
-    return false;
-  }
 }

@@ -5,6 +5,7 @@ import com.adambots.Robot;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.subsystems.DrivetrainSubsystem;
 import com.adambots.utils.Buttons;
+import com.adambots.utils.Utils;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,7 +37,7 @@ public class RotateToAngleCommand extends Command {
   @Override
   public void execute() {
     // Calculates the drive rotation
-    if (Robot.isOnRedAlliance()) {
+    if (Utils.isOnRedAlliance()) {
       drive_output = angleTurningPIDController.calculate(gyro.getContinuousYawRad(), Math.PI-targetAngleRad);
     } else {
       drive_output = angleTurningPIDController.calculate(gyro.getContinuousYawRad(), targetAngleRad);

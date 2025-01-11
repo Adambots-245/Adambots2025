@@ -14,10 +14,10 @@ import com.adambots.Constants.AutoConstants;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.Constants.VisionConstants;
-import com.adambots.Robot;
 import com.adambots.RobotMap;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.utils.ModuleMap;
+import com.adambots.utils.Utils;
 import com.adambots.vision.LimelightHelpers;
 import com.adambots.vision.VisionHelpers;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -73,7 +73,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             new PIDConstants(AutoConstants.kPThetaController, AutoConstants.kIThetaController, AutoConstants.kDThetaController) // Rotation PID constants
         ),
         config, // The robot configuration
-        () -> Robot.isOnRedAlliance(), // Flips path if on the red side of the field
+        () -> Utils.isOnRedAlliance(), // Flips path if on the red side of the field
         this // Reference to this subsystem to set requirements
     );
 
@@ -208,7 +208,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    */
   public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
     if (fieldRelative) {
-      if (Robot.isOnRedAlliance()) {
+      if (Utils.isOnRedAlliance()) {
         setChassisSpeeds(
             ChassisSpeeds.fromFieldRelativeSpeeds(-xSpeed, -ySpeed, rot, m_gyro.getContinuousYawRotation2d()));
       } else {
