@@ -102,15 +102,20 @@ public final class Constants {
         public static final double kMK4L2GearRatio = 1/6.75; // 1:6.75 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
         public static final double kMK4L3GearRatio = 1/6.12; // 1:6.12 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
 
+        // The 2025 Robot will use an Adapter Kit to work with Kraken. This changes the Gear Ratios to L1+, L2+ and L3+
+        public static final double kMK4IL1PlusGearRatio = 1/7.13; // 1:7.13 as per https://www.swervedrivespecialties.com/collections/mk4i-parts/products/kit-adapter-16t-drive-pinion-gear-mk4i?variant=47576386502957
+        public static final double kMK4IL2PlusGearRatio = 1/5.9; // 1:5.9 as per https://www.swervedrivespecialties.com/collections/mk4i-parts/products/kit-adapter-16t-drive-pinion-gear-mk4i?variant=47576386502957
+        public static final double kMK4IL3PlusGearRatio = 1/5.36; // 1:5.36 as per https://www.swervedrivespecialties.com/collections/mk4i-parts/products/kit-adapter-16t-drive-pinion-gear-mk4i?variant=47576386502957
+
         //Define gear ratio as motor revolutions per wheel rotation
-        public static final double kSteeringGearRatio = 150/7; // 150/7:1 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909        
+        public static final double kSteeringGearRatio = 150.0/7.0; // 150/7:1 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909        
 
         public static final int kDriveCurrentLimit = 32; //Current limit in amps of drive motors, higher values mean faster acceleration but lower battery life
         public static final int kTurningCurrentLimit = 21; //Current limit in amps of turning motors
         public static final double kNominalVoltage = 12.6; //Nominal battery voltage for motor voltage compensation
 
         public static final double kWheelRadiusMeters = 0.0478; //0.047625 //Should be as precise as you can get it
-        public static final double kSwerveModuleFinalGearRatio = kMK4L2GearRatio; //Google the swerve module model to find this value
+        public static final double kSwerveModuleFinalGearRatio = kMK4IL2PlusGearRatio; //Google the swerve module model to find this value
 
         // Convert drive motor rpm to linear wheel speed                  Motor RPM to Wheel RPM -> RPM to rad/s -> Wheel rad/s to linear m/s 
         public static final double kDriveEncoderVelocityConversionFactor = kSwerveModuleFinalGearRatio * (Math.PI/30) * kWheelRadiusMeters;
