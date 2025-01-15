@@ -92,7 +92,10 @@ public final class Constants {
 
         //Max speed of the robot in m/s, used in teleop and auton (should be set to real world value)
         //Drive the robot on carpet and measure the speed with a stopwatch
-        public static final double kMaxSpeedMetersPerSecond = 4.35; 
+        //When FOC is enabled - 17.1 ft/s × 0.3048 m/ft = 5.21 m/s. When FOC is disabled - 17.7 ft/s × 0.3048 m/ft = 5.40 m/s. [ 1 foot = 0.3048 meters ]
+        // Previous year's value 4.35; 
+        public static final double kMaxSpeedMetersPerSecond = 5.21; 
+        
         //Rotational speed factor in rad/s of the robot to be used for the teleop drive command
         public static final double kTeleopRotationalSpeed = 10; 
     }
