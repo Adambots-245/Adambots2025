@@ -202,15 +202,15 @@ public class Buttons {
         // -applyCurve(ex3dPro.getZ(), rotateCurve);
 
         public static DoubleSupplier forwardSupplier = () -> {
-                System.out.println("Forward: " + ex3dPro.getY());
+                // System.out.println("Forward: " + ex3dPro.getY());
                 return -applyCurve(ex3dPro.getY());
         };
         public static DoubleSupplier sidewaysSupplier = () ->{
-                System.out.println("Sideways: " + ex3dPro.getX());
+                // System.out.println("Sideways: " + ex3dPro.getX());
                 return -applyCurve(ex3dPro.getX());
         };
         public static DoubleSupplier rotateSupplier = () -> {
-                System.out.println("Rotate: " + ex3dPro.getZ());
+                // System.out.println("Rotate: " + ex3dPro.getZ());
                 return -applyCurve(ex3dPro.getZ());
         };
 
