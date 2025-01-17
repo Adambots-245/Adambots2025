@@ -173,7 +173,7 @@ public class DriveCommands {
         return SwerveDriveTest.generateSysIdCommand(
                 SwerveDriveTest.setDriveSysIdRoutine(
                         new Config(),
-                        subsystem, swerveDrive, 12),
+                        subsystem, swerveDrive, 12.0, true),
                 3.0, 5.0, 3.0);
     }
 
@@ -280,7 +280,7 @@ public class DriveCommands {
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
         return Commands.run(() -> {
             swerveDrive.driveFieldOriented(velocity.get());
-        });
+        }, subsystem);
     }
 
     /**

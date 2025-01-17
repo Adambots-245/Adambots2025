@@ -160,8 +160,8 @@ public class RobotContainer {
         Buttons.sidewaysSupplier)
         .withControllerRotationAxis(Buttons.rotateSupplier)
         .deadband(DriveConstants.kDeadZone)
-        .scaleTranslation(0.8);
-    // .allianceRelativeControl(true);
+        .scaleTranslation(0.8)
+        .allianceRelativeControl(true);
 
     SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
         .withControllerHeadingAxis(Buttons.sidewaysSupplier, Buttons.forwardSupplier)
@@ -186,8 +186,8 @@ public class RobotContainer {
         Buttons.sidewaysSupplier)
         .withControllerRotationAxis(Buttons.rotateSupplier)
         .deadband(DriveConstants.kDeadZone)
-        .scaleTranslation(0.8);
-    // .allianceRelativeControl(true);
+        .scaleTranslation(0.8)
+        .allianceRelativeControl(true);
 
     // Derive the heading axis with math!
     SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
@@ -201,9 +201,10 @@ public class RobotContainer {
         .headingWhile(true);
 
     Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
+    Command driveFieldOrientedAngularVelocitySim = driveCommands.driveFieldOriented(driveAngularVelocitySim);
 
     swerveSubsystem.setDefaultCommand(
-        !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
+        !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedAngularVelocitySim);
 
     if (DriverStation.isTest()) {
       swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
@@ -227,6 +228,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return driveCommands.getAutonomousCommand("New Auto");
   }
 }

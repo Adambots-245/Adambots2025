@@ -8,6 +8,7 @@ import java.io.File;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.adambots.Constants;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.ModuleConstants;
 import com.adambots.utils.Utils;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveDrive;
 import swervelib.math.SwerveMath;
+import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -150,7 +152,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // faster loop cycle on the roboRIO however it can add some instability to the
     // Swerve Drive if anything breaks during a match, like a CAN bus or a low
     // brown-out.
-    swerveDrive.pushOffsetsToEncoders();
+    // swerveDrive.pushOffsetsToEncoders();
 
     if (visionDriveTest) {
       setupPhotonVision();
@@ -162,6 +164,22 @@ public class SwerveSubsystem extends SubsystemBase {
 
     setupPathPlanner();
   }
+
+  /**
+   * Construct the swerve drive.
+   *
+   * @param driveCfg      SwerveDriveConfiguration for the swerve.
+   * @param controllerCfg Swerve Controller.
+   */
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
+  {
+    swerveDrive = new SwerveDrive(driveCfg,
+                                  controllerCfg,
+                                  DriveConstants.kMaxSpeedMetersPerSecond,
+                                  new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+                                             Rotation2d.fromDegrees(0)));
+  }
+
 
   /**
    * Setup the photon vision class.
