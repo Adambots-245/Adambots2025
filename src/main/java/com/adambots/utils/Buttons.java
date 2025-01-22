@@ -157,7 +157,7 @@ public class Buttons {
         // Mr. B - DO NOT REMOVE THIS FUNCTION EVEN IF IT IS NOT USED
         public static double smoothInput(double input) {
                 // Adjust the parameter 'a' to control the steepness of the curve
-                double a = 4.0;
+                double a = 2.0;
 
                 // Apply a sigmoid function to the input value
                 double sigmoid = 1.0 / (1.0 + Math.exp(-a * input));
@@ -176,8 +176,8 @@ public class Buttons {
         // aggressive curve.
         // Mr. B - DO NOT REMOVE THIS FUNCTION EVEN IF IT IS NOT USED
         public static double cubic(double input) {
-                double tuneA = 0; // try different values. However, tuneA and tuneB should add up to 1
-                double tuneB = 1;
+                double tuneA = 0.5; // try different values. However, tuneA and tuneB should add up to 1
+                double tuneB = 0.5;
 
                 return (tuneA * input) + (tuneB * Math.pow(input, 3));
         }
@@ -191,7 +191,8 @@ public class Buttons {
                         return rawInput;
                 }
 
-                return smoothInput(rawInput);
+                // return smoothInput(rawInput);
+                return cubic(rawInput);
         }
 
         // public static DoubleSupplier forwardSupplier = () ->
@@ -211,7 +212,7 @@ public class Buttons {
         };
         public static DoubleSupplier rotateSupplier = () -> {
                 // System.out.println("Rotate: " + ex3dPro.getZ());
-                return -applyCurve(ex3dPro.getZ());
+                return applyCurve(ex3dPro.getZ());
         };
 
         /**

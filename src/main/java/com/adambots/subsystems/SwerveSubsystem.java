@@ -107,7 +107,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // Applying the Correction: The computed ω is then used to adjust the swerve
     // modules' wheel angles and speeds, facilitating the desired rotational
     // movement.
-    swerveDrive.setHeadingCorrection(false);
+    swerveDrive.setHeadingCorrection(true);
 
     // Cosine compensation is a technique used in swerve drive systems to enhance
     // control and efficiency by adjusting the speed of each wheel based on its
