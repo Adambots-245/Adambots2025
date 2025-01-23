@@ -13,6 +13,8 @@ import java.util.Map;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.sensors.BaseGyro;
+import com.adambots.actuators.*;
+
 import com.adambots.sensors.Gyro;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
@@ -28,6 +30,8 @@ public class RobotMap {
     public static final int kPDMPort = 1;
 //     public static final int kGyroPort = 0;
     public static final int kCANdlePort = 31;
+
+    public static final int kGyroPort = 50;
 
     // Test Board Ports
     public static final int PCMport = 0;

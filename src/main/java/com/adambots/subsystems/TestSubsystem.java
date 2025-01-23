@@ -4,25 +4,30 @@
 
 package com.adambots.subsystems;
 
+import com.adambots.actuators.BaseMotor;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-BaseMotor KrakenMotor;
-double speed;
 
 public class TestSubsystem extends SubsystemBase {
+
+  BaseMotor KrakenMotor;
+  double speed;
+
+
   /** Creates a new TestSubsystem. */
   public TestSubsystem(BaseMotor KrakenMotor) {
     this.KrakenMotor = KrakenMotor;
 
   }
 
-  public setMotorSpeed(double speed) {
-    KrakenMotor.setSpeed(speed);
+  public void setMotorSpeed(double speed) {
+    KrakenMotor.set(speed);
 
   }
 
-  public stopMotor() {
-    KrakenMotor.setSpeed(0);
+  public void stopMotor() {
+    KrakenMotor.set(0);
   }
 
   @Override
