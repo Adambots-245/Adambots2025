@@ -132,14 +132,22 @@ public final class Constants {
 
     public static final class AutoConstants {
         // PD values for auton X, Y translational movement
-        public static final double kPTranslationController = 5; 
+        // public static final double kPTranslationController = 5; 
+        // public static final double kITranslationController = 0; 
+        // public static final double kDTranslationController = 0.11;
+
+        public static final double kPTranslationController = 1; 
         public static final double kITranslationController = 0; 
-        public static final double kDTranslationController = 0.11;
+        public static final double kDTranslationController = 0;
 
         // PD values for auton rotational movement
-        public static final double kPThetaController = 3; 
+        // public static final double kPThetaController = 3; 
+        // public static final double kIThetaController = 0; 
+        // public static final double kDThetaController = 0.01;
+
+        public static final double kPThetaController = 0.5; 
         public static final double kIThetaController = 0; 
-        public static final double kDThetaController = 0.01;
+        public static final double kDThetaController = 0;
 
         public static final double kPWaypointTranslation = 5; 
         public static final double kDWaypointTranslation = 0.55;

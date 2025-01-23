@@ -9,6 +9,7 @@ import java.io.File;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.adambots.Constants;
+import com.adambots.Constants.AutoConstants;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.ModuleConstants;
 import com.adambots.utils.Utils;
@@ -107,7 +108,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // Applying the Correction: The computed ω is then used to adjust the swerve
     // modules' wheel angles and speeds, facilitating the desired rotational
     // movement.
-    swerveDrive.setHeadingCorrection(true);
+    swerveDrive.setHeadingCorrection(false);
 
     // Cosine compensation is a technique used in swerve drive systems to enhance
     // control and efficiency by adjusting the speed of each wheel based on its
@@ -121,7 +122,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // This may cause unintended consequences. Hence, test it before fully enabling
     // it.
     // Will not work in simulation
-    swerveDrive.setCosineCompensator(false);
+    swerveDrive.setCosineCompensator(true);
 
     // Angular Velocity Compensation is a feature designed to mitigate the skewing
     // effect that can occur when a swerve-drive robot moves linearly while
@@ -219,9 +220,8 @@ public class SwerveSubsystem extends SubsystemBase {
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic
               // drive trains
-              new PIDConstants(5.0, 0.0, 0.0),
-              // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)
+              new PIDConstants(AutoConstants.kPTranslationController, AutoConstants.kITranslationController, AutoConstants.kDTranslationController), // Translation PID constants
+              new PIDConstants(AutoConstants.kPThetaController, AutoConstants.kIThetaController, AutoConstants.kDThetaController) // Rotation PID constants
           // Rotation PID constants
           ),
           config,
