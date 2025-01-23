@@ -26,8 +26,15 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 public class RobotMap {
     // Robot Device Ports - PDP should be on port 1, and if pnematics are present, PCM must go on port 0
     public static final int kPDMPort = 1;
-    public static final int kGyroPort = 0;
+//     public static final int kGyroPort = 0;
     public static final int kCANdlePort = 31;
+
+    // Test Board Ports
+    public static final int PCMport = 0;
+    public static final int KrakenPort = 10;
+    public static final int smallNeoPort = 19;
+    public static final int baldNeoPort = 15;
+    public static final int bigNeoPort = 30;
 
     // Drive Ports
     public static final int kFrontRightTurningEncoderPort = 5;
@@ -54,6 +61,9 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+
+    // Test Board Devices
+    public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20);
     
     // Robot Swerve Modules
     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

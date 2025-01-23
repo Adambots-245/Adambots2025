@@ -25,6 +25,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(RobotMap.swerveModules,
       RobotMap.gyro);
+  private final TestSubsystem testSubsystem = new TestSubsystem(RobotMap.KrakenMotor);
   // private final CANdleSubsystem candleSubsytem = new
   // CANdleSubsystem(RobotMap.candleLEDs);
 
@@ -63,6 +64,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
+    RunMotorCommand runMotorCommand = new RunMotorCommand(testSubsystem);
+    
 
   }
 
