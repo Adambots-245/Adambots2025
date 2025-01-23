@@ -166,7 +166,7 @@ public class Buttons {
                 // double tanh = Math.tanh(a * input);
 
                 // Map the output range from (0,1) to (minOutput, maxOutput)
-                double output = MathUtil.clamp(sigmoid, -1, 1);
+                double output = 2 * sigmoid - 1;
                 // double output = tanh * (maxOutput - minOutput) + minOutput;
 
                 return output;
@@ -176,8 +176,8 @@ public class Buttons {
         // aggressive curve.
         // Mr. B - DO NOT REMOVE THIS FUNCTION EVEN IF IT IS NOT USED
         public static double cubic(double input) {
-                double tuneA = 0.5; // try different values. However, tuneA and tuneB should add up to 1
-                double tuneB = 0.5;
+                double tuneA = 0.1; // try different values. However, tuneA and tuneB should add up to 1
+                double tuneB = 0.9;
 
                 return (tuneA * input) + (tuneB * Math.pow(input, 3));
         }
