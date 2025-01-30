@@ -3,7 +3,9 @@ package com.adambots;
 import java.io.File;
 
 import com.adambots.Constants.DriveConstants;
+import com.adambots.commands.LEDCommands.AnimateCommand;
 import com.adambots.commands.driveCommands.DriveCommands;
+import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.DrivetrainSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
@@ -42,8 +44,8 @@ public class RobotContainer {
   // DrivetrainSubsystem(RobotMap.swerveModules, RobotMap.gyro);
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
-  // private final CANdleSubsystem candleSubsytem = new
-  // CANdleSubsystem(RobotMap.candleLEDs);
+  private final CANdleSubsystem candleSubsytem = new
+  CANdleSubsystem(RobotMap.candleLEDs);
 
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
 
@@ -87,6 +89,8 @@ public class RobotContainer {
       Buttons.XboxStartButton
           .onTrue(Commands.runOnce(() -> swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
     }
+
+    SmartDashboard.putData(new AnimateCommand(candleSubsytem));
 
     if (DriverStation.isTest()) {
       Buttons.XboxBButton.whileTrue(driveCommands.sysIdDriveMotorCommand());

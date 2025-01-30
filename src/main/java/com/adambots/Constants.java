@@ -17,7 +17,7 @@ public final class Constants {
     public static final Boolean enableAutomaticShuffleboardRecording = false;
 
     public static final class LEDConstants {
-        public static final int LEDS_IN_STRIP = 80;
+        public static final int LEDS_IN_STRIP = 20;
 
         public static final Color off = new Color(0, 0, 0);
         public static final Color adambotsYellow = new Color(255, 255, 0);

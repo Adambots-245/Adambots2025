@@ -27,7 +27,7 @@ public class RobotMap {
     // Robot Device Ports - PDP should be on port 1, and if pnematics are present, PCM must go on port 0
     public static final int kPDMPort = 1;
     public static final int kGyroPort = 6;
-    public static final int kCANdlePort = 31;
+    public static final int kCANdlePort = 30;
 
     // Drive Ports
     public static final int kFrontRightTurningEncoderPort = 5;
