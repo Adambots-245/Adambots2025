@@ -161,6 +161,11 @@ public final class Constants {
     }
 
     // Subystem Constants go here
+    public final static class IntakeConstants {
+        public static final double kMaxSpeed = 1;
+        public static final double kLowSpeed = .5;
+        public static final double kReverseSpeed = -1;
 
+    }
     // Command Constants go here
 }

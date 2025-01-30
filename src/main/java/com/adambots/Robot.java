@@ -7,9 +7,16 @@
 
 package com.adambots;
 
+import com.adambots.commands.intakeCommands.IntakeCommand;
+import com.adambots.commands.intakeCommands.ReverseIntakeCommand;
+import com.adambots.commands.intakeCommands.SlowIntakeCommand;
+import com.adambots.commands.intakeCommands.StopIntakeCommand;
+import com.adambots.subsystems.IntakeSubsystem;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -36,7 +43,12 @@ public class Robot extends TimedRobot {
     
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    // m_robotContainer = new RobotContainer();
+    IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeMotor);
+    SmartDashboard.putData(new IntakeCommand(intakesubsystem));
+    SmartDashboard.putData(new StopIntakeCommand(intakesubsystem));
+    SmartDashboard.putData(new SlowIntakeCommand(intakesubsystem));
+    SmartDashboard.putData(new ReverseIntakeCommand(intakesubsystem));
   }
 
   /**
@@ -115,7 +127,7 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().cancelAll();
 
-    m_robotContainer.teleopInit();
+    // m_robotContainer.teleopInit();
   }
 
   /**
