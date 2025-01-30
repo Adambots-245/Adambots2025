@@ -7,10 +7,12 @@ import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
+import com.adambots.vision.PhotonVision;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -106,6 +108,10 @@ public class RobotContainer {
       Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
       Buttons.XboxRightBumper.onTrue(Commands.none());
     }
+
+    // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
+    // PhotonVision.getAprilTagPose(1, new Transform2d(new Translation2d(2.0, 2.0), new Rotation2d()));
+    // swerveSubsystem.getVision().getDistanceFromAprilTag(1);
 
   }
 
