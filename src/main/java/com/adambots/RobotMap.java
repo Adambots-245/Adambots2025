@@ -15,9 +15,12 @@ import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.actuators.TalonFXMotor;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.sensors.Gyro;
+import com.adambots.sensors.LimitSwitch;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
 import com.adambots.actuators.BaseMotor;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
@@ -49,16 +52,21 @@ public class RobotMap {
 
     // Intake Ports
     public static final int kIntakeMotorPort = 10;
+    public static final int kFirstIntakeLimPort = 3;
+    public static final int kSecondIntakeLimPort = 4;
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
     public static final int kXboxControllerPort = 1;
-
+    
     //Robot Devices
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
     public static final BaseMotor intakeMotor = new TalonFXMotor(kIntakeMotorPort, false, 20);
+    public static final LimitSwitch firstIntakeLimit = new LimitSwitch(kFirstIntakeLimPort, false);
+    public static final LimitSwitch secondIntakeLimit = new LimitSwitch(kSecondIntakeLimPort, false);
+
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

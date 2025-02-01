@@ -6,15 +6,20 @@ package com.adambots.subsystems;
 
 import com.adambots.Constants.IntakeConstants;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.sensors.LimitSwitch;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
   private BaseMotor intakeMotor;
   private double motorSpeed;
-  
+  private LimitSwitch firstIntakeLimit;
+  private LimitSwitch secondIntakeLimit;
+
     /** Creates a new IntakeSubsystem. */
-    public IntakeSubsystem(BaseMotor intakeMotor) {
+    public IntakeSubsystem(BaseMotor intakeMotor, LimitSwitch firstIntakeLimit, LimitSwitch secondIntakeLimit) {
+      this.firstIntakeLimit = firstIntakeLimit;
+      this.secondIntakeLimit = secondIntakeLimit;
       this.intakeMotor = intakeMotor;
   }
 
@@ -35,6 +40,14 @@ public class IntakeSubsystem extends SubsystemBase {
     motorSpeed = IntakeConstants.kLowSpeed;
   }
 
+  public boolean isFirstLimitDetecting() {
+    return firstIntakeLimit.isDetecting();
+  }
+  
+  public boolean isSecondLimitDetecting() {
+    return secondIntakeLimit.isDetecting();
+  }
+  
   @Override
   public void periodic() {
     intakeMotor.set(motorSpeed);
