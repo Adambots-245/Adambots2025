@@ -42,7 +42,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final SwerveDrive swerveDrive;
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   private PhotonVision vision;
 
   /**

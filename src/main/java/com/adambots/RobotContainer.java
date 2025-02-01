@@ -7,6 +7,7 @@ import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
+import com.adambots.utils.Utils;
 import com.adambots.vision.PhotonVision;
 import com.adambots.vision.PhotonVision.Cameras;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -70,7 +71,10 @@ public class RobotContainer {
   public void teleopInit() {
     if (DriverStation.isFMSAttached()) {
       // Initialize Subsystems here
+      // BE CAREFUL
     }
+
+    updatePose();
   }
 
   /**
@@ -97,12 +101,13 @@ public class RobotContainer {
       // RobotMap.gyro.resetYaw();
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+      Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
+      // Buttons.JoystickButton7.onTrue(Commands.runOnce(()->RobotMap.gyro.resetYaw()));
 
       //Test Drive Commands
-      Buttons.JoystickButton6.onTrue(driveCommands.aimAtAprilTag(1, 0));
+      Buttons.JoystickButton6.onTrue(driveCommands.aimAtAprilTag(7, 0));
       Buttons.JoystickButton8.onTrue(driveCommands.aimAtTarget(Cameras.CENTER_CAM));
-      Buttons.JoystickButton9.onTrue(driveCommands.driveToDistanceCommandFixed(2, 1, driveCommands.getSwerveDrive().getPose().getTranslation()));
+      Buttons.JoystickButton9.onTrue(driveCommands.driveToDistanceCommandFixed(2, -1));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
       Buttons.XboxBButton.whileTrue(
@@ -226,11 +231,27 @@ public class RobotContainer {
     Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAngularVelocitySim = driveCommands.driveFieldOriented(driveAngularVelocitySim);
 
+    updatePose();
+
     swerveSubsystem.setDefaultCommand(
         !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedAngularVelocitySim);
 
     if (DriverStation.isTest()) {
       swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+    }
+  }
+
+  private void updatePose() {
+    if (Utils.isOnRedAlliance()){
+      swerveSubsystem.resetOdometry(new Pose2d(
+        new Translation2d(16.5, 5.5),
+        Rotation2d.fromDegrees(180)
+      ));
+    } else {
+      swerveSubsystem.resetOdometry(new Pose2d(
+        new Translation2d(0.5, 5.5),
+        Rotation2d.fromDegrees(0)
+      ));
     }
   }
 

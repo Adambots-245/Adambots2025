@@ -88,7 +88,7 @@ public final class Constants {
         );
 
         // Xbox controller joystick deadzone
-        public static final double kDeadZone = 0.15;
+        public static final double kDeadZone = 0.05;
 
         //Max speed of the robot in m/s, used in teleop and auton (should be set to real world value)
         //Drive the robot on carpet and measure the speed with a stopwatch

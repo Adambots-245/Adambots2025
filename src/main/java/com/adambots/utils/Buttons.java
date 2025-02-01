@@ -183,9 +183,9 @@ public class Buttons {
         }
 
         public static double applyCurve(double rawInput) {
-                if (Math.abs(rawInput) < 0.05) { // Small deadband
-                        return 0;
-                }
+                // if (Math.abs(rawInput) < 0.05) { // Small deadband
+                //         return 0;
+                // }
 
                 if (RobotBase.isSimulation()) {
                         return rawInput;
@@ -204,11 +204,11 @@ public class Buttons {
 
         public static DoubleSupplier forwardSupplier = () -> {
                 // System.out.println("Forward: " + ex3dPro.getY());
-                return -applyCurve(ex3dPro.getY());
+                return applyCurve(ex3dPro.getY());
         };
         public static DoubleSupplier sidewaysSupplier = () ->{
                 // System.out.println("Sideways: " + ex3dPro.getX());
-                return -applyCurve(ex3dPro.getX());
+                return applyCurve(ex3dPro.getX());
         };
         public static DoubleSupplier rotateSupplier = () -> {
                 // System.out.println("Rotate: " + ex3dPro.getZ());
