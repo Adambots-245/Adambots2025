@@ -25,6 +25,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final ArmStates context;
   private final StateMachine<ArmStates> stateMachine;
 
+  // States
   private final StateMachine<ArmStates>.State intakeState;
   private final StateMachine<ArmStates>.State L1state;
   private final StateMachine<ArmStates>.State L2state;
