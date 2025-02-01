@@ -67,7 +67,9 @@ public class DriveCommands {
                             controller.headingCalculate(subsystem.getHeading().getRadians(),
                                     subsystem.getAprilTagYaw(tagId).getRadians()),
                             subsystem.getHeading());
+                    System.out.println(speeds.omegaRadiansPerSecond);
                     subsystem.drive(speeds);
+                    
                 }).until(() -> Math.abs(
                         subsystem.getAprilTagYaw(tagId).minus(subsystem.getHeading()).getDegrees()) < tolerance);
     }
@@ -212,8 +214,18 @@ public class DriveCommands {
      */
     public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond) {
         return Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
-                .until(() -> swerveDrive.getPose().getTranslation()
-                        .getDistance(new Translation2d(0, 0)) > distanceInMeters);
+                .until(() -> swerveDrive.getPose().getTranslation().getDistance(new Translation2d(0, 0)) > distanceInMeters);
+    }
+    // fixed
+    public Command driveToDistanceCommandFixed(double distanceInMeters, double speedInMetersPerSecond, Translation2d startPos) {
+        // Translation2d startPos = swerveDrive.getPose().getTranslation();
+        // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: " +startPos.getY());
+
+        return Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
+                .until(() -> {
+                    // Translation2d startPos = swerveDrive.getPose().getTranslation();
+                    System.out.println("STARTING POSE X: " + startPos.getX() + "Y: " +startPos.getY());
+                    return (swerveDrive.getPose().getTranslation().getDistance(startPos) > distanceInMeters);});
     }
 
     /**
@@ -295,4 +307,7 @@ public class DriveCommands {
         return new PathPlannerAuto(pathName);
     }
 
+    public SwerveDrive getSwerveDrive(){
+        return swerveDrive;
+    }
 }

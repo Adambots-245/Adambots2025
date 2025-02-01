@@ -8,6 +8,7 @@ import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.adambots.vision.PhotonVision;
+import com.adambots.vision.PhotonVision.Cameras;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import swervelib.SwerveInputStream;
 import swervelib.SwerveInputStream;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -93,10 +95,14 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(driveCommands.centerModulesCommand());
       Buttons.XboxLeftBumper.onTrue(Commands.none());
       // RobotMap.gyro.resetYaw();
-      // Buttons.JoystickButton6.onTrue(new InstantCommand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
       Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+
+      //Test Drive Commands
+      Buttons.JoystickButton6.onTrue(driveCommands.aimAtAprilTag(1, 0));
+      Buttons.JoystickButton8.onTrue(driveCommands.aimAtTarget(Cameras.CENTER_CAM));
+      Buttons.JoystickButton9.onTrue(driveCommands.driveToDistanceCommandFixed(2, 1, driveCommands.getSwerveDrive().getPose().getTranslation()));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
       Buttons.XboxBButton.whileTrue(

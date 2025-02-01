@@ -127,7 +127,8 @@ public final class Constants {
         public static final double kDriveEncoderPositionConversionFactor = kSwerveModuleFinalGearRatio * 2*Math.PI * kWheelRadiusMeters;
 
         public static final double kPModuleTurningController = 0.7; //PID Values for turning motors
-        public static final double kDModuleTurningController = 0.026;
+        // public static final double kDModuleTurningController = 0.026;
+        public static final double kDModuleTurningController = 0;
     }
 
     public static final class AutoConstants {
