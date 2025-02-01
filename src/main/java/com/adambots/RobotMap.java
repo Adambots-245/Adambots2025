@@ -68,6 +68,8 @@ public class RobotMap {
 
     // Test Board Devices
     public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20);
+    public static final BaseMotor BigNEOMotor = new NEOMotor(bigNeoPort, false);
+    public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
     
     // Robot Swerve Modules
     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
