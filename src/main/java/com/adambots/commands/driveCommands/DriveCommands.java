@@ -299,6 +299,7 @@ public class DriveCommands {
      */
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
         return Commands.run(() -> {
+            System.out.println("theta speed: "+velocity.get().omegaRadiansPerSecond);
             swerveDrive.driveFieldOriented(velocity.get());
         }, subsystem);
     }

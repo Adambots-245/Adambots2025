@@ -502,7 +502,14 @@ public class PhotonVision
       }
 
       PhotonPipelineResult bestResult       = resultsList.get(0);
-      double               amiguity         = bestResult.getBestTarget().getPoseAmbiguity();
+      double amiguity = 0;
+      try {
+        amiguity         = bestResult.getBestTarget().getPoseAmbiguity();
+        
+      } catch (Exception e) {
+        // TODO: handle exception
+        System.out.println("line 505 fucked!!! big problem!!");
+      }
       double               currentAmbiguity = 0;
       for (PhotonPipelineResult result : resultsList)
       {
@@ -552,7 +559,7 @@ public class PhotonVision
       {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
-      System.out.println("Cts: " + currentTimestamp + "Mrt: " + mostRecentTimestamp + "deb:" + debounceTime);
+      //System.out.println("Cts: " + currentTimestamp + "Mrt: " + mostRecentTimestamp + "deb:" + debounceTime);
       if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
           (currentTimestamp - lastReadTimestamp) >= debounceTime)
       {
@@ -587,7 +594,13 @@ public class PhotonVision
       for (var change : resultsList)
       {
         visionEst = poseEstimator.update(change);
-        System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX() + "y: " + visionEst.get().estimatedPose.getY());
+        try {
+          if (visionEst != null)
+             System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX() + "y: " + visionEst.get().estimatedPose.getY());
+        } catch (Exception e) {
+          // TODO: handle exception
+          System.out.println("Pose died!?! ( big problem !!!)");
+        }
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       estimatedRobotPose = visionEst;
