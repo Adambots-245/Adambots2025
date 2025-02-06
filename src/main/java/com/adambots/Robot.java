@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     // m_robotContainer = new RobotContainer();
-    SmartDashboard.putData(new AnimateCommand(new CANdleSubsystem(RobotMap.candleLEDs)));
+    // SmartDashboard.putData(new AnimateCommand(new CANdleSubsystem(RobotMap.candleLEDs)));
   }
 
   /**
@@ -111,7 +111,9 @@ public class Robot extends TimedRobot {
     if (Constants.enableAutomaticShuffleboardRecording) {
       Shuffleboard.startRecording();
       System.out.println("Teleop Shuffleboard recording started - " + DriverStation.getMatchTime());
+
     }
+
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -119,7 +121,7 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     CommandScheduler.getInstance().cancelAll();
-
+    SmartDashboard.putData(new AnimateCommand(new CANdleSubsystem(RobotMap.candleLEDs)));
     // m_robotContainer.teleopInit();
   }
 

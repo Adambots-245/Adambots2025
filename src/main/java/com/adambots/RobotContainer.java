@@ -44,8 +44,8 @@ public class RobotContainer {
   // DrivetrainSubsystem(RobotMap.swerveModules, RobotMap.gyro);
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
-  private final CANdleSubsystem candleSubsytem = new
-  CANdleSubsystem(RobotMap.candleLEDs);
+  // private final CANdleSubsystem candleSubsytem = new
+  // CANdleSubsystem(RobotMap.candleLEDs);
 
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
 
@@ -90,7 +90,7 @@ public class RobotContainer {
           .onTrue(Commands.runOnce(() -> swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
     }
 
-    SmartDashboard.putData(new AnimateCommand(candleSubsytem));
+    // SmartDashboard.putData(new AnimateCommand(candleSubsytem));
 
     if (DriverStation.isTest()) {
       Buttons.XboxBButton.whileTrue(driveCommands.sysIdDriveMotorCommand());

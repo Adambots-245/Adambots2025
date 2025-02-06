@@ -41,7 +41,7 @@ public class CANdleSubsystem extends SubsystemBase {
 
     CANdleConfiguration configAll = new CANdleConfiguration();
     configAll.disableWhenLOS = true;
-    configAll.stripType = LEDStripType.BRGW; // the BTF-Lighting LED strip uses GRB format
+    configAll.stripType = LEDStripType.GRB; // the BTF-Lighting LED strip uses GRB format
     configAll.brightnessScalar = 1;
     configAll.vBatOutputMode = VBatOutputMode.Off;
     configAll.v5Enabled = true;

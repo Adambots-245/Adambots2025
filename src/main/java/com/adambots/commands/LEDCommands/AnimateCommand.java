@@ -26,8 +26,9 @@ public class AnimateCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    candleSubsystem.setColor(LEDConstants.yellow);
-    candleSubsystem.setAnimation(AnimationTypes.Larson);
+    candleSubsystem.setColor(LEDConstants.green);
+    candleSubsystem.setAnimation(AnimationTypes.Fire);
+    System.out.println("CANdle working");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
