@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(RobotMap.swerveModules,
-      RobotMap.gyro);
+  // private final DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(RobotMap.swerveModules,
+      // RobotMap.gyro);
   private final TestSubsystem testSubsystem = new TestSubsystem(RobotMap.KrakenMotor);
   // private final CANdleSubsystem candleSubsytem = new
   // CANdleSubsystem(RobotMap.candleLEDs);
@@ -113,14 +113,14 @@ public class RobotContainer {
   }
 
   private void setupDefaultCommands() {
-    drivetrainSubsystem.setDefaultCommand(
-        new RunCommand(
-            () -> drivetrainSubsystem.drive(
-                Buttons.forwardSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-                Buttons.sidewaysSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-                Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
-                true),
-            drivetrainSubsystem));
+    // drivetrainSubsystem.setDefaultCommand(
+    //     new RunCommand(
+    //         () -> drivetrainSubsystem.drive(
+    //             Buttons.forwardSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
+    //             Buttons.sidewaysSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
+    //             Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
+    //             true),
+    //         drivetrainSubsystem));
   }
 
   /**
