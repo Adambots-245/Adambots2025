@@ -33,8 +33,6 @@ public class RobotMap {
     public static final int kGyroPort = 6;
     public static final int kCANdlePort = 31;
 
-    public static final int kGyroPort = 50;
-
     // Test Board Ports
     public static final int PCMport = 0;
     public static final int KrakenPort = 10;

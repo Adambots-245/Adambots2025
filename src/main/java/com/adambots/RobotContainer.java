@@ -78,7 +78,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
-    RunMotorCommand runMotorCommand = new RunMotorCommand(testSubsystem);
+    // RunMotorCommand runMotorCommand = new RunMotorCommand(testSubsystem);
     
 
     if (Robot.isSimulation()) {
