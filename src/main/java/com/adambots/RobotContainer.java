@@ -4,14 +4,15 @@ import java.io.File;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
-import com.adambots.subsystems.DrivetrainSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
+import com.adambots.vision.PhotonVision;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -38,12 +39,9 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
-  // private final DrivetrainSubsystem drivetrainSubsystem = new
-  // DrivetrainSubsystem(RobotMap.swerveModules, RobotMap.gyro);
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
-  // private final CANdleSubsystem candleSubsytem = new
-  // CANdleSubsystem(RobotMap.candleLEDs);
+  // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
 
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
 
@@ -99,7 +97,6 @@ public class RobotContainer {
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
       Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
-      Buttons.JoystickButton1.onTrue(new PrintCommand("HellooooooooooooooooooOOOOOOOOO"));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
       Buttons.XboxBButton.whileTrue(
@@ -111,6 +108,10 @@ public class RobotContainer {
       Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
       Buttons.XboxRightBumper.onTrue(Commands.none());
     }
+
+    // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
+    // PhotonVision.getAprilTagPose(1, new Transform2d(new Translation2d(2.0, 2.0), new Rotation2d()));
+    // swerveSubsystem.getVision().getDistanceFromAprilTag(1);
 
   }
 
@@ -139,7 +140,7 @@ public class RobotContainer {
 
     // SmartDashboard.putData("FrontLL Field", Constants.frontLLField);
     // SmartDashboard.putData("RearLL Field", Constants.rearLLField);
-    SmartDashboard.putData("Odom Field", Constants.odomField);
+    // SmartDashboard.putData("Odom Field", Constants.odomField);
 
     // Dash.add("getY", Buttons.forwardSupplier);
     // Dash.add("getX", Buttons.sidewaysSupplier);
@@ -150,9 +151,9 @@ public class RobotContainer {
     // Dash.add("odom x", () -> drivetrainSubsystem.getPose().getX());
     // Dash.add("odom y", () -> drivetrainSubsystem.getPose().getY());
 
-    Dash.add("yaw", () -> RobotMap.gyro.getContinuousYawDeg());
-    Dash.add("pitch", () -> RobotMap.gyro.getPitch());
-    Dash.add("roll", () -> RobotMap.gyro.getRoll());
+    // Dash.add("yaw", () -> RobotMap.gyro.getContinuousYawDeg());
+    // Dash.add("pitch", () -> RobotMap.gyro.getPitch());
+    // Dash.add("roll", () -> RobotMap.gyro.getRoll());
   }
 
   private void setupDefaultCommands() {
@@ -195,6 +196,17 @@ public class RobotContainer {
         .allianceRelativeControl(true);
 
     // Derive the heading axis with math!
+    // Creates a new SwerveInputStream for driving with direct angle simulation.
+    // 
+    // The controller heading axis is calculated using the sine and cosine of the 
+    // rotation supplier's value multiplied by π (Math.PI), and then scaled by 2π (2 * Math.PI).
+    // 
+    // The sine function is used to calculate the x-axis component of the heading, 
+    // while the cosine function is used to calculate the y-axis component of the heading.
+    // 
+    // The headingWhile method is called with a true value to maintain the heading.
+    // 
+    // @return A new SwerveInputStream with the specified controller heading axis and heading behavior.
     SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
         .withControllerHeadingAxis(() -> Math.sin(
             Buttons.rotateSupplier.getAsDouble() * Math.PI)
@@ -214,17 +226,6 @@ public class RobotContainer {
     if (DriverStation.isTest()) {
       swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
     }
-
-    // drivetrainSubsystem.setDefaultCommand(
-    // new RunCommand(
-    // () -> drivetrainSubsystem.drive(
-    // Buttons.forwardSupplier.getAsDouble() *
-    // DriveConstants.kMaxSpeedMetersPerSecond,
-    // Buttons.sidewaysSupplier.getAsDouble() *
-    // DriveConstants.kMaxSpeedMetersPerSecond,
-    // Buttons.rotateSupplier.getAsDouble() * DriveConstants.kTeleopRotationalSpeed,
-    // true),
-    // drivetrainSubsystem));
   }
 
   /**

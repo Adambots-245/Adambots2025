@@ -1,5 +1,7 @@
 package com.adambots;
 
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,7 +19,8 @@ public final class Constants {
     public static final Boolean enableAutomaticShuffleboardRecording = false;
 
     public static final class LEDConstants {
-        public static final int LEDS_IN_STRIP = 80;
+        public static final int LEDS_IN_STRIP = 300;
+        public static final LEDStripType LED_STRIP_TYPE = LEDStripType.GRB; // if this is not set properly, the colors will not work
 
         public static final Color off = new Color(0, 0, 0);
         public static final Color adambotsYellow = new Color(255, 255, 0);
