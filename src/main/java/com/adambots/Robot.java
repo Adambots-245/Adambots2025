@@ -7,19 +7,11 @@
 
 package com.adambots;
 
-import com.adambots.commands.intakeCommands.IntakeCommand;
-import com.adambots.commands.intakeCommands.ReverseIntakeCommand;
-import com.adambots.commands.intakeCommands.SlowIntakeCommand;
-import com.adambots.commands.intakeCommands.StopIntakeCommand;
-import com.adambots.subsystems.IntakeSubsystem;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private TestContainer m_testContainer;
-  private final boolean TEST_CONTAINER = false;
+  private final boolean TEST_CONTAINER = true;
 
   /**
    * This function is run when the robot is first started up and should be used

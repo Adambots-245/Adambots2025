@@ -1,10 +1,17 @@
 package com.adambots;
 
+import com.adambots.commands.intakeCommands.IntakeCommand;
+import com.adambots.commands.intakeCommands.ReverseIntakeCommand;
+import com.adambots.commands.intakeCommands.SlowIntakeCommand;
+import com.adambots.commands.intakeCommands.StopIntakeCommand;
+import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +31,7 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeMotor, RobotMap.firstIntakeLimit, RobotMap.secondIntakeLimit);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -73,7 +81,15 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-      
+    SmartDashboard.putData(new IntakeCommand(intakesubsystem));
+    SmartDashboard.putData(new StopIntakeCommand(intakesubsystem));
+    SmartDashboard.putData(new SlowIntakeCommand(intakesubsystem));
+    SmartDashboard.putData(new ReverseIntakeCommand(intakesubsystem));
+  //   SmartDashboard.putData(Commands.run( ()-> {
+  //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
+  //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());
+
+  //   }));
     }
   }
 
