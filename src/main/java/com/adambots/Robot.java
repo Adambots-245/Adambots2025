@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
  */
 public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
+  private TestContainer m_testContainer;
+  private final boolean TEST_CONTAINER = false;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -34,13 +36,18 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     RobotMap.PDM.setSwitchableChannel(true);
-    RobotMap.gyro.resetYaw();
+    // RobotMap.gyro.resetYaw(); // Don't need this for YAGSL - enable it for our
+    // DriveTrainSubsystem
 
     DriverStation.silenceJoystickConnectionWarning(true);
-    
+
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
-    // m_robotContainer = new RobotContainer();
+    if (TEST_CONTAINER) {
+      m_testContainer = new TestContainer();
+    } else {
+      m_robotContainer = new RobotContainer();
+    }
   }
 
   /**
@@ -54,9 +61,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // newly-scheduled commands, running already-scheduled commands, removing finished or
-    // interrupted commands, and running subsystem periodic() methods. This must be called from the
-    // robot's periodic block in order for anything in the Command-based framework to work.
+    // newly-scheduled commands, running already-scheduled commands, removing
+    // finished or
+    // interrupted commands, and running subsystem periodic() methods. This must be
+    // called from the
+    // robot's periodic block in order for anything in the Command-based framework
+    // to work.
 
     CommandScheduler.getInstance().run();
   }
@@ -73,24 +83,31 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   /**
    * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
+   * {@link RobotContainer} class or {@Link TestContainer} class, depending on the TEST_CONTAINER boolean.
    */
   @Override
   public void autonomousInit() {
-    CommandScheduler.getInstance().cancelAll(); //Cancel all teleop or lingering commands
+    CommandScheduler.getInstance().cancelAll(); // Cancel all teleop or lingering commands
 
     if (Constants.enableAutomaticShuffleboardRecording) {
       Shuffleboard.startRecording();
       System.out.println("Autonomous Shuffleboard recording started - " + DriverStation.getMatchTime());
     }
 
-    Command m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    System.out.println("Auton Selected: " + m_autonomousCommand.toString());
+    Command m_autonomousCommand = null;
 
+    if (TEST_CONTAINER) {
+      m_autonomousCommand = m_testContainer.getAutonomousCommand();
+    } else {
+      m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    }
+
+    System.out.println("Auton Selected: " + m_autonomousCommand.toString());
     System.out.println("Init Auton.........");
 
     // Schedule the autonomous command
@@ -102,8 +119,9 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during autonomous.
    */
-  //@Override
-  public void autonomousPeriodic() {}
+  // @Override
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
@@ -118,23 +136,30 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
 
     CommandScheduler.getInstance().cancelAll();
-    Dash.add("PhotoEye1", () -> RobotMap.photoEye1.isDetecting());
-    // m_robotContainer.teleopInit();
+
+    if (TEST_CONTAINER) {
+      m_testContainer.teleopInit();
+    } else {
+      m_robotContainer.teleopInit();
+    } 
   }
 
   /**
    * This function is called periodically during operator control.
    */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void testInit() {}
+  public void testInit() {
+  }
 
   /**
    * This function is called periodically during test mode.
    */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
 }
