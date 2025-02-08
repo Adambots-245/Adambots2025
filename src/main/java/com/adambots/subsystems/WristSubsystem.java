@@ -108,15 +108,15 @@ public class WristSubsystem extends SubsystemBase {
   }
   
   // Public methods for commanding the arm
-  public void moveToGround() {
+  public void moveToIntake() {
       stateMachine.requestTransition(intakeState);
   }
   
-  public void moveToMid() {
+  public void moveToScore() {
       stateMachine.requestTransition(scoreState);
   }
   
-  public void moveToHigh() {
+  public void moveToHighScore() {
       stateMachine.requestTransition(highScoreState);
   }
 }
