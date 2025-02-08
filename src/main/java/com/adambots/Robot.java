@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private TestContainer m_testContainer;
-  private final boolean TEST_CONTAINER = false;
+  private final boolean TEST_CONTAINER = true;
 
   /**
    * This function is run when the robot is first started up and should be used

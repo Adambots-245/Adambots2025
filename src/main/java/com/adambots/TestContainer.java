@@ -1,5 +1,6 @@
 package com.adambots;
 
+import com.adambots.subsystems.ElevatorTestSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -26,6 +27,10 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  private final ElevatorTestSubsystem elevatorTestSubsystem = new ElevatorTestSubsystem(RobotMap.KrakenMotor, RobotMap.BigNEOMotor);
+    
+  
+    
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
