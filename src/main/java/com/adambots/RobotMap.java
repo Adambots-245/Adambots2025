@@ -21,6 +21,7 @@ import com.adambots.sensors.PhotoEye;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
@@ -37,9 +38,14 @@ public class RobotMap {
     public static final int PCMport = 0;
     public static final int KrakenPort = 10;
     public static final int smallNeoPort = 19;
-    public static final int baldNeoPort = 15;
+    // public static final int baldNeoPort = 15;
     public static final int bigNeoPort = 30;
     public static final int photoEye1Port = 9;
+    public static final int photoEye2Port = 7;
+
+    public static final int limitSwitchPort = 3;
+    public static final int limitSwitchPort2 = 3;
+
 
     // Drive Ports
     public static final int kFrontRightTurningEncoderPort = 5;
@@ -66,12 +72,17 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+    // public static final DigitalInput limitSwitch1 = new DigitalInput(limitSwitchPort);
+    // public static final DigitalInput limitSwitch2 = new DigitalInput(limitSwitchPort);
+
 
 //     // Test Board Devices
     public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20);
     public static final BaseMotor BigNEOMotor = new NEOMotor(bigNeoPort, false);
-    public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
+    // public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
     public static final BaseProximitySensor photoEye1 = new PhotoEye(photoEye1Port, false);
+    public static final BaseProximitySensor photoEye2 = new PhotoEye(photoEye2Port, false);
+    
     
     // // Robot Swerve Modules
 //     // public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

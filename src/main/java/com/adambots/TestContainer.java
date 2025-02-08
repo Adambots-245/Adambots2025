@@ -1,5 +1,7 @@
 package com.adambots;
 
+import com.adambots.commands.MoveToLowerCommand;
+import com.adambots.commands.MoveToUpperCommand;
 import com.adambots.subsystems.ElevatorTestSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
@@ -12,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
 /**
  * This class is an alternative to RobotContainer for testing purposes. Since
@@ -27,7 +31,7 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  private final ElevatorTestSubsystem elevatorTestSubsystem = new ElevatorTestSubsystem(RobotMap.KrakenMotor, RobotMap.BigNEOMotor);
+  private final ElevatorTestSubsystem elevatorTestSubsystem = new ElevatorTestSubsystem(RobotMap.KrakenMotor, RobotMap.photoEye1, RobotMap.photoEye2 /* , RobotMap.BigNEOMotor*/);
     
   
     
@@ -47,6 +51,7 @@ public class TestContainer {
     // Configure commands to run periodically during robot operation
     setupDefaultCommands();
 
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -58,6 +63,7 @@ public class TestContainer {
   }
 
   public void teleopInit() {
+
     
   }
 
@@ -70,8 +76,14 @@ public class TestContainer {
    * If you are not using a Joystick or XboxController, you can add commands to the shuffleboard
    * Use: SmartDashboard.putData("Command Name", new Command());
    */
-  private void configureButtonBindings() {
+    private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
+   MoveToLowerCommand moveToLowerCommand = new MoveToLowerCommand(elevatorTestSubsystem);
+    SmartDashboard.putData("GoToLower", moveToLowerCommand);
+
+    MoveToUpperCommand moveToUpperCommand = new MoveToUpperCommand(elevatorTestSubsystem);
+    SmartDashboard.putData("GoToUpper", moveToUpperCommand);
+    // SmartDashboard.putData("GoToUpper", new Command(() -> elevatorTestSubsystem.moveToUpperState));
 
     if (Robot.isSimulation()) {
     
@@ -95,17 +107,16 @@ public class TestContainer {
    * Configure the dashboard with useful data for driving and debugging
    */
   private void setupDashboard() {
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
 
     // Adds various data to the dashboard that is useful for driving and debugging
-    SmartDashboard.putData("Auton Mode", autoChooser);
+    // SmartDashboard.putData("Auton Mode", autoChooser);
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
     Dash.add("PhotoEye1", () -> RobotMap.photoEye1.isDetecting());
   }
 
   private void setupDefaultCommands() {
-   
 
   }
 
@@ -115,6 +126,7 @@ public class TestContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return Commands.none();
   }
 }

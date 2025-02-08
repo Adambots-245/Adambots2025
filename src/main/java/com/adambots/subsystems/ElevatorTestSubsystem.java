@@ -4,9 +4,13 @@
 
 package com.adambots.subsystems;
 
+import java.lang.Thread.State;
+
 import com.adambots.actuators.BaseMotor;
+import com.adambots.sensors.BaseProximitySensor;
 import com.adambots.utils.StateMachine;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -14,7 +18,12 @@ public class ElevatorTestSubsystem extends SubsystemBase {
   /** Creates a new ElevatorTestSubsystem. */
   // Hardware components
   private final BaseMotor KrakenMotor;
-  private final BaseMotor BigNeoMotor;
+  private final BaseProximitySensor photoEyeLow;
+  private final BaseProximitySensor photoEyeUp;
+
+
+
+  // private final BaseMotor BigNeoMotor;
   // State Machine components
   private final TestContext context;
   private final StateMachine<TestContext> stateMachine;
@@ -23,67 +32,111 @@ public class ElevatorTestSubsystem extends SubsystemBase {
 
   // Constants
   private static final double NeoLower = 0.0;
-  private static final double NeoUpper = 45.0;
-  private static final double KrakenLower = 90.0;
-  private static final double KrakenUpper = 2.0;
-  private static final double TOLERANCE = 2;
+  private static final double NeoUpper = 100.0;
+  private static final double KrakenLower = -1;
+  private static final double KrakenUpper = 1;
+  private static final double TOLERANCE = 0.3;
 
-  public ElevatorTestSubsystem(BaseMotor KrakenMotor, BaseMotor BigNeoMotor) {
+  String targetStateName = "";
+
+
+
+  public ElevatorTestSubsystem(BaseMotor KrakenMotor, BaseProximitySensor photoEyeUp, BaseProximitySensor photoEyeLow/*, BaseMotor BigNeoMotor*/ ) {
     this.KrakenMotor = KrakenMotor;
-    this.BigNeoMotor = BigNeoMotor;
+    this.photoEyeLow = photoEyeLow;
+    this.photoEyeUp = photoEyeUp;
+    // this.BigNeoMotor = BigNeoMotor;
 
     // Initialize state machine
     context = new TestContext();
     stateMachine = new StateMachine<>(context);
 
-    // Create states with trigger conditions
-    lowerState = stateMachine.addState("Lower", () -> isAtPosition(NeoLower, KrakenLower) ||
-        ((context.neoTargetPosition == NeoLower && context.neoMotorSpeed < 0)
-            && (context.krakenTargetPosition == KrakenLower && context.krakenMotorSpeed < 0)));
 
-    upperState = stateMachine.addState("Upper", () -> isAtPosition(NeoUpper, KrakenUpper) ||
-        ((context.neoTargetPosition == NeoUpper && context.neoMotorSpeed < 0)
-            && (context.krakenTargetPosition == KrakenUpper && context.krakenMotorSpeed < 0)));
+    // Create states with trigger conditions
+    lowerState = stateMachine.addState("Lower", () -> {
+
+      if (isAtPosition(photoEyeLow)) {
+        // context.krakenMotorSpeed = 0.00;
+      }
+      return isAtPosition(photoEyeLow); /* && (context.krakenTargetPosition == KrakenLower);
+      /* (context.neoTargetPosition == NeoUpper && context.neoMotorSpeed < 0)
+          && */
+    } );
+    upperState = stateMachine.addState("Upper", () -> { 
+      if (isAtPosition(photoEyeUp)) {
+        // context.krakenMotorSpeed = 0;
+      }
+      return isAtPosition(photoEyeUp); /* && (context.krakenTargetPosition == KrakenUpper);
+      /* (context.neoTargetPosition == NeoUpper && context.neoMotorSpeed < 0)
+          && */
+
+    } );
 
     // Define transitions
     lowerState.addTransition(upperState, ctx -> {
+      targetStateName = upperState.getName();
       ctx.krakenTargetPosition = KrakenUpper;
-      ctx.krakenMotorSpeed = 0.5;
-      ctx.neoTargetPosition = NeoUpper;
-      ctx.neoMotorSpeed = 0.5;
+      ctx.krakenMotorSpeed = -0.02;
+      System.out.println("running to up");
+      // ctx.neoTargetPosition = NeoUpper;
+      // ctx.neoMotorSpeed = 0.5;
     });
 
     upperState.addTransition(lowerState, ctx -> {
+      targetStateName = lowerState.getName();
       ctx.krakenTargetPosition = KrakenLower;
-      ctx.krakenMotorSpeed = -0.5;
-      ctx.neoTargetPosition = NeoLower;
-      ctx.neoMotorSpeed = -0.5;
+      ctx.krakenMotorSpeed = 0.02;
+      System.out.println("running to low");
+
+      // ctx.neoTargetPosition = NeoLower;
+      // ctx.neoMotorSpeed = -0.5;
     });
   }
 
-  private boolean isAtPosition(double NeoPosition, double KrakenPosition) {
-    return (Math.abs(BigNeoMotor.getPosition() - NeoPosition) < TOLERANCE)
-        && (Math.abs(KrakenMotor.getPosition() - KrakenPosition) < TOLERANCE);
+  private boolean isAtPosition(BaseProximitySensor photoEye) {
+    return photoEye.isDetecting();
+    // return  /*(Math.abs(BigNeoMotor.getPosition() - NeoPosition) < TOLERANCE)
+    //     && */(Math.abs(KrakenMotor.getPosition() - KrakenPosition) < TOLERANCE);
   }
 
+  
   @Override
   public void periodic() {
     // Update context
-    context.neoCurrentPosition = BigNeoMotor.getPosition();
+    // context.neoCurrentPosition = BigNeoMotor.getPosition();
     context.krakenCurrentPosition = KrakenMotor.getPosition();
+    SmartDashboard.putNumber("current pos", context.krakenCurrentPosition);
+    SmartDashboard.putNumber("target pos", context.krakenTargetPosition);
+
+    SmartDashboard.putNumber("error", Math.abs(KrakenMotor.getPosition() - context.krakenTargetPosition));
+    SmartDashboard.putBoolean("is at up", isAtPosition(photoEyeUp));
+    SmartDashboard.putBoolean("is at low", isAtPosition(photoEyeLow));
+
+
 
     // Update state machine
     stateMachine.periodic();
 
+    if (stateMachine.getCurrentState().getName().equals(targetStateName)) {
+      context.krakenMotorSpeed = 0;
+    }
+
     // Apply motor output
-    BigNeoMotor.set(context.neoMotorSpeed);
+    // BigNeoMotor.set(context.neoMotorSpeed);
+    // if (isAtPosition(context.neoTargetPosition, context.krakenTargetPosition)) {
+    //   KrakenMotor.set(0);
+
+    // } else {
+    SmartDashboard.putNumber("motor speed", context.krakenMotorSpeed);
     KrakenMotor.set(context.krakenMotorSpeed);
+    // }
 
     // Update SmartDashboard
     SmartDashboard.putString("Current State",
         stateMachine.getCurrentState().getName());
-    SmartDashboard.putNumber("Big NEO motor position",
-        context.neoCurrentPosition);
+    SmartDashboard.putString("targetState", targetStateName);
+    // SmartDashboard.putNumber("Big NEO motor position",
+    //     context.neoCurrentPosition);
     SmartDashboard.putNumber("Kraken motor position",
         context.krakenCurrentPosition);
   }
