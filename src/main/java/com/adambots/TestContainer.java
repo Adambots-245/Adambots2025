@@ -2,6 +2,7 @@ package com.adambots;
 
 import com.adambots.commands.MoveToLowerCommand;
 import com.adambots.commands.MoveToUpperCommand;
+import com.adambots.commands.driveCommands.ElevatorTestCommands;
 import com.adambots.subsystems.ElevatorTestSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
@@ -32,6 +33,7 @@ public class TestContainer {
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
   private final ElevatorTestSubsystem elevatorTestSubsystem = new ElevatorTestSubsystem(RobotMap.KrakenMotor, RobotMap.photoEye1, RobotMap.photoEye2 /* , RobotMap.BigNEOMotor*/);
+  private final ElevatorTestCommands elevatorTestCommands = new ElevatorTestCommands(elevatorTestSubsystem);
     
   
     
@@ -78,11 +80,8 @@ public class TestContainer {
    */
     private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
-   MoveToLowerCommand moveToLowerCommand = new MoveToLowerCommand(elevatorTestSubsystem);
-    SmartDashboard.putData("GoToLower", moveToLowerCommand);
-
-    MoveToUpperCommand moveToUpperCommand = new MoveToUpperCommand(elevatorTestSubsystem);
-    SmartDashboard.putData("GoToUpper", moveToUpperCommand);
+    SmartDashboard.putData("GoToLower", elevatorTestCommands.moveToLower());
+    SmartDashboard.putData("GoToUpper", elevatorTestCommands.moveToUpper());
     // SmartDashboard.putData("GoToUpper", new Command(() -> elevatorTestSubsystem.moveToUpperState));
 
     if (Robot.isSimulation()) {
