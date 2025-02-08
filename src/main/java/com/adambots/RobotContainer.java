@@ -4,6 +4,10 @@ import java.io.File;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
+import com.adambots.commands.driveCommands.DriveToWaypointCommand;
+import com.adambots.commands.driveCommands.RotateToAngleCommand;
+import com.adambots.commands.driveCommands.RotateToAprilTagCommand;
+import com.adambots.sensors.Lidar;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
@@ -50,6 +54,9 @@ public class RobotContainer {
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  private Lidar lidar = new Lidar(7);
+  private static SwerveInputStream driveAngularVelocity;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -101,23 +108,26 @@ public class RobotContainer {
       // RobotMap.gyro.resetYaw();
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
+      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
       // Buttons.JoystickButton7.onTrue(Commands.runOnce(()->RobotMap.gyro.resetYaw()));
+      Buttons.JoystickButton7.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(14.264, 4.045 + DriveConstants.kReefAllignOffset), new Rotation2d(Math.toRadians(180))), driveCommands));
+      Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(14.264, 4.045 - DriveConstants.kReefAllignOffset), new Rotation2d(Math.toRadians(180))), driveCommands));
 
+      // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(14.409, 4.031), new Rotation2d(Math.toRadians(180)))));
       //Test Drive Commands
-      Buttons.JoystickButton6.onTrue(driveCommands.aimAtAprilTag(7, 0));
-      Buttons.JoystickButton8.onTrue(driveCommands.aimAtTarget(Cameras.CENTER_CAM));
-      Buttons.JoystickButton9.onTrue(driveCommands.driveToDistanceCommandFixed(2, -1));
+      // Buttons.JoystickButton6.whileTrue(new RotateToAprilTagCommand(swerveSubsystem));
+      // Buttons.JoystickButton8.onTrue(driveCommands.aimAtTarget(Cameras.CENTER_CAM));
+      // Buttons.JoystickButton9.onTrue(driveCommands.driveToDistanceCommandFixed(2, -1));
 
-      Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
-      Buttons.XboxBButton.whileTrue(
-          driveCommands.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
-      Buttons.XboxStartButton.whileTrue(Commands.none());
-      Buttons.XboxBackButton.whileTrue(Commands.none());
-      Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
-      Buttons.XboxRightBumper.onTrue(Commands.none());
+      // Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
+      // Buttons.XboxBButton.whileTrue(
+      //     driveCommands.driveToPose(
+      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+      // Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
+      // Buttons.XboxStartButton.whileTrue(Commands.none());
+      // Buttons.XboxBackButton.whileTrue(Commands.none());
+      // Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
+      // Buttons.XboxRightBumper.onTrue(Commands.none());
     }
 
     // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
@@ -158,6 +168,7 @@ public class RobotContainer {
     // Dash.add("getZ", Buttons.rotateSupplier);
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
+    Dash.add("Lidar distance", () -> lidar.getDistanceInInches());
 
     // Dash.add("odom x", () -> drivetrainSubsystem.getPose().getX());
     // Dash.add("odom y", () -> drivetrainSubsystem.getPose().getY());
@@ -167,14 +178,18 @@ public class RobotContainer {
     // Dash.add("roll", () -> RobotMap.gyro.getRoll());
   }
 
+  public static SwerveInputStream getDriveAngularVelocity(){
+    return driveAngularVelocity;
+  }
+
   private void setupDefaultCommands() {
     /**
      * Converts driver input into a field-relative ChassisSpeeds that is controlled
      * by angular velocity.
      */
-    SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
-        Buttons.forwardSupplier,
-        Buttons.sidewaysSupplier)
+    driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
+        ()-> -Buttons.forwardSupplier.getAsDouble(),
+        ()-> -Buttons.sidewaysSupplier.getAsDouble())
         .withControllerRotationAxis(Buttons.rotateSupplier)
         .deadband(DriveConstants.kDeadZone)
         .scaleTranslation(0.8)
@@ -197,7 +212,7 @@ public class RobotContainer {
     // left stick controls translation
     // right stick controls the angular velocity of the robot
     Command driveFieldOrientedAnglularVelocity = driveCommands.driveFieldOriented(driveAngularVelocity);
-
+    
     SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
         Buttons.forwardSupplier,
         Buttons.sidewaysSupplier)

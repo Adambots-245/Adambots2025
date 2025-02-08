@@ -524,6 +524,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public PhotonVision getVision() {
     return vision;
   }
+  
 
   /**
    * Add a fake vision reading for testing purposes.

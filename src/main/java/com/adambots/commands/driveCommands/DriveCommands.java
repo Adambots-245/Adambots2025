@@ -68,7 +68,9 @@ public class DriveCommands {
                                 controller.headingCalculate(subsystem.getHeading().getRadians(),
                                         subsystem.getAprilTagYaw(tagId).getRadians()),
                                 subsystem.getHeading());
-                        System.out.println(speeds.omegaRadiansPerSecond);
+                        System.out.println("RObot Rotoation " + subsystem.getHeading());
+                        System.out.println("Aptil Tag Rotoation " + subsystem.getAprilTagYaw(tagId).getRadians());
+                        // System.out.println(speeds.omegaRadiansPerSecond);
                         subsystem.drive(speeds);
                         
                     }).until(() -> Math.abs(
@@ -299,7 +301,6 @@ public class DriveCommands {
      */
     public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity) {
         return Commands.run(() -> {
-            System.out.println("theta speed: "+velocity.get().omegaRadiansPerSecond);
             swerveDrive.driveFieldOriented(velocity.get());
         }, subsystem);
     }

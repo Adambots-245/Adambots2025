@@ -212,7 +212,7 @@ public class Buttons {
         };
         public static DoubleSupplier rotateSupplier = () -> {
                 // System.out.println("Rotate: " + ex3dPro.getZ());
-                return applyCurve(ex3dPro.getZ());
+                return -applyCurve(ex3dPro.getZ());
         };
 
         /**

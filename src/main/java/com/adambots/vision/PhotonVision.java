@@ -127,6 +127,7 @@ public class PhotonVision
     }
 
   }
+  
 
   /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the given poses.
@@ -148,6 +149,7 @@ public class PhotonVision
     }
     for (Cameras camera : Cameras.values())
     {
+      Cameras.updatedCache = false;
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
@@ -312,6 +314,19 @@ public class PhotonVision
     }
   }
 
+  public boolean hasTarget(){
+    // boolean isTarget = false;
+    // for (Cameras c : Cameras.values()){
+      // c.clearCache();
+      // c.updateUnreadResults();
+      // if (!c.getLatestResult().isEmpty()){
+      //   isTarget = true;
+      // }
+      // isTarget = Cameras.updatedCache;
+    // }
+    return Cameras.updatedCache;
+  }
+
   /**
    * Update the {@link Field2d} to include tracked targets/
    */
@@ -429,6 +444,10 @@ public class PhotonVision
      */
     private       double                       lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
 
+    private static boolean updatedCache = false;
+
+
+
     /**
      * Construct a Photon Camera class with help. Standard deviations are fake values, experiment and determine
      * estimation noise on an actual robot.
@@ -488,6 +507,10 @@ public class PhotonVision
       }
     }
 
+    public void clearCache(){
+      resultsList.clear();
+    }
+
     /**
      * Get the result with the least ambiguity from the best tracked target within the Cache. This may not be the most
      * recent result!
@@ -501,15 +524,9 @@ public class PhotonVision
         return Optional.empty();
       }
 
-      PhotonPipelineResult bestResult       = resultsList.get(0);
+      PhotonPipelineResult bestResult = resultsList.get(0);
       double amiguity = 0;
-      try {
-        amiguity         = bestResult.getBestTarget().getPoseAmbiguity();
-        
-      } catch (Exception e) {
-        // TODO: handle exception
-        System.out.println("line 505 fucked!!! big problem!!");
-      }
+      amiguity = bestResult.getBestTarget().getPoseAmbiguity();
       double               currentAmbiguity = 0;
       for (PhotonPipelineResult result : resultsList)
       {
@@ -559,12 +576,13 @@ public class PhotonVision
       {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
-      //System.out.println("Cts: " + currentTimestamp + "Mrt: " + mostRecentTimestamp + "deb:" + debounceTime);
-      if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
-          (currentTimestamp - lastReadTimestamp) >= debounceTime)
-      {
-        System.err.println("Checkpoint 6");
-
+      // System.out.println("Cts: " + currentTimestamp + "Mrt: " + lastReadTimestamp + " current - mostRecent " + (currentTimestamp - mostRecentTimestamp + " debounce" + debounceTime));
+      // if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
+      //     (currentTimestamp - lastReadTimestamp) >= debounceTime)
+      // {
+      if (true) {
+        // System.err.println("Checkpoint 6");
+        resultsList.clear();;
         resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
         lastReadTimestamp = currentTimestamp;
         resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
@@ -572,7 +590,12 @@ public class PhotonVision
         });
         if (!resultsList.isEmpty())
         {
-          System.err.println("Checkpoint 7");
+          if (resultsList.get(0).targets.size() > 0) {
+            updatedCache = true;
+          }
+          // System.err.println(resultsList.get(0).targets.size());
+          // updatedCache = true;
+          // System.err.println("Checkpoint 7");
           updateEstimatedGlobalPose();
         }
       }
@@ -594,13 +617,13 @@ public class PhotonVision
       for (var change : resultsList)
       {
         visionEst = poseEstimator.update(change);
-        try {
-          if (visionEst != null)
-             System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX() + "y: " + visionEst.get().estimatedPose.getY());
-        } catch (Exception e) {
-          // TODO: handle exception
-          System.out.println("Pose died!?! ( big problem !!!)");
-        }
+        // try {
+        //   if (visionEst != null)
+        //     //  System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX() + "y: " + visionEst.get().estimatedPose.getY());
+        // } catch (Exception e) {
+        //   // TODO: handle exception
+        //   System.out.println("Pose died!?! ( big problem !!!)");
+        // }
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       estimatedRobotPose = visionEst;

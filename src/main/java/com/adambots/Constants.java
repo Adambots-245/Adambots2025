@@ -65,6 +65,8 @@ public final class Constants {
         public static final boolean kFrontRightDriveMotorReversed = true;
         public static final boolean kRearRightDriveMotorReversed = true;
 
+        public static final double kReefAllignOffset = 0.185;
+
         // Distance between centers of right and left wheels on robot in meters
         public static final double kTrackWidth = 0.61;
         // Distance between front and back wheels on robot in meters
