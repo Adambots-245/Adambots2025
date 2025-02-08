@@ -2,7 +2,7 @@ package com.adambots.subsystems;
 
 import java.util.Scanner;
 
-public class ArmStates {
+public class ElevatorStates {
         public double elevatorPosition = 0;
         public double elevatorTargetPosition = 0;
         public double elevatorMotorSpeed = 0;

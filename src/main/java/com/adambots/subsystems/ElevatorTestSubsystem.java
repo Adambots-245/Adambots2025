@@ -54,18 +54,11 @@ public class ElevatorTestSubsystem extends SubsystemBase {
 
     // Create states with trigger conditions
     lowerState = stateMachine.addState("Lower", () -> {
-
-      if (isAtPosition(photoEyeLow)) {
-        // context.krakenMotorSpeed = 0.00;
-      }
       return isAtPosition(photoEyeLow); /* && (context.krakenTargetPosition == KrakenLower);
       /* (context.neoTargetPosition == NeoUpper && context.neoMotorSpeed < 0)
           && */
     } );
     upperState = stateMachine.addState("Upper", () -> { 
-      if (isAtPosition(photoEyeUp)) {
-        // context.krakenMotorSpeed = 0;
-      }
       return isAtPosition(photoEyeUp); /* && (context.krakenTargetPosition == KrakenUpper);
       /* (context.neoTargetPosition == NeoUpper && context.neoMotorSpeed < 0)
           && */
