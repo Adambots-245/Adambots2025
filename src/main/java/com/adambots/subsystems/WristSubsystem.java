@@ -8,6 +8,7 @@ import com.adambots.actuators.BaseMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.utils.StateMachine;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WristSubsystem extends SubsystemBase {
@@ -19,10 +20,13 @@ public class WristSubsystem extends SubsystemBase {
   private final StateMachine<WristContext> stateMachine;
   private final StateMachine<WristContext>.State scoreState;
   private final StateMachine<WristContext>.State intakeState;
+  private final StateMachine<WristContext>.State highScoreState;
 
   // Constants
   private static final double wristIntakePos = 0.0;
   private static final double wristScorePos = 0.0;
+  private static final double wristHighScorePos = 0.0;
+
   private static final double wristTolerance = 2.0;
 
   public WristSubsystem(BaseMotor wristMotor, BaseAbsoluteEncoder wristEncoder) {
@@ -35,10 +39,13 @@ public class WristSubsystem extends SubsystemBase {
 
     // Create states with trigger conditions
     scoreState = stateMachine.addState("Score",
-        () -> (isAtPosition(wristScorePos)) && context.wristTargetPosition == wristScorePos);
+        () -> (isAtPosition(wristScorePos)));
 
     intakeState = stateMachine.addState("Intake", () -> isAtPosition(wristIntakePos) &&
-        (context.wristTargetPosition == wristIntakePos));
+        (isAtPosition(wristIntakePos)));
+
+    highScoreState = stateMachine.addState("HighScore", () -> isAtPosition(wristHighScorePos) &&
+        (isAtPosition(wristIntakePos)));
 
     // Define transitions
     intakeState.addTransition(scoreState, ctx -> {
@@ -48,7 +55,27 @@ public class WristSubsystem extends SubsystemBase {
 
     scoreState.addTransition(intakeState, ctx -> {
       ctx.wristTargetPosition = wristIntakePos;
+      ctx.wristMotorSpeed = -0.5;
+    });
+
+    scoreState.addTransition(highScoreState, ctx -> {
+      ctx.wristTargetPosition = wristHighScorePos;
       ctx.wristMotorSpeed = 0.5;
+    });
+
+    intakeState.addTransition(highScoreState, ctx -> {
+      ctx.wristTargetPosition = wristHighScorePos;
+      ctx.wristMotorSpeed = 0.5;
+    });
+
+    highScoreState.addTransition(intakeState, ctx -> {
+      ctx.wristTargetPosition = wristIntakePos;
+      ctx.wristMotorSpeed = -0.5;
+    });
+    
+    highScoreState.addTransition(scoreState, ctx -> {
+      ctx.wristTargetPosition = wristHighScorePos;
+      ctx.wristMotorSpeed = -0.5;
     });
   }
 
@@ -64,6 +91,32 @@ public class WristSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+      // Update context
+      context.wristCurrentPosition = wristEncoder.getAbsolutePositionDegrees();
+      
+      // Update state machine
+      stateMachine.periodic();
+      
+      // Apply motor output
+      wristMotor.set(context.wristMotorSpeed);
+      
+      // Update SmartDashboard
+      SmartDashboard.putString("Current State", 
+          stateMachine.getCurrentState().getName());
+      SmartDashboard.putNumber("Arm Position", 
+          context.wristCurrentPosition);
+  }
+  
+  // Public methods for commanding the arm
+  public void moveToGround() {
+      stateMachine.requestTransition(intakeState);
+  }
+  
+  public void moveToMid() {
+      stateMachine.requestTransition(scoreState);
+  }
+  
+  public void moveToHigh() {
+      stateMachine.requestTransition(highScoreState);
   }
 }
