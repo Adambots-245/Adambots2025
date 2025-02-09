@@ -18,8 +18,8 @@ public class TestStates {
     public static void main(String[] args) throws InterruptedException {
         // Create context and state machine
         ArmContext context = new ArmContext();
-        StateMachine<ArmContext> stateMachine = new StateMachine<>(context);
-        stateMachine.setDebug(true);
+        StateMachine<ArmContext> stateMachine = new StateMachine<ArmContext>("Arm", context, System.out::println);
+        // stateMachine.setDebug(true);
 
         // Define states with their trigger conditions
         StateMachine<ArmContext>.State groundState = 
@@ -35,21 +35,29 @@ public class TestStates {
         groundState.addTransition(midState, ctx -> {
             ctx.targetPosition = 45.0;
             ctx.motorSpeed = 0.5;
+        }, ctx ->{ // OnComplete
+            ctx.motorSpeed = 0;
         });
 
         midState.addTransition(highState, ctx -> {
             ctx.targetPosition = 90.0;
             ctx.motorSpeed = 0.5;
+        }, ctx -> { // OnComplete
+            ctx.motorSpeed = 0;
         });
 
         midState.addTransition(groundState, ctx -> {
             ctx.targetPosition = 0.0;
             ctx.motorSpeed = -0.5;
+        }, ctx -> { // OnComplete
+            ctx.motorSpeed = 0;
         });
 
         highState.addTransition(midState, ctx -> {
             ctx.targetPosition = 45.0;
             ctx.motorSpeed = -0.5;
+        }, ctx -> { // OnComplete
+            ctx.motorSpeed = 0;
         });
 
         // Start command line interface
@@ -88,12 +96,6 @@ public class TestStates {
                     break;
                 case "high":
                     stateMachine.requestTransition(highState);
-                    break;
-                case "status":
-                    System.out.println("\nRecent state machine logs:");
-                    for (String log : stateMachine.getStateLog()) {
-                        System.out.println(log);
-                    }
                     break;
                 case "quit":
                     running = false;

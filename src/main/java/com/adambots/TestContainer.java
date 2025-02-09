@@ -1,5 +1,8 @@
 package com.adambots;
 
+import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.TestArmSubsystem;
+import com.adambots.subsystems.TestArmSubsystem2;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -24,6 +27,8 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  private final TestArmSubsystem2 testArmSubsystem = new TestArmSubsystem2();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -67,7 +72,15 @@ public class TestContainer {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
 
     if (Robot.isSimulation()) {
-    
+      Buttons.XboxAButton.onTrue(testArmSubsystem.moveToLowCommand());
+      Buttons.XboxBButton.onTrue(testArmSubsystem.moveToMidCommand());
+      Buttons.XboxXButton.onTrue(testArmSubsystem.moveToHighCommand());
+      Buttons.JoystickButton1.onTrue(elevatorSubsystem.moveToIntakeCommand());
+      Buttons.JoystickButton2.onTrue(elevatorSubsystem.moveToL1Command());
+      Buttons.JoystickButton3.onTrue(elevatorSubsystem.moveToL2Command());
+      Buttons.JoystickButton4.onTrue(elevatorSubsystem.moveToL3Command());
+      Buttons.JoystickButton5.onTrue(elevatorSubsystem.moveToL4Command());
+
     }
 
     if (DriverStation.isTest()) {
@@ -88,10 +101,10 @@ public class TestContainer {
    * Configure the dashboard with useful data for driving and debugging
    */
   private void setupDashboard() {
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
 
     // Adds various data to the dashboard that is useful for driving and debugging
-    SmartDashboard.putData("Auton Mode", autoChooser);
+    // SmartDashboard.putData("Auton Mode", autoChooser);
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }
@@ -107,6 +120,7 @@ public class TestContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return Commands.none();
   }
 }
