@@ -8,14 +8,15 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
+// import com.ctre.phoenix6.hardware.TalonFX;
+// import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+// import com.ctre.phoenix6.signals.ForwardLimitValue;
+// import com.ctre.phoenix6.signals.NeutralModeValue;
+// import com.ctre.phoenix6.configs.TalonFXConfiguration;
+// import com.ctre.phoenix6.controls.PositionVoltage;
+import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.NEOMotor;
+import com.adambots.actuators.TalonFXMotor;
 import com.adambots.utils.StateMachine2;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -54,8 +55,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     // Hardware
-    private final TalonFX elevatorMotor;
-    private final PositionVoltage positionVoltage = new PositionVoltage(0);
+    // private final TalonFX elevatorMotor;
+    private final BaseMotor elevatorMotor;
+    // private final PositionVoltage positionVoltage = new PositionVoltage(0);
 
     // Mechanism2d visualization
     private final Mechanism2d mechanism;
@@ -75,7 +77,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
         // Initialize motor
-        elevatorMotor = new TalonFX(2);
+        // elevatorMotor = new TalonFX(2);
+        elevatorMotor = new TalonFXMotor(2, false, 40.0, true);
+        // elevatorMotor = new NEOMotor(2, false);
         configureMotor();
 
         // Initialize Mechanism2d
@@ -110,32 +114,37 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void configureMotor() {
-        var config = new TalonFXConfiguration();
+        // var config = new TalonFXConfiguration();
 
         // Configure PID
-        config.Slot0.kP = 0.5;
-        config.Slot0.kI = 0.0;
-        config.Slot0.kD = 0.0;
+        // config.Slot0.kP = 0.5;
+        // config.Slot0.kI = 0.0;
+        // config.Slot0.kD = 0.0;
+        elevatorMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
 
         // Configure soft limits
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorState.L4.properties.heightInches()
-                / INCHES_PER_ROTATION;
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorState.L4.properties.heightInches()
+        //         / INCHES_PER_ROTATION;
+        // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        elevatorMotor.configureSoftLimits(ElevatorState.L4.properties.heightInches() / INCHES_PER_ROTATION, 0, true);
 
         // Configure forward limit switch (bottom position)
-        config.HardwareLimitSwitch.ForwardLimitEnable = true; // Enable hardware limit
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin; // Normally open
+        // config.HardwareLimitSwitch.ForwardLimitEnable = true; // Enable hardware limit
+        // config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin; // Normally open
+        elevatorMotor.configureHardLimits(true, false);
 
-        elevatorMotor.getConfigurator().apply(config);
-        elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+        // elevatorMotor.getConfigurator().apply(config);
+        // elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+        elevatorMotor.setBrakeMode(true);
     }
 
     private void setPosition(ElevatorProperties properties) {
         // Set motor position
         double rotations = properties.heightInches() / INCHES_PER_ROTATION;
-        elevatorMotor.setControl(positionVoltage.withPosition(rotations));
+        // elevatorMotor.setControl(positionVoltage.withPosition(rotations));
+        elevatorMotor.setPosition(rotations);
 
         // Update visualization
         updateVisualization(properties);
@@ -157,17 +166,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private boolean isAtPosition() {
-        double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+        // double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+        double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
         return Math.abs(currentHeight - stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
     }
 
     @Override
     public void periodic() {
         // Get current position
-        double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+        // double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+        double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
+
 
         // If the limit switch at the bottom is hit, reset the encoder.
-        if (elevatorMotor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround) {
+        if (elevatorMotor.getForwardLimitSwitch()) {
+            // if (elevatorMotor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround) {
             elevatorMotor.setPosition(0);
         }
 
