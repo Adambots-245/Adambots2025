@@ -5,6 +5,8 @@ import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -88,10 +90,25 @@ public class TestContainer {
    * Configure the dashboard with useful data for driving and debugging
    */
   private void setupDashboard() {
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
 
     // Adds various data to the dashboard that is useful for driving and debugging
-    SmartDashboard.putData("Auton Mode", autoChooser);
+    // SmartDashboard.putData("Auton Mode", autoChooser);
+    SmartDashboard.putData("servo", Commands.runOnce(() -> {
+      RobotMap.servo.set(0.5);
+    }));
+    SmartDashboard.putData("servo Angle", Commands.runOnce(() -> {
+      RobotMap.servo.setAngle(90);
+    }));
+        SmartDashboard.putData("set 45", Commands.runOnce(() -> {
+      RobotMap.servo.setAngle(45);
+    }));
+    SmartDashboard.putData("set 1", Commands.runOnce(() -> {
+      RobotMap.servo.set(1);
+    }));
+    SmartDashboard.putData("set 0", Commands.runOnce(() -> {
+      RobotMap.servo.set(0);
+    }));
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }
@@ -107,6 +124,7 @@ public class TestContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return Commands.none();
   }
 }

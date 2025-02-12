@@ -19,6 +19,7 @@ import com.ctre.phoenix.led.CANdle;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.Servo;
 
 /**
  * Define all the devices here
@@ -44,7 +45,8 @@ public class RobotMap {
 
     public static final int kFrontLeftTurningEncoderPort = 4;
     public static final int kFrontLeftTurningMotorPort = 15;
-    public static final int kFrontLeftDriveMotorPort = 22;  
+    public static final int kFrontLeftDriveMotorPort = 22; 
+    public static final int kServoPort = 0; 
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
@@ -54,6 +56,7 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+    public static final Servo servo = new Servo(kServoPort);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
