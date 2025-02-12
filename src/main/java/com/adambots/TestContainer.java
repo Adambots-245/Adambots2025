@@ -109,6 +109,21 @@ public class TestContainer {
     SmartDashboard.putData("set 0", Commands.runOnce(() -> {
       RobotMap.servo.set(0);
     }));
+    SmartDashboard.putData("negativeSpeed", Commands.runOnce(() -> {
+      RobotMap.servo.setSpeed(-1);;
+    }));
+    SmartDashboard.putData("fullSpeed", Commands.runOnce(() -> {
+      RobotMap.servo.setSpeed(1);;
+    }));
+    SmartDashboard.putData("STOP", Commands.runOnce(() -> {
+      RobotMap.servo.setSpeed(0);;
+    }));
+    Dash.add("getSpeed", () -> RobotMap.servo.getSpeed());
+
+    SmartDashboard.putNumber("analog pos", RobotMap.servoAnalog.getValue());
+    Dash.add("analog", () -> RobotMap.servoAnalog.getValue());
+    
+
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }

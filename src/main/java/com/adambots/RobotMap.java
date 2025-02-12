@@ -17,6 +17,7 @@ import com.adambots.sensors.Gyro;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Servo;
@@ -57,6 +58,9 @@ public class RobotMap {
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
     public static final Servo servo = new Servo(kServoPort);
+    public static final AnalogInput servoAnalog = new AnalogInput(0);
+
+
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
