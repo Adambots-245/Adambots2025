@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.NEOMotor;
 import com.adambots.actuators.TalonFXMotor;
+import com.adambots.actuators.BaseMotor.ControlMode;
 import com.adambots.utils.StateMachine2;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -78,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem() {
         // Initialize motor
         // elevatorMotor = new TalonFX(2);
-        elevatorMotor = new TalonFXMotor(2, false, 40.0, true);
+        elevatorMotor = new TalonFXMotor(10, false, 40.0, true);
         // elevatorMotor = new NEOMotor(2, false);
         configureMotor();
 
@@ -103,8 +104,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Initialize state machine
         // Initialize state machine with position control
         stateMachine = new StateMachine2<>(
-                ElevatorState.INTAKE,
-                ElevatorState.INTAKE.properties,
+                ElevatorState.L1,
+                ElevatorState.L1.properties,
                 message -> SmartDashboard.putString("Elevator/Status", message),
                 true // Using position control
         );
@@ -143,8 +144,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private void setPosition(ElevatorProperties properties) {
         // Set motor position
         double rotations = properties.heightInches() / INCHES_PER_ROTATION;
+        System.out.println("In SetPosition: " + rotations);
         // elevatorMotor.setControl(positionVoltage.withPosition(rotations));
-        elevatorMotor.setPosition(rotations);
+        elevatorMotor.set(ControlMode.POSITION, rotations);
+        // elevatorMotor.setPosition(rotations);
 
         // Update visualization
         updateVisualization(properties);
@@ -206,6 +209,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Command factories
     public Command moveToIntakeCommand() {
+        System.out.println("Intake command");
         return Commands.runOnce(() -> moveToState(ElevatorState.INTAKE));
     }
 

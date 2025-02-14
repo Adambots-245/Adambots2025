@@ -71,15 +71,16 @@ public class TestContainer {
   private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
 
-    if (Robot.isSimulation()) {
-      Buttons.XboxAButton.onTrue(testArmSubsystem.moveToLowCommand());
-      Buttons.XboxBButton.onTrue(testArmSubsystem.moveToMidCommand());
-      Buttons.XboxXButton.onTrue(testArmSubsystem.moveToHighCommand());
-      Buttons.JoystickButton1.onTrue(elevatorSubsystem.moveToIntakeCommand());
-      Buttons.JoystickButton2.onTrue(elevatorSubsystem.moveToL1Command());
-      Buttons.JoystickButton3.onTrue(elevatorSubsystem.moveToL2Command());
-      Buttons.JoystickButton4.onTrue(elevatorSubsystem.moveToL3Command());
-      Buttons.JoystickButton5.onTrue(elevatorSubsystem.moveToL4Command());
+    // if (Robot.isSimulation()) 
+    {
+      // Buttons.XboxAButton.onTrue(testArmSubsystem.moveToLowCommand());
+      // Buttons.XboxBButton.onTrue(testArmSubsystem.moveToMidCommand());
+      // Buttons.XboxXButton.onTrue(testArmSubsystem.moveToHighCommand());
+      Buttons.XboxAButton.onTrue(elevatorSubsystem.moveToIntakeCommand());
+      Buttons.XboxBButton.onTrue(elevatorSubsystem.moveToL1Command());
+      Buttons.XboxYButton.onTrue(elevatorSubsystem.moveToL2Command());
+      Buttons.XboxXButton.onTrue(elevatorSubsystem.moveToL3Command());
+      Buttons.XboxDPadN.onTrue(elevatorSubsystem.moveToL4Command());
 
     }
 
