@@ -12,7 +12,9 @@ import java.util.Map;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
+import com.adambots.actuators.HubServo;
 import com.adambots.sensors.BaseGyro;
+import com.adambots.actuators.BaseServo;
 import com.adambots.sensors.Gyro;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
@@ -59,6 +61,7 @@ public class RobotMap {
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
     public static final Servo servo = new Servo(kServoPort);
     public static final AnalogInput servoAnalog = new AnalogInput(0);
+    public static final BaseServo hubServo = new HubServo(45, 2);
 
 
     

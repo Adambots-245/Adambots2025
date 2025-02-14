@@ -122,6 +122,8 @@ public class TestContainer {
 
     SmartDashboard.putNumber("analog pos", RobotMap.servoAnalog.getValue());
     Dash.add("analog", () -> RobotMap.servoAnalog.getValue());
+
+    SmartDashboard.putData("set hub speed", Commands.runOnce(() -> RobotMap.hubServo.turnClockwise()));
     
 
 
