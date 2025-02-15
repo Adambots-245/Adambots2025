@@ -1,9 +1,10 @@
 package com.adambots;
 
-import com.adambots.commands.MoveToLowerCommand;
-import com.adambots.commands.MoveToUpperCommand;
-import com.adambots.commands.driveCommands.ElevatorTestCommands;
-import com.adambots.subsystems.ElevatorTestSubsystem;
+
+// import com.adambots.subsystems.ElevatorTestSubsystem;
+import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.TestArmSubsystem;
+import com.adambots.subsystems.TestArmSubsystem2;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -32,11 +33,13 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  private final ElevatorTestSubsystem elevatorTestSubsystem = new ElevatorTestSubsystem(RobotMap.KrakenMotor, RobotMap.photoEye1, RobotMap.photoEye2 /* , RobotMap.BigNEOMotor*/);
-  private final ElevatorTestCommands elevatorTestCommands = new ElevatorTestCommands(elevatorTestSubsystem);
+  // private final ElevatorTestSubsystem elevatorTestSubsystem = new ElevatorTestSubsystem(RobotMap.KrakenMotor, RobotMap.photoEye1, RobotMap.photoEye2 /* , RobotMap.BigNEOMotor*/);
+  // private final ElevatorTestCommands elevatorTestCommands = new ElevatorTestCommands(elevatorTestSubsystem);
     
   
     
+  private final TestArmSubsystem2 testArmSubsystem = new TestArmSubsystem2();
+  private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -80,12 +83,20 @@ public class TestContainer {
    */
     private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
-    SmartDashboard.putData("GoToLower", elevatorTestCommands.moveToLower());
-    SmartDashboard.putData("GoToUpper", elevatorTestCommands.moveToUpper());
+    // SmartDashboard.putData("GoToLower", elevatorTestCommands.moveToLower());
+    // SmartDashboard.putData("GoToUpper", elevatorTestCommands.moveToUpper());
     // SmartDashboard.putData("GoToUpper", new Command(() -> elevatorTestSubsystem.moveToUpperState));
 
+    Buttons.XboxAButton.onTrue(testArmSubsystem.moveToLowCommand());
+    Buttons.XboxBButton.onTrue(testArmSubsystem.moveToMidCommand());
+    Buttons.XboxXButton.onTrue(testArmSubsystem.moveToHighCommand());
+    Buttons.JoystickButton1.onTrue(elevatorSubsystem.moveToIntakeCommand());
+    Buttons.JoystickButton2.onTrue(elevatorSubsystem.moveToL1Command());
+    Buttons.JoystickButton3.onTrue(elevatorSubsystem.moveToL2Command());
+    Buttons.JoystickButton4.onTrue(elevatorSubsystem.moveToL3Command());
+    Buttons.JoystickButton5.onTrue(elevatorSubsystem.moveToL4Command());
+
     if (Robot.isSimulation()) {
-    
     }
 
     if (DriverStation.isTest()) {

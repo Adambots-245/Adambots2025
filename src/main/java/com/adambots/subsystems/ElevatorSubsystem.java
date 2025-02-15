@@ -1,227 +1,227 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package com.adambots.subsystems;
 
-import com.adambots.actuators.BaseMotor;
-import com.adambots.sensors.PhotoEye;
-import com.adambots.utils.StateMachine;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+// import com.ctre.phoenix6.hardware.TalonFX;
+// import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+// import com.ctre.phoenix6.signals.ForwardLimitValue;
+// import com.ctre.phoenix6.signals.NeutralModeValue;
+// import com.ctre.phoenix6.configs.TalonFXConfiguration;
+// import com.ctre.phoenix6.controls.PositionVoltage;
+import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.NEOMotor;
+import com.adambots.actuators.TalonFXMotor;
+import com.adambots.utils.StateMachine2;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  
-  // Hardware
-  private BaseMotor elevatorMotor;
-  private PhotoEye intakeEye;
-  private PhotoEye L1Eye;
-  private PhotoEye L2Eye;
-  private PhotoEye L3Eye;
-  private PhotoEye L4Eye;
 
-  // State Machine components
-  private final ElevatorStates context;
-  private final StateMachine<ElevatorStates> stateMachine;
+    // Properties class to hold state data
+    public record ElevatorProperties(
+            double heightInches, // Height in inches
+            Color8Bit visualColor, // Color for visualization
+            String description // Description of state
+    ) {
+    }
 
-  // States
-  private final StateMachine<ElevatorStates>.State intakeState;
-  private final StateMachine<ElevatorStates>.State L1state;
-  private final StateMachine<ElevatorStates>.State L2state;
-  private final StateMachine<ElevatorStates>.State L3state;
-  private final StateMachine<ElevatorStates>.State L4state;
+    // Define states with their properties
+    public enum ElevatorState {
+        INTAKE(new ElevatorProperties(0.0,
+                new Color8Bit(0, 255, 0), // Green
+                "Intake Position")),
+        L1(new ElevatorProperties(12.0,
+                new Color8Bit(255, 255, 0), // Yellow
+                "Level 1")),
+        L2(new ElevatorProperties(24.0,
+                new Color8Bit(255, 165, 0), // Orange
+                "Level 2")),
+        L3(new ElevatorProperties(36.0,
+                new Color8Bit(255, 0, 0), // Red
+                "Level 3")),
+        L4(new ElevatorProperties(48.0,
+                new Color8Bit(128, 0, 128), // Purple
+                "Level 4"));
 
-  // Elevator Position Constants
-  private static final double ElevatorIntakePos = 0;
-  private static final double ElevatorL1Pos = 0;
-  private static final double ElevatorL2Pos = 0;
-  private static final double ElevatorL3Pos = 0;
-  private static final double ElevatorL4Pos = 0;
+        public final ElevatorProperties properties;
 
-  private static final double TOLERANCE = 2.0;
+        ElevatorState(ElevatorProperties properties) {
+            this.properties = properties;
+        }
+    }
 
-  /** Creates a new ElevatorSubsystem. */
-  public ElevatorSubsystem(BaseMotor elevatorMotor) {
-    this.elevatorMotor = elevatorMotor;
+    // Hardware
+    // private final TalonFX elevatorMotor;
+    private final BaseMotor elevatorMotor;
+    // private final PositionVoltage positionVoltage = new PositionVoltage(0);
 
-    // Initialize state machine
-    context = new ElevatorStates();
-    stateMachine = new StateMachine<>(context);
+    // Mechanism2d visualization
+    // private final Mechanism2d mechanism;
+    // private final MechanismRoot2d elevatorRoot;
+    // private final MechanismLigament2d elevatorTower;
+    // private final MechanismLigament2d elevatorCarriage;
 
-    // Create states with trigger conditions
-    intakeState = stateMachine.addState("Intake State", () -> {
-      boolean isAtIntake = intakeEye.isDetecting() &&
-          (context.elevatorTargetPosition == ElevatorIntakePos);
-      if (isAtIntake) {
-        elevatorMotor.setPosition(ElevatorIntakePos);
-        return true;
-      } else {
-        return false;
-      }
-    });
+    // State Machine
+    private final StateMachine2<ElevatorState, ElevatorProperties> stateMachine;
 
-    L1state = stateMachine.addState("L1 State", () -> {
-      boolean isAtL1 = L1Eye.isDetecting() &&
-          (context.elevatorTargetPosition == ElevatorIntakePos);
-      if (isAtL1) {
-        elevatorMotor.setPosition(ElevatorL1Pos);
-        return true;
-      } else {
-        return false;
-      }
-    });
+    // Constants
+    private static final double GEAR_RATIO = 10.0; // 10:1 gear ratio - every 10 rotations of motor is 1 rotation of
+                                                   // drum
+    private static final double DRUM_CIRCUMFERENCE = 2.0; // inches - drum or pulley mechanism at the top (Pi*D)
+    private static final double INCHES_PER_ROTATION = DRUM_CIRCUMFERENCE / GEAR_RATIO;
+    private static final double POSITION_TOLERANCE = 0.5; // inches
 
-    L2state = stateMachine.addState("L2 State", () -> {
-      boolean isAtL2 = L2Eye.isDetecting() &&
-          (context.elevatorTargetPosition == ElevatorIntakePos);
-      if (isAtL2) {
-        elevatorMotor.setPosition(ElevatorL2Pos);
-        return true;
-      } else {
-        return false;
-      }
-    });
+    public ElevatorSubsystem() {
+        // Initialize motor
+        // elevatorMotor = new TalonFX(2);
+        elevatorMotor = new TalonFXMotor(2, false, 40.0, true);
+        // elevatorMotor = new NEOMotor(2, false);
+        configureMotor();
 
-    L3state = stateMachine.addState("L3 State", () -> {
-      boolean isAtL3 = L3Eye.isDetecting() &&
-          (context.elevatorTargetPosition == ElevatorIntakePos);
-      if (isAtL3) {
-        elevatorMotor.setPosition(ElevatorL3Pos);
-        return true;
-      } else {
-        return false;
-      }
-    });
+        // Initialize Mechanism2d
+        // mechanism = new Mechanism2d(60, 60);
+        // elevatorRoot = mechanism.getRoot("ElevatorRoot", 30, 0);
 
-    L4state = stateMachine.addState("L4 State", () -> {
-      boolean isAtL4 = L4Eye.isDetecting() &&
-          (context.elevatorTargetPosition == ElevatorIntakePos);
-      if (isAtL4) {
-        elevatorMotor.setPosition(ElevatorL1Pos);
-        return true;
-      } else {
-        return false;
-      }
-    });
+        // // Create fixed tower (background)
+        // elevatorTower = elevatorRoot.append(new MechanismLigament2d(
+        //         "Tower", 50, 90, 4, new Color8Bit(169, 169, 169)));
 
-    // Define transitions
-    intakeState.addTransition(L1state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL1Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+        // // Create moving carriage
+        // elevatorCarriage = elevatorRoot.append(
+        //         new MechanismLigament2d(
+        //                 "Carriage",
+        //                 5, // length
+        //                 0, // angle
+        //                 6, // width
+        //                 new Color8Bit(255, 255, 0) // initial color
+        //         ));
 
-    L1state.addTransition(L2state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL2Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+        // Initialize state machine
+        // Initialize state machine with position control
+        stateMachine = new StateMachine2<>(
+                ElevatorState.INTAKE,
+                ElevatorState.INTAKE.properties,
+                message -> SmartDashboard.putString("Elevator/Status", message),
+                true // Using position control
+        );
 
-    L2state.addTransition(L3state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL3Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+        // Put mechanism to dashboard
+        // SmartDashboard.putData("Elevator Mechanism", mechanism);
+    }
 
-    L3state.addTransition(L4state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL4Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+    private void configureMotor() {
+        // var config = new TalonFXConfiguration();
 
-    L4state.addTransition(L3state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL3Pos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
+        // Configure PID
+        // config.Slot0.kP = 0.5;
+        // config.Slot0.kI = 0.0;
+        // config.Slot0.kD = 0.0;
+        elevatorMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
 
-    L3state.addTransition(L2state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL2Pos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
+        // Configure soft limits
+        // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorState.L4.properties.heightInches()
+        //         / INCHES_PER_ROTATION;
+        // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        elevatorMotor.configureSoftLimits(ElevatorState.L4.properties.heightInches() / INCHES_PER_ROTATION, 0, true);
 
-    L2state.addTransition(L1state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL1Pos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
+        // Configure forward limit switch (bottom position)
+        // config.HardwareLimitSwitch.ForwardLimitEnable = true; // Enable hardware limit
+        // config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin; // Normally open
+        elevatorMotor.configureHardLimits(true, false);
 
-    L1state.addTransition(intakeState, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorIntakePos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
+        // elevatorMotor.getConfigurator().apply(config);
+        // elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+        elevatorMotor.setBrakeMode(true);
+    }
 
-    intakeState.addTransition(L2state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL2Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+    private void setPosition(ElevatorProperties properties) {
+        // Set motor position
+        double rotations = properties.heightInches() / INCHES_PER_ROTATION;
+        // elevatorMotor.setControl(positionVoltage.withPosition(rotations));
+        elevatorMotor.setPosition(rotations);
 
-    L2state.addTransition(intakeState, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorIntakePos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
+        // Update visualization
+        updateVisualization(properties);
+    }
 
-    intakeState.addTransition(L3state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL3Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+    private void updateVisualization(ElevatorProperties properties) {
+        // Calculate carriage position (scale height to visualization)
+        double maxHeight = ElevatorState.L4.properties.heightInches();
+        double normalizedHeight = properties.heightInches() / maxHeight;
+        // double visualHeight = normalizedHeight * 50; // 50 is max visual height
 
-    L3state.addTransition(intakeState, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorIntakePos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
+        // Update carriage
+        // elevatorCarriage.setLength(5); // Keep constant length
+        // elevatorCarriage.setAngle(0); // Keep horizontal
+        // elevatorCarriage.setColor(properties.visualColor());
 
-    intakeState.addTransition(L4state, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorL4Pos;
-      ctx.elevatorMotorSpeed = 0.5;
-    });
+        // // Update position directly on elevatorRoot
+        // elevatorRoot.setPosition(30, visualHeight);
+    }
 
-    L4state.addTransition(intakeState, ctx -> {
-      ctx.elevatorTargetPosition = ElevatorIntakePos;
-      ctx.elevatorMotorSpeed = -0.5;
-    });
-  }
+    private boolean isAtPosition() {
+        // double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+        double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
+        return Math.abs(currentHeight - stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
+    }
 
-  // private boolean isAtPosition(double position) {
-  // return Math.abs(elevatorMotor.getPosition() - position) < TOLERANCE;
-  // }
+    @Override
+    public void periodic() {
+        // Get current position
+        // double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+        double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
 
-  private boolean isMovingTowards(double position) {
-    double current = elevatorMotor.getPosition();
-    return (current < position && context.elevatorMotorSpeed > 0) ||
-        (current > position && context.elevatorMotorSpeed < 0);
 
-  }
+        // If the limit switch at the bottom is hit, reset the encoder.
+        if (elevatorMotor.getForwardLimitSwitch()) {
+            // if (elevatorMotor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround) {
+            elevatorMotor.setPosition(0);
+        }
 
-  @Override
-  public void periodic() {
-    context.elevatorPosition = elevatorMotor.getPosition();
-    // Update state machine
-    stateMachine.periodic();
+        // Update dashboard
+        SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
+        SmartDashboard.putNumber("Elevator/TargetHeight",
+                stateMachine.getTargetProperties().heightInches());
+        SmartDashboard.putString("Elevator/CurrentState",
+                stateMachine.getCurrentState().toString());
+        SmartDashboard.putString("Elevator/StateDescription",
+                stateMachine.getCurrentState().properties.description());
+        SmartDashboard.putBoolean("Elevator/AtPosition", isAtPosition());
+    }
 
-    // Apply motor output
-    elevatorMotor.set(context.elevatorMotorSpeed);
+    // Public methods for commanding the elevator
+    public void moveToState(ElevatorState state) {
+        stateMachine.requestTransition(
+                state,
+                state.properties,
+                this::isAtPosition,
+                this::setPosition);
+    }
 
-    // Update SmartDashboard
-    SmartDashboard.putString("Current State",
-        stateMachine.getCurrentState().getName());
-    SmartDashboard.putNumber("Elevator Position",
-        context.elevatorPosition);
-  }
+    // Command factories
+    public Command moveToIntakeCommand() {
+        return Commands.runOnce(() -> moveToState(ElevatorState.INTAKE));
+    }
 
-  // Public methods for commanding the arm
-  public void moveToIntake() {
-    stateMachine.requestTransition(intakeState);
-  }
+    public Command moveToL1Command() {
+        return Commands.runOnce(() -> moveToState(ElevatorState.L1));
+    }
 
-  public void moveToL1() {
-    stateMachine.requestTransition(L1state);
-  }
+    public Command moveToL2Command() {
+        return Commands.runOnce(() -> moveToState(ElevatorState.L2));
+    }
 
-  public void moveToL2() {
-    stateMachine.requestTransition(L2state);
-  }
+    public Command moveToL3Command() {
+        return Commands.runOnce(() -> moveToState(ElevatorState.L3));
+    }
 
-  public void moveToL3() {
-    stateMachine.requestTransition(L3state);
-  }
-
-  public void moveToL4() {
-    stateMachine.requestTransition(L4state);
-  }
+    public Command moveToL4Command() {
+        return Commands.runOnce(() -> moveToState(ElevatorState.L4));
+    }
 }

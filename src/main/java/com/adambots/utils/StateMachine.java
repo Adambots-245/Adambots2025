@@ -4,33 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StateMachine<T> {
     private final T context;
     private final Map<String, State> states = new HashMap<>();
     private State currentState = null;
-    private final List<String> stateLog = new ArrayList<>();
-    private boolean debugEnabled = false;
+    private final String name;
+    private final Consumer<String> logger;
 
-    public StateMachine(T context) {
+    // Transition tracking
+    private State targetState = null;
+    private TransitionData activeTransition = null;
+
+    public StateMachine(String name, T context, Consumer<String> logger) {
+        this.name = name;
         this.context = context;
+        this.logger = logger != null ? logger : (msg -> {});
     }
 
-    public void setDebug(boolean enabled) {
-        this.debugEnabled = enabled;
-    }
-
-    public void log(String message) {
-        if (debugEnabled) {
-            System.out.println("[StateMachine] " + message);
-            stateLog.add(message);
-        }
-    }
-
-    public List<String> getStateLog() {
-        return new ArrayList<>(stateLog);
+    private void log(String message) {
+        logger.accept(String.format("[StateMachine-%s] %s", name, message));
     }
 
     public State getCurrentState() {
@@ -41,10 +34,24 @@ public class StateMachine<T> {
         return context;
     }
 
+    private class TransitionData {
+        final Consumer<T> action;
+        final Consumer<T> onComplete;
+        final State fromState;
+        final State toState;
+
+        TransitionData(State from, State to, Consumer<T> action, Consumer<T> onComplete) {
+            this.fromState = from;
+            this.toState = to;
+            this.action = action;
+            this.onComplete = onComplete;
+        }
+    }
+
     public class State {
         private final String name;
         private final BooleanSupplier trigger;
-        private final Map<State, Consumer<T>> transitionActions = new HashMap<>();
+        private final Map<State, TransitionData> transitions = new HashMap<>();
         
         private State(String name, BooleanSupplier trigger) {
             this.name = name;
@@ -59,27 +66,21 @@ public class StateMachine<T> {
             return trigger.getAsBoolean();
         }
 
-        public void addTransition(State targetState, Consumer<T> action) {
-            transitionActions.put(targetState, action);
-            log("Added transition from " + name + " to " + targetState.getName());
-        }
-
-        public boolean hasTransitionTo(State targetState) {
-            return transitionActions.containsKey(targetState);
+        public void addTransition(State targetState, Consumer<T> action, Consumer<T> onComplete) {
+            TransitionData transition = new TransitionData(this, targetState, action, onComplete);
+            transitions.put(targetState, transition);
+            log(String.format("Added transition from %s to %s", name, targetState.getName()));
         }
     }
 
     public State addState(String name, BooleanSupplier trigger) {
-        // Validate state name uniqueness
         if (states.containsKey(name)) {
             throw new IllegalArgumentException("State " + name + " already exists");
         }
 
-        // Create and store the new state
         State state = new State(name, trigger);
         states.put(name, state);
         
-        // Set as initial state if this is the first state
         if (currentState == null) {
             currentState = state;
             log("Initial state set to " + name);
@@ -89,49 +90,52 @@ public class StateMachine<T> {
     }
 
     public void requestTransition(State targetState) {
-        if (targetState == null) {
-            log("Invalid target state: null");
+        if (targetState == null || currentState == null) {
+            log("Invalid transition request: null state");
             return;
         }
 
-        if (currentState == null) {
-            log("No current state set");
+        if (activeTransition != null) {
+            log("Transition already in progress");
             return;
         }
 
-        // Check if transition is defined
-        Consumer<T> transitionAction = currentState.transitionActions.get(targetState);
-        if (transitionAction != null) {
-            log("Executing transition from " + currentState.getName() + 
-                " to " + targetState.getName());
-            transitionAction.accept(context);
+        TransitionData transition = currentState.transitions.get(targetState);
+        if (transition != null) {
+            log(String.format("Starting transition from %s to %s", 
+                currentState.getName(), targetState.getName()));
+            this.targetState = targetState;
+            this.activeTransition = transition;
+            
+            if (transition.action != null) {
+                transition.action.accept(context);
+            }
         } else {
-            log("No transition defined from " + currentState.getName() + 
-                " to " + targetState.getName());
+            log(String.format("No transition defined from %s to %s", 
+                currentState.getName(), targetState.getName()));
         }
     }
 
     public void periodic() {
-        // Check for trigger condition conflicts
-        for (State state : states.values()) {
-            if (state != currentState && state.isTriggered()) {
-                if (currentState.isTriggered()) {
-                    log("Warning: Ambiguous state triggers detected between " + 
-                        currentState.getName() + " and " + state.getName());
+        if (activeTransition != null && targetState != null) {
+            // Check if target state is reached
+            if (targetState.isTriggered()) {
+                log(String.format("Reached target state %s", targetState.getName()));
+                
+                // Execute completion handler
+                if (activeTransition.onComplete != null) {
+                    log("Executing completion handler");
+                    activeTransition.onComplete.accept(context);
                 }
-            }
-        }
-
-        // Update current state based on triggers
-        for (State state : states.values()) {
-            if (state.isTriggered()) {
-                if (state != currentState) {
-                    log("State changed from " + 
-                        (currentState != null ? currentState.getName() : "null") + 
-                        " to " + state.getName() + " via trigger");
-                    currentState = state;
-                }
-                break;
+                
+                // Update current state
+                currentState = targetState;
+                
+                // Clear transition data
+                activeTransition = null;
+                targetState = null;
+                
+                log(String.format("Completed transition to %s", currentState.getName()));
             }
         }
     }
