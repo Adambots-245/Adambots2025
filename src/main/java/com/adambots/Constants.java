@@ -1,9 +1,12 @@
 package com.adambots;
 
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -16,7 +19,8 @@ public final class Constants {
     public static final Boolean enableAutomaticShuffleboardRecording = false;
 
     public static final class LEDConstants {
-        public static final int LEDS_IN_STRIP = 80;
+        public static final int LEDS_IN_STRIP = 300;
+        public static final LEDStripType LED_STRIP_TYPE = LEDStripType.GRB; // if this is not set properly, the colors will not work
 
         public static final Color off = new Color(0, 0, 0);
         public static final Color adambotsYellow = new Color(255, 255, 0);
@@ -90,18 +94,34 @@ public final class Constants {
         public static final double kDeadZone = 0.15;
 
         //Max speed of the robot in m/s, used in teleop and auton (should be set to real world value)
-        public static final double kMaxSpeedMetersPerSecond = 4.35; 
+        //Drive the robot on carpet and measure the speed with a stopwatch
+        //When FOC is enabled - 17.1 ft/s × 0.3048 m/ft = 5.21 m/s. When FOC is disabled - 17.7 ft/s × 0.3048 m/ft = 5.40 m/s. [ 1 foot = 0.3048 meters ]
+        // Previous year's value 4.35; 
+        public static final double kMaxSpeedMetersPerSecond = 5.21; 
+        
         //Rotational speed factor in rad/s of the robot to be used for the teleop drive command
         public static final double kTeleopRotationalSpeed = 10; 
     }
 
     public static final class ModuleConstants {
+        public static final double kMK4L1GearRatio = 1/8.14; // 1:8.14 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
+        public static final double kMK4L2GearRatio = 1/6.75; // 1:6.75 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
+        public static final double kMK4L3GearRatio = 1/6.12; // 1:6.12 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909
+
+        // The 2025 Robot will use an Adapter Kit to work with Kraken. This changes the Gear Ratios to L1+, L2+ and L3+
+        public static final double kMK4IL1PlusGearRatio = 1/7.13; // 1:7.13 as per https://www.swervedrivespecialties.com/collections/mk4i-parts/products/kit-adapter-16t-drive-pinion-gear-mk4i?variant=47576386502957
+        public static final double kMK4IL2PlusGearRatio = 1/5.9; // 1:5.9 as per https://www.swervedrivespecialties.com/collections/mk4i-parts/products/kit-adapter-16t-drive-pinion-gear-mk4i?variant=47576386502957
+        public static final double kMK4IL3PlusGearRatio = 1/5.36; // 1:5.36 as per https://www.swervedrivespecialties.com/collections/mk4i-parts/products/kit-adapter-16t-drive-pinion-gear-mk4i?variant=47576386502957
+
+        //Define gear ratio as motor revolutions per wheel rotation
+        public static final double kSteeringGearRatio = 150.0/7.0; // 150/7:1 as per https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=47316033732909        
+
         public static final int kDriveCurrentLimit = 32; //Current limit in amps of drive motors, higher values mean faster acceleration but lower battery life
         public static final int kTurningCurrentLimit = 21; //Current limit in amps of turning motors
         public static final double kNominalVoltage = 12.6; //Nominal battery voltage for motor voltage compensation
 
         public static final double kWheelRadiusMeters = 0.0478; //0.047625 //Should be as precise as you can get it
-        public static final double kSwerveModuleFinalGearRatio = 1/6.75; //Google the swerve module model to find this value
+        public static final double kSwerveModuleFinalGearRatio = kMK4IL2PlusGearRatio; //Google the swerve module model to find this value
 
         // Convert drive motor rpm to linear wheel speed                  Motor RPM to Wheel RPM -> RPM to rad/s -> Wheel rad/s to linear m/s 
         public static final double kDriveEncoderVelocityConversionFactor = kSwerveModuleFinalGearRatio * (Math.PI/30) * kWheelRadiusMeters;
@@ -115,14 +135,22 @@ public final class Constants {
 
     public static final class AutoConstants {
         // PD values for auton X, Y translational movement
-        public static final double kPTranslationController = 5; 
+        // public static final double kPTranslationController = 5; 
+        // public static final double kITranslationController = 0; 
+        // public static final double kDTranslationController = 0.11;
+
+        public static final double kPTranslationController = 1; 
         public static final double kITranslationController = 0; 
-        public static final double kDTranslationController = 0.11;
+        public static final double kDTranslationController = 0;
 
         // PD values for auton rotational movement
-        public static final double kPThetaController = 3; 
+        // public static final double kPThetaController = 3; 
+        // public static final double kIThetaController = 0; 
+        // public static final double kDThetaController = 0.01;
+
+        public static final double kPThetaController = 0.5; 
         public static final double kIThetaController = 0; 
-        public static final double kDThetaController = 0.01;
+        public static final double kDThetaController = 0;
 
         public static final double kPWaypointTranslation = 5; 
         public static final double kDWaypointTranslation = 0.55;
