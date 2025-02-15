@@ -85,7 +85,7 @@ public class RobotMap {
 
 
 //     // Test Board Devices
-    public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20);
+    public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20, true);
     public static final BaseMotor BigNEOMotor = new NEOMotor(bigNeoPort, false);
     public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
     public static final Servo servo = new Servo(kServoPort);

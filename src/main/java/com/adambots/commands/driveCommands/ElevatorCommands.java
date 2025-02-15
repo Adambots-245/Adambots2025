@@ -22,31 +22,31 @@ public class ElevatorCommands extends Command {
 
   public Command goToIntake() {
     return Commands.runOnce(() -> {
-      elevatorSubsystem.moveToIntake();
+      elevatorSubsystem.moveToIntakeCommand();
     }, elevatorSubsystem);
   }
 
   public Command goToL1() {
     return Commands.runOnce(() -> {
-      elevatorSubsystem.moveToL1();
+      elevatorSubsystem.moveToL1Command();
     }, elevatorSubsystem);
   }
 
   public Command goToL2() {
     return Commands.runOnce(() -> {
-      elevatorSubsystem.moveToL2();
+      elevatorSubsystem.moveToL2Command();
     }, elevatorSubsystem);
   }
 
   public Command goToL3() {
     return Commands.runOnce(() -> {
-      elevatorSubsystem.moveToL3();
+      elevatorSubsystem.moveToL3Command();
     }, elevatorSubsystem);
   }
 
   public Command goToL4() {
     return Commands.runOnce(() -> {
-      elevatorSubsystem.moveToL4();
+      elevatorSubsystem.moveToL4Command();
     }, elevatorSubsystem);
   }
 }
