@@ -18,12 +18,16 @@ import com.adambots.actuators.TalonFXMotor;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.sensors.BaseProximitySensor;
+import com.adambots.actuators.*;
 
 import com.adambots.sensors.Gyro;
+import com.adambots.sensors.PhotoEye;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Servo;
@@ -36,12 +40,19 @@ public class RobotMap {
     public static final int kPDMPort = 1;
     public static final int kGyroPort = 6;
     public static final int kCANdlePort = 31;
+
     // Test Board Ports
     public static final int PCMport = 0;
     public static final int KrakenPort = 10;
     public static final int smallNeoPort = 19;
     public static final int baldNeoPort = 15;
     public static final int bigNeoPort = 30;
+    public static final int photoEye1Port = 9;
+    public static final int photoEye2Port = 7;
+
+    public static final int limitSwitchPort = 3;
+    public static final int limitSwitchPort2 = 3;
+
 
     // Drive Ports
     public static final int kFrontRightTurningEncoderPort = 5;
@@ -69,8 +80,11 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+    // public static final DigitalInput limitSwitch1 = new DigitalInput(limitSwitchPort);
+    // public static final DigitalInput limitSwitch2 = new DigitalInput(limitSwitchPort);
 
-    // Test Board Devices
+
+//     // Test Board Devices
     public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20);
     public static final BaseMotor BigNEOMotor = new NEOMotor(bigNeoPort, false);
     public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
@@ -79,17 +93,21 @@ public class RobotMap {
     public static final BaseServo hubServo = new HubServo(45, 2);
 
 
+    // public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
+    public static final BaseProximitySensor photoEye1 = new PhotoEye(photoEye1Port, false);
+    public static final BaseProximitySensor photoEye2 = new PhotoEye(photoEye2Port, false);
     
-//     // Robot Swerve Modules
-//     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
-//         Map.of(
-//             ModulePosition.FRONT_LEFT,
-//             new SwerveModule(
-//                     ModulePosition.FRONT_LEFT,
-//                     RobotMap.kFrontLeftDriveMotorPort,
-//                     RobotMap.kFrontLeftTurningMotorPort,
-//                     RobotMap.kFrontLeftTurningEncoderPort,
-//                     DriveConstants.kFrontLeftDriveMotorReversed),
+    
+    // // Robot Swerve Modules
+//     // public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
+//     //     Map.of(
+//     //         ModulePosition.FRONT_LEFT,
+//     //         new SwerveModule(
+//     //                 ModulePosition.FRONT_LEFT,
+//     //                 RobotMap.kFrontLeftDriveMotorPort,
+//     //                 RobotMap.kFrontLeftTurningMotorPort,
+//     //                 RobotMap.kFrontLeftTurningEncoderPort,
+//     //                 DriveConstants.kFrontLeftDriveMotorReversed),
 
 //             ModulePosition.FRONT_RIGHT,
 //             new SwerveModule(

@@ -22,15 +22,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   private PhotoEye L4Eye;
 
   // State Machine components
-  private final ArmStates context;
-  private final StateMachine<ArmStates> stateMachine;
+  private final ElevatorStates context;
+  private final StateMachine<ElevatorStates> stateMachine;
 
   // States
-  private final StateMachine<ArmStates>.State intakeState;
-  private final StateMachine<ArmStates>.State L1state;
-  private final StateMachine<ArmStates>.State L2state;
-  private final StateMachine<ArmStates>.State L3state;
-  private final StateMachine<ArmStates>.State L4state;
+  private final StateMachine<ElevatorStates>.State intakeState;
+  private final StateMachine<ElevatorStates>.State L1state;
+  private final StateMachine<ElevatorStates>.State L2state;
+  private final StateMachine<ElevatorStates>.State L3state;
+  private final StateMachine<ElevatorStates>.State L4state;
 
   // Elevator Position Constants
   private static final double ElevatorIntakePos = 0;
@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     this.elevatorMotor = elevatorMotor;
 
     // Initialize state machine
-    context = new ArmStates();
+    context = new ElevatorStates();
     stateMachine = new StateMachine<>(context);
 
     // Create states with trigger conditions
@@ -83,7 +83,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
     });
 
-    L3state = stateMachine.addState("L3", () -> {
+    L3state = stateMachine.addState("L3 State", () -> {
       boolean isAtL3 = L3Eye.isDetecting() &&
           (context.elevatorTargetPosition == ElevatorIntakePos);
       if (isAtL3) {
@@ -94,7 +94,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
     });
 
-    L4state = stateMachine.addState("L4", () -> {
+    L4state = stateMachine.addState("L4 State", () -> {
       boolean isAtL4 = L4Eye.isDetecting() &&
           (context.elevatorTargetPosition == ElevatorIntakePos);
       if (isAtL4) {

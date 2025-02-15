@@ -7,6 +7,7 @@ import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.commands.driveCommands.RunMotorCommand;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.subsystems.TestSubsystem;
+import com.adambots.subsystems.ElevatorTestSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.adambots.vision.PhotonVision;
@@ -83,8 +84,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
-    RunMotorCommand runMotorCommand = new RunMotorCommand(testSubsystem);
-    
+    // RunMotorCommand runMotorCommand = new RunMotorCommand(testSubsystem);    
 
     if (Robot.isSimulation()) {
       Buttons.XboxStartButton
