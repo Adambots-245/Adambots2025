@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -94,38 +95,91 @@ public class TestContainer {
 
     // Adds various data to the dashboard that is useful for driving and debugging
     // SmartDashboard.putData("Auton Mode", autoChooser);
-    SmartDashboard.putData("servo", Commands.runOnce(() -> {
-      RobotMap.servo.set(0.5);
-    }));
-    SmartDashboard.putData("servo Angle", Commands.runOnce(() -> {
-      RobotMap.servo.setAngle(90);
-    }));
-        SmartDashboard.putData("set 45", Commands.runOnce(() -> {
-      RobotMap.servo.setAngle(45);
-    }));
-    SmartDashboard.putData("set 1", Commands.runOnce(() -> {
-      RobotMap.servo.set(1);
-    }));
-    SmartDashboard.putData("set 0", Commands.runOnce(() -> {
-      RobotMap.servo.set(0);
-    }));
-    SmartDashboard.putData("negativeSpeed", Commands.runOnce(() -> {
-      RobotMap.servo.setSpeed(-1);;
-    }));
-    SmartDashboard.putData("fullSpeed", Commands.runOnce(() -> {
-      RobotMap.servo.setSpeed(1);;
-    }));
-    SmartDashboard.putData("STOP", Commands.runOnce(() -> {
-      RobotMap.servo.setSpeed(0);;
-    }));
-    Dash.add("getSpeed", () -> RobotMap.servo.getSpeed());
+    // SmartDashboard.putData("servo", Commands.runOnce(() -> {
+    //   RobotMap.servo.set(0.5);
+    // }));
+    // SmartDashboard.putData("servo Angle", Commands.runOnce(() -> {
+    //   RobotMap.servo.setAngle(90);
+    // }));
+    //     SmartDashboard.putData("set 45", Commands.runOnce(() -> {
+    //   RobotMap.servo.setAngle(45);
+    // }));
+    // SmartDashboard.putData("set 1", Commands.runOnce(() -> {
+    //   RobotMap.servo.set(1);
+    // }));
+    // SmartDashboard.putData("set 0", Commands.runOnce(() -> {
+    //   RobotMap.servo.set(0);
+    // }));
+    // SmartDashboard.putData("negativeSpeed", Commands.runOnce(() -> {
+    //   RobotMap.servo.setSpeed(-1);;
+    // }));
+    // SmartDashboard.putData("fullSpeed", Commands.runOnce(() -> {
+    //   RobotMap.servo.setSpeed(1);;
+    // }));
+    // SmartDashboard.putData("STOP", Commands.runOnce(() -> {
+    //   RobotMap.servo.setSpeed(0);;
+    // }));
+    // Dash.add("getSpeed", () -> RobotMap.servo.getSpeed());
 
-    SmartDashboard.putNumber("analog pos", RobotMap.servoAnalog.getValue());
-    Dash.add("analog", () -> RobotMap.servoAnalog.getValue());
+    // SmartDashboard.putNumber("analog pos", RobotMap.servoAnalog.getValue());
+    // Dash.add("analog", () -> RobotMap.servoAnalog.getValue());
 
-    SmartDashboard.putData("set hub speed", Commands.runOnce(() -> RobotMap.hubServo.turnClockwise()));
+    // SmartDashboard.putData("set hub speed", Commands.runOnce(() -> RobotMap.hubServo.turnClockwise()));
     
+    SmartDashboard.putData("Run intake", Commands.runOnce(
+      () -> {
+        RobotMap.hubServo.turnCounterclockwise();
+        RobotMap.hubServo2.turnClockwise();
+      }
+    ));
 
+    SmartDashboard.putData("Reverse intake", Commands.runOnce(
+      () -> {
+        RobotMap.hubServo.turnClockwise();
+        RobotMap.hubServo2.turnCounterclockwise();
+      }
+    ));
+
+    SmartDashboard.putData("Stop intake", Commands.runOnce(
+      () -> {
+        RobotMap.hubServo.stop();
+        RobotMap.hubServo2.stop();
+      }
+    ));
+
+    SmartDashboard.putData("Stop Algae", Commands.runOnce(
+      () -> {
+        // RobotMap.hubServo3.stop();
+        RobotMap.hubServo4.stop();
+      }
+    ));
+
+    SmartDashboard.putData("Run Algae Intake", Commands.repeatingSequence(
+      Commands.runOnce(
+      () -> {
+        System.out.println("Timer 1:" + Timer.getFPGATimestamp());
+        RobotMap.hubServo3.turnCounterclockwise();
+        // RobotMap.hubServo3.setPulseWidth(4500);
+        RobotMap.hubServo4.turnClockwise();
+      }
+    ).andThen(
+      Commands.waitSeconds(0.5)
+    ).andThen(Commands.runOnce(
+      () -> {
+        System.out.println("Timer 2:" + Timer.getFPGATimestamp());
+
+        RobotMap.hubServo4.stop();
+      }  
+    )
+    )
+    ));
+
+    SmartDashboard.putData("Reverse Algae Intake", Commands.runOnce(
+      () -> {
+        RobotMap.hubServo3.turnClockwise();
+        RobotMap.hubServo4.turnCounterclockwise();
+      }
+    ));
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }

@@ -18,6 +18,8 @@ import com.adambots.actuators.BaseServo;
 import com.adambots.sensors.Gyro;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
+import com.revrobotics.servohub.ServoHub;
+import com.revrobotics.servohub.ServoHub.Bank;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -61,8 +63,13 @@ public class RobotMap {
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
     public static final Servo servo = new Servo(kServoPort);
     public static final AnalogInput servoAnalog = new AnalogInput(0);
-    public static final BaseServo hubServo = new HubServo(45, 2);
-
+    
+    public static final ServoHub hub = new ServoHub(45);
+    
+    public static final BaseServo hubServo = new HubServo(hub, 2);
+    public static final BaseServo hubServo2 = new HubServo(hub, 3);
+    public static final BaseServo hubServo3 = new HubServo(hub, 4);
+    public static final BaseServo hubServo4 = new HubServo(hub, 5);
 
     
 //     // Robot Swerve Modules

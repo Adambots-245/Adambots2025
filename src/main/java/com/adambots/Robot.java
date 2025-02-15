@@ -7,6 +7,10 @@
 
 package com.adambots;
 
+import com.revrobotics.servohub.ServoHub;
+import com.revrobotics.servohub.config.ServoChannelConfig;
+import com.revrobotics.servohub.config.ServoHubConfig;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -44,6 +48,29 @@ public class Robot extends TimedRobot {
     } else {
       m_robotContainer = new RobotContainer();
     }
+
+    ServoHubConfig config = new ServoHubConfig();
+    setChannelBehavior(config.channel0);
+    setChannelBehavior(config.channel1);
+    setChannelBehavior(config.channel2);
+    setChannelBehavior(config.channel3);
+    setChannelBehavior(config.channel4);
+    setChannelBehavior(config.channel5);
+    // Persist parameters and reset any not explicitly set above to
+    // their defaults.
+    RobotMap.hub.configure(config, ServoHub.ResetMode.kResetSafeParameters);
+
+    // Set the pulse period for channels 0-2 to 5ms (5000 microseconds)
+    RobotMap.hub.setBankPulsePeriod(ServoHub.Bank.kBank0_2, 5000);
+
+    // Set the pulse period for channels 3-5 to 20ms (20000 microseconds)
+    RobotMap.hub.setBankPulsePeriod(ServoHub.Bank.kBank3_5, 5000);
+
+  }
+
+  public void setChannelBehavior(ServoChannelConfig channelConfig){
+    channelConfig.pulseRange(500, 1500, 2500)
+    .disableBehavior(ServoChannelConfig.BehaviorWhenDisabled.kSupplyPower);
   }
 
   /**

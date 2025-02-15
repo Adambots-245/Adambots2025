@@ -7,18 +7,20 @@ package com.adambots.actuators;
 import com.revrobotics.servohub.ServoHub;
 import com.revrobotics.servohub.ServoChannel;
 import com.revrobotics.servohub.ServoChannel.ChannelId;
+import com.revrobotics.servohub.ServoHub.Bank;
 
 /** Add your docs here. */
 public class HubServo implements BaseServo {
 
     // This class is not intended for use if using multiple REV ServoHubs.
 
-    static ServoHub hub;
+    private ServoHub hub;
     ServoChannel channel;
 
     // When initializing a REV ServoHub for the first time
-    public HubServo(int hubPortNum, int servoPortNum) {
-        hub = new ServoHub(hubPortNum);
+    public HubServo(ServoHub hub, int servoPortNum) {
+        this.hub = hub;
+        hub.setBankPulsePeriod(Bank.kBank3_5, 5000);
         switch (servoPortNum) {
             case 0:
                 channel = hub.getServoChannel(ChannelId.kChannelId0);
