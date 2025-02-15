@@ -13,13 +13,12 @@ import java.util.Map;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.actuators.HubServo;
+import com.adambots.actuators.NEOMotor;
+import com.adambots.actuators.TalonFXMotor;
 import com.adambots.sensors.BaseGyro;
-<<<<<<< HEAD
-import com.adambots.actuators.*;
-
-=======
 import com.adambots.actuators.BaseServo;
->>>>>>> Servo
+import com.adambots.actuators.BaseMotor;
+
 import com.adambots.sensors.Gyro;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
@@ -35,15 +34,8 @@ import edu.wpi.first.wpilibj.Servo;
 public class RobotMap {
     // Robot Device Ports - PDP should be on port 1, and if pnematics are present, PCM must go on port 0
     public static final int kPDMPort = 1;
-<<<<<<< HEAD
-//     public static final int kGyroPort = 0;
-=======
     public static final int kGyroPort = 6;
->>>>>>> Servo
     public static final int kCANdlePort = 31;
-
-    public static final int kGyroPort = 50;
-
     // Test Board Ports
     public static final int PCMport = 0;
     public static final int KrakenPort = 10;
@@ -77,19 +69,16 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
-<<<<<<< HEAD
 
     // Test Board Devices
     public static final BaseMotor KrakenMotor = new TalonFXMotor(KrakenPort, false, 20);
     public static final BaseMotor BigNEOMotor = new NEOMotor(bigNeoPort, false);
     public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
-=======
     public static final Servo servo = new Servo(kServoPort);
     public static final AnalogInput servoAnalog = new AnalogInput(0);
     public static final BaseServo hubServo = new HubServo(45, 2);
 
 
->>>>>>> Servo
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
