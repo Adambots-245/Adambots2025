@@ -146,7 +146,7 @@ public class RobotContainer {
     // Dash.add("getX", Buttons.sidewaysSupplier);
     // Dash.add("getZ", Buttons.rotateSupplier);
 
-    Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
+    // Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
 
     // Dash.add("odom x", () -> drivetrainSubsystem.getPose().getX());
     // Dash.add("odom y", () -> drivetrainSubsystem.getPose().getY());
