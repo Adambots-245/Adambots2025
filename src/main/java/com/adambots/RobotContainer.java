@@ -4,16 +4,10 @@ import java.io.File;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
-import com.adambots.commands.driveCommands.DriveToWaypointCommand;
-import com.adambots.commands.driveCommands.RotateToAngleCommand;
-import com.adambots.commands.driveCommands.RotateToAprilTagCommand;
-import com.adambots.sensors.Lidar;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
-import com.adambots.utils.Utils;
 import com.adambots.vision.PhotonVision;
-import com.adambots.vision.PhotonVision.Cameras;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import swervelib.SwerveInputStream;
 import swervelib.SwerveInputStream;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -55,7 +48,6 @@ public class RobotContainer {
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
-  private Lidar lidar = new Lidar(7);
   private static SwerveInputStream driveAngularVelocity;
 
   /**
@@ -78,10 +70,7 @@ public class RobotContainer {
   public void teleopInit() {
     if (DriverStation.isFMSAttached()) {
       // Initialize Subsystems here
-      // BE CAREFUL
     }
-
-    updatePose();
   }
 
   /**
@@ -106,28 +95,20 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(driveCommands.centerModulesCommand());
       Buttons.XboxLeftBumper.onTrue(Commands.none());
       // RobotMap.gyro.resetYaw();
+      // Buttons.JoystickButton6.onTrue(new InstantCommand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
-      // Buttons.JoystickButton7.onTrue(Commands.runOnce(()->RobotMap.gyro.resetYaw()));
-      Buttons.JoystickButton7.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(14.264, 4.045 + DriveConstants.kReefAllignOffset), new Rotation2d(Math.toRadians(180))), driveCommands));
-      Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(14.264, 4.045 - DriveConstants.kReefAllignOffset), new Rotation2d(Math.toRadians(180))), driveCommands));
+      Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
-      // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(14.409, 4.031), new Rotation2d(Math.toRadians(180)))));
-      //Test Drive Commands
-      // Buttons.JoystickButton6.whileTrue(new RotateToAprilTagCommand(swerveSubsystem));
-      // Buttons.JoystickButton8.onTrue(driveCommands.aimAtTarget(Cameras.CENTER_CAM));
-      // Buttons.JoystickButton9.onTrue(driveCommands.driveToDistanceCommandFixed(2, -1));
-
-      // Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
-      // Buttons.XboxBButton.whileTrue(
-      //     driveCommands.driveToPose(
-      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      // Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
-      // Buttons.XboxStartButton.whileTrue(Commands.none());
-      // Buttons.XboxBackButton.whileTrue(Commands.none());
-      // Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
-      // Buttons.XboxRightBumper.onTrue(Commands.none());
+      Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
+      Buttons.XboxBButton.whileTrue(
+          driveCommands.driveToPose(
+              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+      Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
+      Buttons.XboxStartButton.whileTrue(Commands.none());
+      Buttons.XboxBackButton.whileTrue(Commands.none());
+      Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
+      Buttons.XboxRightBumper.onTrue(Commands.none());
     }
 
     // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
@@ -167,8 +148,7 @@ public class RobotContainer {
     // Dash.add("getX", Buttons.sidewaysSupplier);
     // Dash.add("getZ", Buttons.rotateSupplier);
 
-    Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
-    Dash.add("Lidar distance", () -> lidar.getDistanceInInches());
+    // Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
 
     // Dash.add("odom x", () -> drivetrainSubsystem.getPose().getX());
     // Dash.add("odom y", () -> drivetrainSubsystem.getPose().getY());
@@ -178,18 +158,14 @@ public class RobotContainer {
     // Dash.add("roll", () -> RobotMap.gyro.getRoll());
   }
 
-  public static SwerveInputStream getDriveAngularVelocity(){
-    return driveAngularVelocity;
-  }
-
   private void setupDefaultCommands() {
     /**
      * Converts driver input into a field-relative ChassisSpeeds that is controlled
      * by angular velocity.
      */
     driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
-        ()-> -Buttons.forwardSupplier.getAsDouble(),
-        ()-> -Buttons.sidewaysSupplier.getAsDouble())
+        Buttons.forwardSupplier,
+        Buttons.sidewaysSupplier)
         .withControllerRotationAxis(Buttons.rotateSupplier)
         .deadband(DriveConstants.kDeadZone)
         .scaleTranslation(0.8)
@@ -212,7 +188,7 @@ public class RobotContainer {
     // left stick controls translation
     // right stick controls the angular velocity of the robot
     Command driveFieldOrientedAnglularVelocity = driveCommands.driveFieldOriented(driveAngularVelocity);
-    
+
     SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
         Buttons.forwardSupplier,
         Buttons.sidewaysSupplier)
@@ -246,8 +222,6 @@ public class RobotContainer {
     Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAngularVelocitySim = driveCommands.driveFieldOriented(driveAngularVelocitySim);
 
-    updatePose();
-
     swerveSubsystem.setDefaultCommand(
         !RobotBase.isSimulation() ? driveFieldOrientedAnglularVelocity : driveFieldOrientedAngularVelocitySim);
 
@@ -256,18 +230,8 @@ public class RobotContainer {
     }
   }
 
-  private void updatePose() {
-    if (Utils.isOnRedAlliance()){
-      swerveSubsystem.resetOdometry(new Pose2d(
-        new Translation2d(16.5, 5.5),
-        Rotation2d.fromDegrees(180)
-      ));
-    } else {
-      swerveSubsystem.resetOdometry(new Pose2d(
-        new Translation2d(0.5, 5.5),
-        Rotation2d.fromDegrees(0)
-      ));
-    }
+  public static SwerveInputStream getDriveAngularVelocity() {
+    return driveAngularVelocity;
   }
 
   /**

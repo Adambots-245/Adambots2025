@@ -150,6 +150,7 @@ public class PhotonVision
     for (Cameras camera : Cameras.values())
     {
       Cameras.updatedCache = false;
+      // System.out.println("Checkpoints 1");
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
@@ -367,30 +368,30 @@ public class PhotonVision
     /**
      * Left Camera
      */
-    // LEFT_CAM("left",
-    //          new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(30)),
-    //          new Translation3d(Units.inchesToMeters(12.056),
-    //                            Units.inchesToMeters(10.981),
-    //                            Units.inchesToMeters(8.44)),
-    //          VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-    // /**
-    //  * Right Camera
-    //  */
-    // RIGHT_CAM("right",
-    //           new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(-30)),
-    //           new Translation3d(Units.inchesToMeters(12.056),
-    //                             Units.inchesToMeters(-10.981),
-    //                             Units.inchesToMeters(8.44)),
-    //           VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    LEFT_CAM("Left",
+             new Rotation3d(0, Math.toRadians(5), Math.toRadians(29)),
+             new Translation3d(Units.inchesToMeters(11.5),
+                               Units.inchesToMeters(-11.0),
+                               Units.inchesToMeters(7.5)),
+             VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    /**
+     * Right Camera
+     */
+    RIGHT_CAM("Right",
+              new Rotation3d(0, Math.toRadians(5), Math.toRadians(-29)),
+              new Translation3d(Units.inchesToMeters(11.5),
+                                Units.inchesToMeters(11.0),
+                                Units.inchesToMeters(7.5)),
+              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
     /**
      * Center Camera
     //  */
-    CENTER_CAM("CENTER_CAM",
-               new Rotation3d(0, Units.degreesToRadians(18), 0),
-               new Translation3d(Units.inchesToMeters(15),
-                                 Units.inchesToMeters(0),
-                                 Units.inchesToMeters(6)),
-               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    // CENTER_CAM("CENTER_CAM",
+    //            new Rotation3d(0, Units.degreesToRadians(18), 0),
+    //            new Translation3d(Units.inchesToMeters(15),
+    //                              Units.inchesToMeters(0),
+    //                              Units.inchesToMeters(6)),
+    //            VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // CENTER_CAM("CENTER_CAM",
     // new Rotation3d(0, Units.degreesToRadians(18), 0),
