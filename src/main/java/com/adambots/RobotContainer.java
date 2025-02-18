@@ -48,6 +48,8 @@ public class RobotContainer {
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+  private static SwerveInputStream driveAngularVelocity;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -161,7 +163,7 @@ public class RobotContainer {
      * Converts driver input into a field-relative ChassisSpeeds that is controlled
      * by angular velocity.
      */
-    SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
+    driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
         Buttons.forwardSupplier,
         Buttons.sidewaysSupplier)
         .withControllerRotationAxis(Buttons.rotateSupplier)
@@ -226,6 +228,10 @@ public class RobotContainer {
     if (DriverStation.isTest()) {
       swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
     }
+  }
+
+  public static SwerveInputStream getDriveAngularVelocity() {
+    return driveAngularVelocity;
   }
 
   /**

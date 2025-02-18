@@ -79,6 +79,7 @@ public class PhotonVision
    * Field from {@link swervelib.SwerveDrive#field}
    */
   private             Field2d             field2d;
+  int counter = 0;
 
 
   /**
@@ -126,6 +127,7 @@ public class PhotonVision
     }
 
   }
+  
 
   /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the given poses.
@@ -147,10 +149,20 @@ public class PhotonVision
     }
     for (Cameras camera : Cameras.values())
     {
+      Cameras.updatedCache = false;
+      // System.out.println("Checkpoints 1");
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
       if (poseEst.isPresent())
       {
         var pose = poseEst.get();
+        // counter++;
+        // if (counter > 25) {
+        //   System.out.println(pose.estimatedPose.getX() + "   Y " + pose.estimatedPose.getY());
+        //   counter = 0;
+        // }
+        // System.out.println(pose.estimatedPose.getX() + "Y " + pose.estimatedPose.getY());
+        // System.err.println("Checkpoint 4");
+
         swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
                                          pose.timestampSeconds,
                                          camera.curStdDevs);
@@ -303,6 +315,19 @@ public class PhotonVision
     }
   }
 
+  public boolean hasTarget(){
+    // boolean isTarget = false;
+    // for (Cameras c : Cameras.values()){
+      // c.clearCache();
+      // c.updateUnreadResults();
+      // if (!c.getLatestResult().isEmpty()){
+      //   isTarget = true;
+      // }
+      // isTarget = Cameras.updatedCache;
+    // }
+    return Cameras.updatedCache;
+  }
+
   /**
    * Update the {@link Field2d} to include tracked targets/
    */
@@ -343,30 +368,37 @@ public class PhotonVision
     /**
      * Left Camera
      */
-    LEFT_CAM("left",
-             new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(30)),
-             new Translation3d(Units.inchesToMeters(12.056),
-                               Units.inchesToMeters(10.981),
-                               Units.inchesToMeters(8.44)),
+    LEFT_CAM("Left",
+             new Rotation3d(0, Math.toRadians(5), Math.toRadians(29)),
+             new Translation3d(Units.inchesToMeters(11.5),
+                               Units.inchesToMeters(-11.0),
+                               Units.inchesToMeters(7.5)),
              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
-    RIGHT_CAM("right",
-              new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(-30)),
-              new Translation3d(Units.inchesToMeters(12.056),
-                                Units.inchesToMeters(-10.981),
-                                Units.inchesToMeters(8.44)),
-              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    RIGHT_CAM("Right",
+              new Rotation3d(0, Math.toRadians(5), Math.toRadians(-29)),
+              new Translation3d(Units.inchesToMeters(11.5),
+                                Units.inchesToMeters(11.0),
+                                Units.inchesToMeters(7.5)),
+              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
     /**
      * Center Camera
-     */
-    CENTER_CAM("center",
-               new Rotation3d(0, Units.degreesToRadians(18), 0),
-               new Translation3d(Units.inchesToMeters(-4.628),
-                                 Units.inchesToMeters(-10.687),
-                                 Units.inchesToMeters(16.129)),
-               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    //  */
+    // CENTER_CAM("CENTER_CAM",
+    //            new Rotation3d(0, Units.degreesToRadians(18), 0),
+    //            new Translation3d(Units.inchesToMeters(15),
+    //                              Units.inchesToMeters(0),
+    //                              Units.inchesToMeters(6)),
+    //            VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+
+    // CENTER_CAM("CENTER_CAM",
+    // new Rotation3d(0, Units.degreesToRadians(18), 0),
+    // new Translation3d(Units.inchesToMeters(-4.628),
+    //                   Units.inchesToMeters(-10.687),
+    //                   Units.inchesToMeters(16.129)),
+    // VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     /**
      * Latency alert to use when high latency is detected.
@@ -412,6 +444,10 @@ public class PhotonVision
      * Last read from the camera timestamp to prevent lag due to slow data fetches.
      */
     private       double                       lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
+
+    private static boolean updatedCache = false;
+
+
 
     /**
      * Construct a Photon Camera class with help. Standard deviations are fake values, experiment and determine
@@ -472,6 +508,10 @@ public class PhotonVision
       }
     }
 
+    public void clearCache(){
+      resultsList.clear();
+    }
+
     /**
      * Get the result with the least ambiguity from the best tracked target within the Cache. This may not be the most
      * recent result!
@@ -485,8 +525,9 @@ public class PhotonVision
         return Optional.empty();
       }
 
-      PhotonPipelineResult bestResult       = resultsList.get(0);
-      double               amiguity         = bestResult.getBestTarget().getPoseAmbiguity();
+      PhotonPipelineResult bestResult = resultsList.get(0);
+      double amiguity = 0;
+      amiguity = bestResult.getBestTarget().getPoseAmbiguity();
       double               currentAmbiguity = 0;
       for (PhotonPipelineResult result : resultsList)
       {
@@ -518,6 +559,7 @@ public class PhotonVision
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose()
     {
+      // System.err.println("Checkpoint 5");
       updateUnreadResults();
       return estimatedRobotPose;
     }
@@ -530,13 +572,18 @@ public class PhotonVision
       double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
       double currentTimestamp    = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
       double debounceTime        = Milliseconds.of(15).in(Seconds);
+      // System.out.println("Results: " + resultsList.size());
       for (PhotonPipelineResult result : resultsList)
       {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
-      if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
-          (currentTimestamp - lastReadTimestamp) >= debounceTime)
-      {
+      // System.out.println("Cts: " + currentTimestamp + "Mrt: " + lastReadTimestamp + " current - mostRecent " + (currentTimestamp - mostRecentTimestamp + " debounce" + debounceTime));
+      // if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
+      //     (currentTimestamp - lastReadTimestamp) >= debounceTime)
+      // {
+      if (true) {
+        // System.err.println("Checkpoint 6");
+        resultsList.clear();;
         resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
         lastReadTimestamp = currentTimestamp;
         resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
@@ -544,6 +591,12 @@ public class PhotonVision
         });
         if (!resultsList.isEmpty())
         {
+          if (resultsList.get(0).targets.size() > 0) {
+            updatedCache = true;
+          }
+          // System.err.println(resultsList.get(0).targets.size());
+          // updatedCache = true;
+          // System.err.println("Checkpoint 7");
           updateEstimatedGlobalPose();
         }
       }
@@ -565,6 +618,13 @@ public class PhotonVision
       for (var change : resultsList)
       {
         visionEst = poseEstimator.update(change);
+        // try {
+        //   if (visionEst != null)
+        //     //  System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX() + "y: " + visionEst.get().estimatedPose.getY());
+        // } catch (Exception e) {
+        //   // TODO: handle exception
+        //   System.out.println("Pose died!?! ( big problem !!!)");
+        // }
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       estimatedRobotPose = visionEst;
