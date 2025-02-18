@@ -1,7 +1,9 @@
 package com.adambots;
 
+import com.adambots.subsystems.TestSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
+import com.adambots.utils.TestStates;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,6 +35,7 @@ public class TestContainer {
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
+  private TestSubsystem testSubsystem = new TestSubsystem();
 
   private SendableChooser<Command> autoChooser;
 
@@ -150,8 +153,9 @@ public class TestContainer {
     SmartDashboard.putData("Stop Algae", Commands.runOnce(
       () -> {
         // RobotMap.hubServo3.stop();
+        
         RobotMap.hubServo4.stop();
-      }
+      }, testSubsystem
     ));
 
     SmartDashboard.putData("Run Algae Intake", Commands.repeatingSequence(
@@ -161,7 +165,7 @@ public class TestContainer {
         RobotMap.hubServo3.turnCounterclockwise();
         // RobotMap.hubServo3.setPulseWidth(4500);
         RobotMap.hubServo4.turnClockwise();
-      }
+      }, testSubsystem
     ).andThen(
       Commands.waitSeconds(0.5)
     ).andThen(Commands.runOnce(
@@ -178,7 +182,7 @@ public class TestContainer {
       () -> {
         RobotMap.hubServo3.turnClockwise();
         RobotMap.hubServo4.turnCounterclockwise();
-      }
+      }, testSubsystem
     ));
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
