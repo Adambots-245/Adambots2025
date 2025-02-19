@@ -7,12 +7,6 @@
 
 package com.adambots;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.adambots.Constants.DriveConstants;
-import com.adambots.Constants.DriveConstants.ModulePosition;
-import com.adambots.actuators.HubServo;
 import com.adambots.actuators.NEOMotor;
 import com.adambots.actuators.TalonFXMotor;
 import com.adambots.sensors.BaseGyro;
@@ -23,11 +17,10 @@ import com.adambots.actuators.*;
 
 import com.adambots.sensors.Gyro;
 import com.adambots.sensors.PhotoEye;
-import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
+import com.revrobotics.servohub.ServoHub;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Servo;
@@ -90,7 +83,8 @@ public class RobotMap {
     public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
     public static final Servo servo = new Servo(kServoPort);
     public static final AnalogInput servoAnalog = new AnalogInput(0);
-    public static final BaseServo hubServo = new HubServo(45, 2);
+    public static final ServoHub hub = new ServoHub(45);
+    public static final BaseServo hubServo = new CRHubServo(hub, 2);
 
 
     // public static final BaseMotor BaldNEOMotor = new NEOMotor(baldNeoPort, false);
