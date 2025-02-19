@@ -1,9 +1,6 @@
 package com.adambots;
 
-import com.adambots.commands.intakeCommands.IntakeCommand;
-import com.adambots.commands.intakeCommands.ReverseIntakeCommand;
-import com.adambots.commands.intakeCommands.SlowIntakeCommand;
-import com.adambots.commands.intakeCommands.StopIntakeCommand;
+import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
@@ -14,8 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.*;
 
 /**
  * This class is an alternative to RobotContainer for testing purposes. Since
@@ -35,6 +31,7 @@ public class TestContainer {
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
+  private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -81,10 +78,10 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-    SmartDashboard.putData(new IntakeCommand(intakesubsystem));
-    SmartDashboard.putData(new StopIntakeCommand(intakesubsystem));
-    SmartDashboard.putData(new SlowIntakeCommand(intakesubsystem));
-    SmartDashboard.putData(new ReverseIntakeCommand(intakesubsystem));
+    SmartDashboard.putData(intakeCommands.intake());
+    SmartDashboard.putData(intakeCommands.stopIntake());
+    SmartDashboard.putData(intakeCommands.slowIntake());
+    SmartDashboard.putData(intakeCommands.reverseIntake());
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
   //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());
