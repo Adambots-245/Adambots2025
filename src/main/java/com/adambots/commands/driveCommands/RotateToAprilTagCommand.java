@@ -9,26 +9,22 @@ import com.adambots.utils.Buttons;
 import com.adambots.utils.Utils;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class RotateToAngleCommand extends Command {
-  private DrivetrainSubsystem driveTrainSubsystem;
-  // private CANdleSubsystem caNdleSubsystem;
-  private BaseGyro gyro;
+public class RotateToAprilTagCommand extends Command {
+
+  private SwerveSubsystem swerveSubsystem;
   private PIDController angleTurningPIDController = new PIDController(5, 0, 0.02);
   private double drive_output;
-  private double targetAngleRad;
 
-  public RotateToAngleCommand(DrivetrainSubsystem driveTrainSubsystem, double targetAngleDeg, BaseGyro gyro) {
-    addRequirements(driveTrainSubsystem);
+  public RotateToAprilTagCommand(SwerveSubsystem swerveSubsystem) {
+    addRequirements(swerveSubsystem);
 
     angleTurningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
-    this.driveTrainSubsystem = driveTrainSubsystem;
-    this.targetAngleRad = Math.toRadians(targetAngleDeg);
-    this.gyro = gyro;
+    this.swerveSubsystem = swerveSubsystem;
   }
-
 
   @Override
   public void initialize() {
@@ -38,22 +34,16 @@ public class RotateToAngleCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // Calculates the drive rotation
-    if (Utils.isOnRedAlliance()) {
-      drive_output = angleTurningPIDController.calculate(gyro.getContinuousYawRad(), Math.PI-targetAngleRad);
-    } else {
-      drive_output = angleTurningPIDController.calculate(gyro.getContinuousYawRad(), targetAngleRad);
-    }
-
     // Moves left or right depending on the angle
-    driveTrainSubsystem.drive(Buttons.forwardSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond,
-        Buttons.sidewaysSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond, drive_output, true);
+    drive_output = angleTurningPIDController.calculate(swerveSubsystem.getHeading().getRadians(), swerveSubsystem.getAprilTagYaw(7).getRadians());
+    swerveSubsystem.drive(new ChassisSpeeds(0,0,drive_output));
+    // System.out.println("Working");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // driveTrainSubsystem.stop();
+    swerveSubsystem.drive(new ChassisSpeeds(0,0,0));
   }
 
   // Returns true when the command should end.
