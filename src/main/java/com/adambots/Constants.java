@@ -68,6 +68,8 @@ public final class Constants {
         public static final boolean kFrontRightDriveMotorReversed = true;
         public static final boolean kRearRightDriveMotorReversed = true;
 
+        public static final double kReefAllignOffset = 0.185;
+
         // Distance between centers of right and left wheels on robot in meters
         public static final double kTrackWidth = 0.61;
         // Distance between front and back wheels on robot in meters
@@ -91,7 +93,7 @@ public final class Constants {
         );
 
         // Xbox controller joystick deadzone
-        public static final double kDeadZone = 0.15;
+        public static final double kDeadZone = 0.0;
 
         //Max speed of the robot in m/s, used in teleop and auton (should be set to real world value)
         //Drive the robot on carpet and measure the speed with a stopwatch
@@ -130,7 +132,8 @@ public final class Constants {
         public static final double kDriveEncoderPositionConversionFactor = kSwerveModuleFinalGearRatio * 2*Math.PI * kWheelRadiusMeters;
 
         public static final double kPModuleTurningController = 0.7; //PID Values for turning motors
-        public static final double kDModuleTurningController = 0.026;
+        // public static final double kDModuleTurningController = 0.026;
+        public static final double kDModuleTurningController = 0;
     }
 
     public static final class AutoConstants {
