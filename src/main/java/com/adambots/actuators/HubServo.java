@@ -91,4 +91,9 @@ public class HubServo implements BaseServo {
         channel.setPulseWidth(pulseWidth);
 
     }
+
+    @Override
+    public double getCurrent() {
+        return channel.getCurrent();
+    }
 }

@@ -15,6 +15,6 @@ public interface BaseServo {
 
     void setPulseWidth(int pulseWidth);
 
-    
+    double getCurrent();
 
 }

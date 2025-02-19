@@ -128,25 +128,28 @@ public class TestContainer {
     // Dash.add("analog", () -> RobotMap.servoAnalog.getValue());
 
     // SmartDashboard.putData("set hub speed", Commands.runOnce(() -> RobotMap.hubServo.turnClockwise()));
+
+    Dash.add("Current", ()->RobotMap.hubServo.getCurrent());
+    Dash.add("Resistance", ()->RobotMap.hubServo.getCurrent() > 0.6);
     
     SmartDashboard.putData("Run intake", Commands.runOnce(
       () -> {
         RobotMap.hubServo.turnCounterclockwise();
-        RobotMap.hubServo2.turnClockwise();
+        // RobotMap.hubServo2.turnClockwise();
       }
     ));
 
     SmartDashboard.putData("Reverse intake", Commands.runOnce(
       () -> {
         RobotMap.hubServo.turnClockwise();
-        RobotMap.hubServo2.turnCounterclockwise();
+        // RobotMap.hubServo2.turnCounterclockwise();
       }
     ));
 
     SmartDashboard.putData("Stop intake", Commands.runOnce(
       () -> {
         RobotMap.hubServo.stop();
-        RobotMap.hubServo2.stop();
+        // RobotMap.hubServo2.stop();
       }
     ));
 

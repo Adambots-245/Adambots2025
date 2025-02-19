@@ -36,4 +36,9 @@ public class PWMServo implements BaseServo {
         throw new UnsupportedOperationException("Unimplemented method 'setPulseWidth'");
     }
 
+    @Override
+    public double getCurrent() {
+        throw new UnsupportedOperationException("Unimplemented method 'getCurrent'");
+    }
+
 }
