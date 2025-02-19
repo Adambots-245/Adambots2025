@@ -369,19 +369,19 @@ public class PhotonVision
      * Left Camera
      */
     LEFT_CAM("Left",
-             new Rotation3d(0, Math.toRadians(5), Math.toRadians(29)),
-             new Translation3d(Units.inchesToMeters(11.5),
-                               Units.inchesToMeters(-11.0),
-                               Units.inchesToMeters(7.5)),
+             new Rotation3d(0, Math.toRadians(-5), Math.toRadians(0)),
+             new Translation3d(Units.inchesToMeters(-11.5),
+                               Units.inchesToMeters(11.0),
+                               Units.inchesToMeters(-7.5)),
              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
     RIGHT_CAM("Right",
-              new Rotation3d(0, Math.toRadians(5), Math.toRadians(-29)),
-              new Translation3d(Units.inchesToMeters(11.5),
-                                Units.inchesToMeters(11.0),
-                                Units.inchesToMeters(7.5)),
+              new Rotation3d(0, Math.toRadians(-5), Math.toRadians(0)),
+              new Translation3d(Units.inchesToMeters(-11.5),
+                                Units.inchesToMeters(-11.0),
+                                Units.inchesToMeters(-7.5)),
               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
     /**
      * Center Camera
