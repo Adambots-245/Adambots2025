@@ -27,7 +27,7 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeMotor, RobotMap.CANrange);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeActuator, RobotMap.CANrange);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -78,14 +78,12 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-    SmartDashboard.putData(intakeCommands.intake());
-    SmartDashboard.putData(intakeCommands.stopIntake());
-    SmartDashboard.putData(intakeCommands.slowIntake());
-    SmartDashboard.putData(intakeCommands.reverseIntake());
+    SmartDashboard.putData("Intake", intakeCommands.intake());
+    SmartDashboard.putData("Stop Intake", intakeCommands.stopIntake());
+    SmartDashboard.putData("Slow Intake", intakeCommands.slowIntake());
+    SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntake());
 
-    SmartDashboard.putData(Commands.runOnce( () -> {
-      SmartDashboard.putNumber("Distance", RobotMap.CANrange.getDistanceInCentimeters());
-    }));
+    Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
   //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());

@@ -5,24 +5,20 @@
 package com.adambots.subsystems;
 
 import com.adambots.Constants.IntakeConstants;
-import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.BaseServo;
+import com.adambots.actuators.BaseActuator;
 import com.adambots.sensors.BaseDistanceSensor;
-import com.adambots.sensors.LimitSwitch;
-
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
   // private BaseMotor intakeMotor;
-  private BaseServo intakeServo;
+  private BaseActuator intakeActuator;
   private double motorSpeed;
   private BaseDistanceSensor CANrange;
 
     /** Creates a new IntakeSubsystem. */
-    public IntakeSubsystem(BaseServo intakeServo, BaseDistanceSensor CANrange) {
+    public IntakeSubsystem(BaseActuator intakeActuator, BaseDistanceSensor CANrange) {
       this.CANrange = CANrange;
-      this.intakeServo = intakeServo;
+      this.intakeActuator = intakeActuator;
   }
 
   public void intake() {
@@ -48,6 +44,6 @@ public class IntakeSubsystem extends SubsystemBase {
   
   @Override
   public void periodic() {
-    intakeServo.setSpeed(motorSpeed);
+    intakeActuator.set(motorSpeed);
   }
 }

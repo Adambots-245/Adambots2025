@@ -1,8 +1,6 @@
 package com.adambots.actuators;
 
-public interface BaseMotor {
-
-    void set(double speed);
+public interface BaseMotor extends BaseActuator {
 
     void setInverted(boolean inverted);
 

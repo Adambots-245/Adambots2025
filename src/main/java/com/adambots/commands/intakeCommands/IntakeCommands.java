@@ -5,36 +5,22 @@ import com.adambots.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 
 public class IntakeCommands {
     private final IntakeSubsystem intakeSubsystem;
-    private int counter;
 
     public IntakeCommands(IntakeSubsystem intakeSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
     }
 
     public Command intake() {
-        return new FunctionalCommand(
-            // initialize
-            () -> {
+        return Commands.runOnce(() -> {
                 System.out.println("Intake Command Running");
-                counter = 0;
                 intakeSubsystem.intake();
-            },
-            // execute
-            () -> {
-                if (intakeSubsystem.isDetecting())
-                    counter++;
-            },
-            // end
-            interrupted -> intakeSubsystem.stopIntake(),
-            // isFinished
-            () -> counter > IntakeConstants.kTimerThreshold,
-            // requirements
-            intakeSubsystem
-        );
+            }, intakeSubsystem)
+            .andThen(Commands.waitUntil(intakeSubsystem::isDetecting))
+            .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold))
+            .andThen(Commands.runOnce(intakeSubsystem::stopIntake, intakeSubsystem));
     }
 
     public Command reverseIntake() {
