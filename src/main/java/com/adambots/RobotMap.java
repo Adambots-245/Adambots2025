@@ -13,12 +13,18 @@ import java.util.Map;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.actuators.TalonFXMotor;
+import com.adambots.sensors.BaseDistanceSensor;
 import com.adambots.sensors.BaseGyro;
+import com.adambots.sensors.CANRangeSensor;
 import com.adambots.sensors.Gyro;
 import com.adambots.sensors.LimitSwitch;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
+import com.revrobotics.servohub.ServoHub;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.BaseServo;
+import com.adambots.actuators.CRHubServo;
+import com.adambots.actuators.NEOMotor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -51,9 +57,11 @@ public class RobotMap {
     public static final int kFrontLeftDriveMotorPort = 22;  
 
     // Intake Ports
-    public static final int kIntakeMotorPort = 10;
+    public static final int kIntakeMotorPort = 16;
     public static final int kFirstIntakeLimPort = 3;
     public static final int kSecondIntakeLimPort = 4;
+    public static final int kCANrangePort = 35;
+    public static final int kServoPort = 45;
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
@@ -63,9 +71,12 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
-    public static final BaseMotor intakeMotor = new TalonFXMotor(kIntakeMotorPort, false, 20);
+    // public static final BaseMotor intakeMotor = new NEOMotor(kIntakeMotorPort, false);
+    public static final ServoHub hub = new ServoHub(kServoPort);
+    public static final BaseServo intakeMotor = new CRHubServo(hub, 5);
     public static final LimitSwitch firstIntakeLimit = new LimitSwitch(kFirstIntakeLimPort, false);
     public static final LimitSwitch secondIntakeLimit = new LimitSwitch(kSecondIntakeLimPort, false);
+    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort);
 
     
 //     // Robot Swerve Modules

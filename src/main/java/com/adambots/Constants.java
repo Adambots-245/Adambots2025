@@ -171,6 +171,8 @@ public final class Constants {
         public static final double kMaxSpeed = 1;
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = -1;
+        public static final double kDistanceToDetect = 5;
+        public static final double kTimerThreshold = 10;
 
     }
     // Command Constants go here

@@ -6,21 +6,23 @@ package com.adambots.subsystems;
 
 import com.adambots.Constants.IntakeConstants;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.BaseServo;
+import com.adambots.sensors.BaseDistanceSensor;
 import com.adambots.sensors.LimitSwitch;
+
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
-  private BaseMotor intakeMotor;
+  // private BaseMotor intakeMotor;
+  private BaseServo intakeServo;
   private double motorSpeed;
-  private LimitSwitch firstIntakeLimit;
-  private LimitSwitch secondIntakeLimit;
+  private BaseDistanceSensor CANrange;
 
     /** Creates a new IntakeSubsystem. */
-    public IntakeSubsystem(BaseMotor intakeMotor, LimitSwitch firstIntakeLimit, LimitSwitch secondIntakeLimit) {
-      this.firstIntakeLimit = firstIntakeLimit;
-      this.secondIntakeLimit = secondIntakeLimit;
-      this.intakeMotor = intakeMotor;
+    public IntakeSubsystem(BaseServo intakeServo, BaseDistanceSensor CANrange) {
+      this.CANrange = CANrange;
+      this.intakeServo = intakeServo;
   }
 
   public void intake() {
@@ -40,16 +42,12 @@ public class IntakeSubsystem extends SubsystemBase {
     motorSpeed = IntakeConstants.kLowSpeed;
   }
 
-  public boolean isFirstLimitDetecting() {
-    return firstIntakeLimit.isDetecting();
-  }
-  
-  public boolean isSecondLimitDetecting() {
-    return secondIntakeLimit.isDetecting();
+  public boolean isDetecting() {
+    return CANrange.getDistanceInCentimeters() < IntakeConstants.kDistanceToDetect;
   }
   
   @Override
   public void periodic() {
-    intakeMotor.set(motorSpeed);
+    intakeServo.setSpeed(motorSpeed);
   }
 }

@@ -27,7 +27,7 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeMotor, RobotMap.firstIntakeLimit, RobotMap.secondIntakeLimit);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeMotor, RobotMap.CANrange);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -82,6 +82,10 @@ public class TestContainer {
     SmartDashboard.putData(intakeCommands.stopIntake());
     SmartDashboard.putData(intakeCommands.slowIntake());
     SmartDashboard.putData(intakeCommands.reverseIntake());
+
+    SmartDashboard.putData(Commands.runOnce( () -> {
+      SmartDashboard.putNumber("Distance", RobotMap.CANrange.getDistanceInCentimeters());
+    }));
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
   //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());
@@ -101,10 +105,10 @@ public class TestContainer {
    * Configure the dashboard with useful data for driving and debugging
    */
   private void setupDashboard() {
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
 
     // Adds various data to the dashboard that is useful for driving and debugging
-    SmartDashboard.putData("Auton Mode", autoChooser);
+    // SmartDashboard.putData("Auton Mode", autoChooser);
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }
@@ -120,6 +124,7 @@ public class TestContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return Commands.none();
   }
 }
