@@ -15,7 +15,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.adambots.actuators.BaseMotor;
-import com.adambots.utils.StateMachine2;
+import com.adambots.utils.StateMachine;
 
 public class ElevatorSubsystem extends SubsystemBase {
     
@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final PositionVoltage positionVoltage = new PositionVoltage(0);
 
     // State Machine
-    private final StateMachine2<ElevatorState, ElevatorProperties> stateMachine;
+    private final StateMachine<ElevatorState, ElevatorProperties> stateMachine;
 
     // Constants
     private static final double GEAR_RATIO = 100.0;
@@ -77,7 +77,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             "Arm", 40, 0, 4, new Color8Bit(255, 255, 0)));
 
         // Initialize state machine
-        stateMachine = new StateMachine2<>(
+        stateMachine = new StateMachine<>(
             ElevatorState.INTAKE,
             ElevatorState.INTAKE.properties,
             message -> SmartDashboard.putString("Arm/Status", message),
@@ -99,7 +99,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure soft limits
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 
-            ElevatorState.L2.properties.angleDegrees() * MOTOR_ROTATIONS_PER_DEGREE;
+            ElevatorState.L2.properties.wristAngleDegrees() * MOTOR_ROTATIONS_PER_DEGREE;
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
