@@ -29,7 +29,7 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeActuator, RobotMap.CANrange);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor, RobotMap.wristMotor, RobotMap.encoder);
 
   // Add commands here
@@ -82,10 +82,10 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-    SmartDashboard.putData("Intake", intakeCommands.intake());
-    SmartDashboard.putData("Stop Intake", intakeCommands.stopIntake());
-    SmartDashboard.putData("Slow Intake", intakeCommands.slowIntake());
-    SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntake());
+    SmartDashboard.putData("Intake", intakeCommands.intakeCoral());
+    SmartDashboard.putData("Stop Intake", intakeCommands.stopIntakeCoral());
+    SmartDashboard.putData("Slow Intake", intakeCommands.slowIntakeCoral());
+    SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntakeCoral());
 
     Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
 
@@ -95,7 +95,16 @@ public class TestContainer {
     SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
     SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
 
+    SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
+    SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
+    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L1));
+    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L2));
+    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L3));
+    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L4));
 
+    SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
+    SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
+    SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
 
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());

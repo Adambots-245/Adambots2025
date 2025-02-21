@@ -62,33 +62,40 @@ public class RobotMap {
 
     // Intake Ports
     public static final int kIntakeMotorPort = 16;
-    public static final int kFirstIntakeLimPort = 3;
-    public static final int kSecondIntakeLimPort = 4;
+    // public static final int kFirstIntakeLimPort = 3;
+    // public static final int kSecondIntakeLimPort = 4;
+    public static final int kTopCoralServoChannel = 5;
+    public static final int kBottomCoralServoChannel = 4;
+    public static final int kGripperAlgaeServoChannel = 3;
+    public static final int kRunnerAlgaeServoChannel = 2;
     public static final int kCANrangePort = 35;
-    public static final int kServoPort = 45;
+    public static final int kServoHubPort = 45;
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
     public static final int kXboxControllerPort = 1;
 
     // Elevator Ports
-    public static final int kWristPort = 16;
+    public static final int kWristMotorPort = 16;
     public static final int kEncoderPort = 0;
-    public static final int kElevatorPort = 50;
+    public static final int kElevatorMotorPort = 50;
 
     //Robot Devices
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
-    public static final ServoHub hub = new ServoHub(kServoPort);
-    public static final BaseActuator intakeActuator = new CRHubServo(hub, 5);
-    // public static final BaseActuator intakeActuator = new NEOMotor(kIntakeMotorPort, false);
+    public static final ServoHub hub = new ServoHub(kServoHubPort);
+    public static final BaseActuator topCoralActuator = new CRHubServo(hub, kTopCoralServoChannel);
+    public static final BaseActuator bottomCoralActuator = new CRHubServo(hub, kBottomCoralServoChannel);
+    public static final BaseActuator algaeGripper = new CRHubServo(hub, kGripperAlgaeServoChannel);
+    public static final BaseActuator algaeRunner = new CRHubServo(hub, kRunnerAlgaeServoChannel);
+    // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
     public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort);
 
 
-    public static final BaseMotor wristMotor = new NEOMotor(kWristPort, false);
+    public static final BaseMotor wristMotor = new NEOMotor(kWristMotorPort, false);
     public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(kEncoderPort);
-    public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorPort, false, kElevatorPort, false);
+    public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, false, kElevatorMotorPort, false);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

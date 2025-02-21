@@ -4,15 +4,17 @@ import java.io.File;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
+import com.adambots.commands.elevatorCommands.ElevatorCommands;
+import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.subsystems.CANdleSubsystem;
+import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
-import com.adambots.utils.Dash;
-import com.adambots.vision.PhotonVision;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -23,10 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import swervelib.SwerveInputStream;
 import swervelib.SwerveInputStream;
 
 /**
@@ -41,9 +39,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
-  // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
+  ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor, RobotMap.wristMotor, RobotMap.encoder);
 
+  // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
+  private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();

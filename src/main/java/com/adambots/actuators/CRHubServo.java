@@ -111,6 +111,10 @@ public class CRHubServo implements BaseServo {
         }
     }
 
+    /**
+     * Set the speed of the servo in CR mode.
+     * @param speed Speed of the servo in the range -1.0 to 1.0. -1.0 is full speed counterclockwise, and 1.0 is full speed clockwise.
+     */
     @Override
     public void set(double speed) {
         if (isSim) {

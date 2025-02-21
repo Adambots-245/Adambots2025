@@ -54,4 +54,32 @@ public class ElevatorCommands extends Command {
     public Command moveWristToStateCommand(WristState state) {
         return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(state), elevatorSubsystem);
     }
+
+    public Command moveElevatorToStateCommand(ElevatorState state) {
+        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(state), elevatorSubsystem);
+    }
+
+    public Command moveWristToStowedCommand() {
+        return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem);
+    }
+
+    public Command moveWristToIntakeCommand() {
+        return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(WristState.INTAKE), elevatorSubsystem);
+    }
+
+    public Command moveWristToL1Command() {
+        return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(WristState.L1), elevatorSubsystem);
+    }
+
+    public Command moveWristToL2Command() {
+        return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(WristState.L2), elevatorSubsystem);
+    }
+
+    public Command moveWristToL3Command() {
+        return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(WristState.L3), elevatorSubsystem);
+    }
+
+    public Command moveWristToL4Command() {
+        return Commands.runOnce(() -> elevatorSubsystem.moveWristToState(WristState.L4), elevatorSubsystem);
+    }
 }

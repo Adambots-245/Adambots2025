@@ -13,33 +13,70 @@ public class IntakeCommands {
         this.intakeSubsystem = intakeSubsystem;
     }
 
-    public Command intake() {
+    public Command intakeCoral() {
         return Commands.runOnce(() -> {
                 System.out.println("Intake Command Running");
-                intakeSubsystem.intake();
+                intakeSubsystem.intakeCoral();
             }, intakeSubsystem)
-            .andThen(Commands.waitUntil(intakeSubsystem::isDetecting))
+            .andThen(Commands.waitUntil(intakeSubsystem::isDetectingCoral))
             .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold))
-            .andThen(Commands.runOnce(intakeSubsystem::stopIntake, intakeSubsystem));
+            .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
     }
 
-    public Command reverseIntake() {
+    public Command scoreCoral() {
+        // No coral - don't do anything
+        if (!intakeSubsystem.isDetectingCoral()){
+            return Commands.none();
+        }
+
+        // run the intake, wait until the CANRange does not see a Coral, wait a bit, then stop the intake
+        return Commands.runOnce(() -> {
+                System.out.println("Score Command Running");
+                intakeSubsystem.intakeCoral();
+            }, intakeSubsystem)
+            .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
+            .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
+            .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
+    }
+
+    public Command reverseIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::reverseIntake,
+            intakeSubsystem::reverseCoralIntake,
             intakeSubsystem
         );
     }
 
-    public Command slowIntake() {
+    public Command slowIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::slowIntake,
+            intakeSubsystem::slowCoralIntake,
             intakeSubsystem
         );
     }
 
-    public Command stopIntake() {
+    public Command stopIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::stopIntake,
+            intakeSubsystem::stopCoralIntake,
+            intakeSubsystem
+        );
+    }
+
+    public Command intakeAlgae() {
+        return Commands.runOnce(
+            intakeSubsystem::intakeAlgae,
+            intakeSubsystem
+        );
+    }
+    
+    public Command stopIntakeAlgae() {
+        return Commands.runOnce(
+            intakeSubsystem::stopAlgaeIntake,
+            intakeSubsystem
+        );
+    }
+
+    public Command reverseIntakeAlgae() {
+        return Commands.runOnce(
+            intakeSubsystem::reverseAlgaeIntake,
             intakeSubsystem
         );
     }
