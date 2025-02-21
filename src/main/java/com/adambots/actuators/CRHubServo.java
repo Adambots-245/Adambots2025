@@ -9,6 +9,9 @@ import com.revrobotics.servohub.ServoChannel;
 import com.revrobotics.servohub.ServoChannel.ChannelId;
 import com.revrobotics.servohub.ServoHub.Bank;
 
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.PWMSim;
+
 /**
  * A servo class for servos plugged into a REV ServoHub for Continuous Rotation (CR) mode.
  * 
@@ -18,9 +21,10 @@ import com.revrobotics.servohub.ServoHub.Bank;
  * Within the ServoHub, each Servo is addressed by a ChannelId.
  */
 public class CRHubServo implements BaseServo {
-
     private ServoHub hub;
-    ServoChannel channel;
+    private ServoChannel channel;
+    private PWMSim pwmSim;
+    private boolean isSim;
 
     // Pulse width values for the servo as per ServoHub docs for CR mode
     private static final int SERVO_CCW_PULSE_WIDTH = 500;
@@ -29,33 +33,38 @@ public class CRHubServo implements BaseServo {
 
     public CRHubServo(ServoHub hub, int servoPortNum) {
         this.hub = hub;
-        hub.setBankPulsePeriod(Bank.kBank3_5, 5000);
+        this.isSim = RobotBase.isSimulation();
+        if (!isSim) {
+            hub.setBankPulsePeriod(Bank.kBank3_5, 5000);
+        }
         setServo(servoPortNum);
     }
 
     private void setServo(int servoPortNum) {
-        switch (servoPortNum) {
-            case 0:
-                channel = hub.getServoChannel(ChannelId.kChannelId0);
-                break;
-            case 1:
-                channel = hub.getServoChannel(ChannelId.kChannelId1);
-                break;
-            case 2:
-                channel = hub.getServoChannel(ChannelId.kChannelId2);
-                break;
-            case 3:
-                channel = hub.getServoChannel(ChannelId.kChannelId3);
-                break;
-            case 4:
-                channel = hub.getServoChannel(ChannelId.kChannelId4);
-                break;
-            case 5:
-                channel = hub.getServoChannel(ChannelId.kChannelId5);
-                break;
+        if (!isSim) {
+            switch (servoPortNum) {
+                case 0:
+                    channel = hub.getServoChannel(ChannelId.kChannelId0);
+                    break;
+                case 1:
+                    channel = hub.getServoChannel(ChannelId.kChannelId1);
+                    break;
+                case 2:
+                    channel = hub.getServoChannel(ChannelId.kChannelId2);
+                    break;
+                case 3:
+                    channel = hub.getServoChannel(ChannelId.kChannelId3);
+                    break;
+                case 4:
+                    channel = hub.getServoChannel(ChannelId.kChannelId4);
+                    break;
+                case 5:
+                    channel = hub.getServoChannel(ChannelId.kChannelId5);
+                    break;
+            }
+            channel.setEnabled(true);
+            channel.setPowered(true);
         }
-        channel.setEnabled(true);
-        channel.setPowered(true);
     }
 
     @Override
@@ -65,34 +74,60 @@ public class CRHubServo implements BaseServo {
 
     @Override
     public void turnCounterclockwise() {
-        channel.setPulseWidth(SERVO_CCW_PULSE_WIDTH);
+        if (isSim) {
+            pwmSim.setSpeed(1.0);  // CCW is positive in simulation
+        } else {
+            channel.setPulseWidth(SERVO_CCW_PULSE_WIDTH);
+        }
     }
 
     @Override
     public void turnClockwise() {
-        channel.setPulseWidth(SERVO_CW_PULSE_WIDTH);
+        if (isSim) {
+            pwmSim.setSpeed(-1.0);  // CW is negative in simulation
+        } else {
+            channel.setPulseWidth(SERVO_CW_PULSE_WIDTH);
+        }
     }
 
     @Override
     public void stop() {
-        channel.setPulseWidth(SERVO_STOP_PULSE_WIDTH);
+        if (isSim) {
+            pwmSim.setSpeed(0.0);
+        } else {
+            channel.setPulseWidth(SERVO_STOP_PULSE_WIDTH);
+        }
     }
 
     @Override
     public void setPulseWidth(int pulseWidth) {
-        channel.setPulseWidth(pulseWidth);
-
+        if (isSim) {
+            // Map pulse width to -1.0 to 1.0 range for simulation
+            double normalizedSpeed = (pulseWidth - SERVO_STOP_PULSE_WIDTH) / 
+                                   (double)(SERVO_CW_PULSE_WIDTH - SERVO_STOP_PULSE_WIDTH);
+            pwmSim.setSpeed(normalizedSpeed);
+        } else {
+            channel.setPulseWidth(pulseWidth);
+        }
     }
 
     @Override
-    public void setSpeed(double speed) {
-        // Map -1.0 to 1.0 to pulse width range
-        int pulseWidth = (int)(SERVO_STOP_PULSE_WIDTH + (speed * (SERVO_CW_PULSE_WIDTH - SERVO_STOP_PULSE_WIDTH)));
-        channel.setPulseWidth(pulseWidth);
+    public void set(double speed) {
+        if (isSim) {
+            pwmSim.setSpeed(speed);
+        } else {
+            // Map -1.0 to 1.0 to pulse width range
+            int pulseWidth = (int)(SERVO_STOP_PULSE_WIDTH + 
+                                 (speed * (SERVO_CW_PULSE_WIDTH - SERVO_STOP_PULSE_WIDTH)));
+            channel.setPulseWidth(pulseWidth);
+        }
     }
 
     @Override
     public double getCurrent() {
+        if (isSim) {
+            return 0.0;  // Simulation doesn't provide current feedback
+        }
         return channel.getCurrent();
     }
 }

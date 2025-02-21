@@ -118,18 +118,6 @@ public class DirectServo implements BaseServo {
         }
     }
 
-    @Override
-    public void setSpeed(double speed) {
-        if (mode == ServoMode.CONTINUOUS_ROTATION) {
-            // Convert -1.0 to 1.0 range to 0.0 to 1.0 range that WPILib expects
-            double position = (speed + 1.0) / 2.0;
-            position = Math.min(1.0, Math.max(0.0, position));
-            servo.set(position);
-        } else {
-            throw new UnsupportedOperationException("Speed control not supported in Angular mode");
-        }
-    }
-
     /**
      * Gets the raw position (0 to 1 range)
      * @return The current position

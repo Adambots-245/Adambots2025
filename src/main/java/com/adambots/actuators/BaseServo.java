@@ -4,7 +4,7 @@ package com.adambots.actuators;
  * Interface for a servo motor that can operate in either Continuous Rotation (CR)
  * or Angular (Position) mode.
  */
-public interface BaseServo {
+public interface BaseServo extends BaseActuator{
     /**
      * Sets the operating mode of the servo.
      */
@@ -63,7 +63,8 @@ public interface BaseServo {
      * For Angular mode: This will throw UnsupportedOperationException
      * @param speed Speed from -1.0 (full CCW) to 1.0 (full CW)
      */
-    default void setSpeed(double speed) {
+    @Override
+    default void set(double speed) {
         throw new UnsupportedOperationException("Speed control not supported in current mode");
     }
 }
