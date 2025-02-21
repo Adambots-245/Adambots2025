@@ -1,6 +1,6 @@
 package com.adambots;
 
-import com.adambots.commands.driveCommands.ElevatorCommands;
+import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
