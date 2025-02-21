@@ -5,151 +5,181 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color8Bit;
-// import com.ctre.phoenix6.hardware.TalonFX;
-// import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-// import com.ctre.phoenix6.signals.ForwardLimitValue;
-// import com.ctre.phoenix6.signals.NeutralModeValue;
-// import com.ctre.phoenix6.configs.TalonFXConfiguration;
-// import com.ctre.phoenix6.controls.PositionVoltage;
 import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.NEOMotor;
-import com.adambots.actuators.TalonFXMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
-import com.adambots.sensors.ThroughBoreEncoder;
 import com.adambots.utils.StateMachine;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-    // Properties class to hold state data
+    // Properties for Elevator
     public record ElevatorProperties(
-            double heightInches, // Height in inches
-            double wristAngle,
-            String description // Description of state
-    ) {
-    }
+            double heightInches,
+            String description
+    ) {}
 
-    // Define states with their properties
+    // Properties for Wrist
+    public record WristProperties(
+            double angleDegrees,
+            String description
+    ) {}
+
+    // Define elevator states
     public enum ElevatorState {
-        INTAKE(new ElevatorProperties(0.0, 20, "Intake Position")),
-        L1(new ElevatorProperties(12.0, 40, "Level 1")),
-        L2(new ElevatorProperties(24.0, 60, "Level 2")),
-        L3(new ElevatorProperties(36.0, 80, "Level 3")),
-        L4(new ElevatorProperties(48.0, 100, "Level 4"));
+        INTAKE(new ElevatorProperties(0.0, "Intake Position")),
+        L1(new ElevatorProperties(12.0, "Level 1")),
+        L2(new ElevatorProperties(24.0, "Level 2")),
+        L3(new ElevatorProperties(36.0, "Level 3")),
+        L4(new ElevatorProperties(48.0, "Level 4"));
 
         public final ElevatorProperties properties;
-
         ElevatorState(ElevatorProperties properties) {
             this.properties = properties;
         }
     }
 
+    // Define wrist states
+    public enum WristState {
+        STOWED(new WristProperties(0.0, "Stowed")),
+        INTAKE(new WristProperties(20.0, "Intake Ready")),
+        L1(new WristProperties(40.0, "Level 1 Angle")),
+        L2(new WristProperties(60.0, "Level 2 Angle")),
+        L3(new WristProperties(80.0, "Level 3 Angle")),
+        L4(new WristProperties(100.0, "Level 4 Angle"));
+
+        public final WristProperties properties;
+        WristState(WristProperties properties) {
+            this.properties = properties;
+        }
+    }
+
     // Hardware
-    BaseMotor wristMotor;
-    BaseMotor elevatorMotor;
-    BaseAbsoluteEncoder encoder;
+    private final BaseMotor wristMotor;
+    private final BaseMotor elevatorMotor;
+    private final BaseAbsoluteEncoder wristEncoder;
+    private final PIDController wristPID;
 
-    PIDController pid = new PIDController(0.5, 0, 0);
-
-    // State Machine
-    private final StateMachine<ElevatorState, ElevatorProperties> stateMachine;
+    // State Machines
+    private final StateMachine<ElevatorState, ElevatorProperties> elevatorStateMachine;
+    private final StateMachine<WristState, WristProperties> wristStateMachine;
 
     // Constants
-    private static final double GEAR_RATIO = 10.0; // 10:1 gear ratio - every 10 rotations of motor is 1 rotation of
-    private static final double DRUM_CIRCUMFERENCE = 2.0; // inches - drum or pulley mechanism at the top (Pi*D)
+    private static final double GEAR_RATIO = 10.0;
+    private static final double DRUM_CIRCUMFERENCE = 2.0; // inches
     private static final double INCHES_PER_ROTATION = DRUM_CIRCUMFERENCE / GEAR_RATIO;
-    private static final double ElEVATOR_POSITION_TOLERANCE = 0.5; // inches
-    private static final double WRIST_POSITION_TOLERANCE = 2; // degrees
+    private static final double ELEVATOR_POSITION_TOLERANCE = 0.5; // inches
+    private static final double WRIST_POSITION_TOLERANCE = 2.0; // degrees
 
-    public ElevatorSubsystem(BaseMotor elevatorMotor, BaseMotor wristMotor, BaseAbsoluteEncoder encoder) {
-        // Initialize motor
+    public ElevatorSubsystem(BaseMotor elevatorMotor, BaseMotor wristMotor, BaseAbsoluteEncoder wristEncoder) {
         this.wristMotor = wristMotor;
         this.elevatorMotor = elevatorMotor;
-        this.encoder = encoder;
+        this.wristEncoder = wristEncoder;
+        
+        // Initialize PID
+        this.wristPID = new PIDController(0.5, 0, 0);
+        this.wristPID.setTolerance(WRIST_POSITION_TOLERANCE);
 
-        configureMotor();
+        configureMotors();
 
-        stateMachine = new StateMachine<>(
-                ElevatorState.INTAKE,
-                ElevatorState.INTAKE.properties,
-                message -> SmartDashboard.putString("Elevator/Status", message),
-                true // Using position control
+        // Initialize elevator state machine with position control
+        elevatorStateMachine = new StateMachine<>(
+            ElevatorState.INTAKE,
+            ElevatorState.INTAKE.properties,
+            message -> SmartDashboard.putString("Elevator/Status", message),
+            true  // Using position control
+        );
+
+        // Initialize wrist state machine without position control
+        wristStateMachine = new StateMachine<>(
+            WristState.STOWED,
+            WristState.STOWED.properties,
+            message -> SmartDashboard.putString("Wrist/Status", message),
+            false  // Not using position control
         );
     }
 
-    private void configureMotor() {
-        pid.setTolerance(2);
+    private void configureMotors() {
+        // Configure elevator motor
         elevatorMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
-        // elevatorMotor.configureSoftLimits(ElevatorState.L4.properties.heightInches()
-        // / INCHES_PER_ROTATION, 0, true);
-        // elevatorMotor.configureHardLimits(true, false);
         elevatorMotor.setBrakeMode(true);
 
-        // wristMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
-        // wristMotor.configureSoftLimits(ElevatorState.L4.properties.wristAngle() /
-        // INCHES_PER_ROTATION, 0, true);
-        // wristMotor.configureHardLimits(true, false);
-        // wristMotor.setBrakeMode(true);
+        // Configure wrist motor
+        wristMotor.setBrakeMode(true);
     }
 
-    private void setPosition(ElevatorProperties properties) {
-        // Set motor position
-        double elevatorRotations = properties.heightInches() / INCHES_PER_ROTATION;
-        elevatorMotor.setPosition(elevatorRotations);
+    private void setElevatorPosition(ElevatorProperties properties) {
+        double rotations = properties.heightInches() / INCHES_PER_ROTATION;
+        elevatorMotor.setPosition(rotations);
     }
 
-    private boolean isWristAtPosition() {
-        double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
-        System.out.println("ENcoder:" + encoder.getAbsolutePositionDegrees());
-        // return Math.abs(currentHeight -
-        // stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
-        double wristSpeed = pid.calculate(encoder.getAbsolutePositionDegrees(),
-                stateMachine.getTargetProperties().wristAngle());
-        System.out.println("WristSpeed: " + wristSpeed);
+    private void setWristOutput(WristProperties properties) {
+        double output = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(), 
+                                         properties.angleDegrees());
+        if (wristPID.atSetpoint()) {
+            output = 0;
+        }
+        wristMotor.set(output);
+    }
 
-        if (pid.atSetpoint())
-            wristSpeed = 0;
-
-        wristMotor.set(wristSpeed);
-        
-        return pid.atSetpoint();
+    private boolean isWristAtTarget() {
+        return wristPID.atSetpoint();
     }
 
     @Override
     public void periodic() {
-        // Get current position
-        double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
+        // Get current positions
+        double currentHeight = elevatorMotor.getPosition() * INCHES_PER_ROTATION;
+        double currentAngle = wristEncoder.getAbsolutePositionDegrees();
 
-        stateMachine.periodic();
-
-        // If the limit switch at the bottom is hit, reset the encoder.
-        // if (elevatorMotor.getForwardLimitSwitch()) {
-        // elevatorMotor.setPosition(0);
-        // }
+        // Update wrist state machine
+        wristStateMachine.periodic();
 
         // Update dashboard
         SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
-        SmartDashboard.putNumber("Elevator/TargetHeight",
-                stateMachine.getTargetProperties().heightInches());
-        SmartDashboard.putNumber("Elevator/TargetAngle",
-                stateMachine.getTargetProperties().wristAngle());
-        SmartDashboard.putString("Elevator/CurrentState",
-                stateMachine.getCurrentState().toString());
-        SmartDashboard.putString("Elevator/StateDescription",
-                stateMachine.getCurrentState().properties.description());
-        SmartDashboard.putBoolean("Elevator/AtPosition", isWristAtPosition());
+        SmartDashboard.putNumber("Elevator/TargetHeight", 
+            elevatorStateMachine.getTargetProperties().heightInches());
+        SmartDashboard.putString("Elevator/State", 
+            elevatorStateMachine.getCurrentState().toString());
+
+        SmartDashboard.putNumber("Wrist/CurrentAngle", currentAngle);
+        SmartDashboard.putNumber("Wrist/TargetAngle", 
+            wristStateMachine.getTargetProperties().angleDegrees());
+        SmartDashboard.putString("Wrist/State", 
+            wristStateMachine.getCurrentState().toString());
+        SmartDashboard.putBoolean("Wrist/AtTarget", isWristAtTarget());
     }
 
     // Public methods for commanding the elevator
-    public void moveToState(ElevatorState state) {
-        stateMachine.requestTransition(
-                state,
-                state.properties,
-                this::isWristAtPosition,
-                this::setPosition);
+    public void moveElevatorToState(ElevatorState state) {
+        elevatorStateMachine.requestTransition(
+            state,
+            state.properties,
+            () -> true,  // No check needed for position control
+            this::setElevatorPosition
+        );
     }
+
+    // Public methods for commanding the wrist
+    public void moveWristToState(WristState state) {
+        wristStateMachine.requestTransition(
+            state,
+            state.properties,
+            this::isWristAtTarget,
+            this::setWristOutput
+        );
+    }
+
+    // Methods to check states
+    public boolean isWristAtState(WristState state) {
+        return wristStateMachine.getCurrentState() == state && isWristAtTarget();
+    }
+
+    public ElevatorState getCurrentElevatorState() {
+        return elevatorStateMachine.getCurrentState();
+    }
+
+    public WristState getCurrentWristState() {
+        return wristStateMachine.getCurrentState();
+    }
+
+    
 }
