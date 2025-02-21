@@ -71,6 +71,9 @@ public class RobotMap {
     public static final int kJoystickControllerPort = 0;
     public static final int kXboxControllerPort = 1;
 
+    public static final int elevatorPort = 16;
+    public static final int encoderPort = 2;
+
     //Robot Devices
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
@@ -78,13 +81,11 @@ public class RobotMap {
     public static final ServoHub hub = new ServoHub(kServoPort);
     public static final BaseActuator intakeActuator = new CRHubServo(hub, 5);
     // public static final BaseActuator intakeActuator = new NEOMotor(kIntakeMotorPort, false);
-    public static final LimitSwitch firstIntakeLimit = new LimitSwitch(kFirstIntakeLimPort, false);
-    public static final LimitSwitch secondIntakeLimit = new LimitSwitch(kSecondIntakeLimPort, false);
     public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort);
 
 
     public static final BaseMotor elevatorMotor = new NEOMotor(elevatorPort, false);
-    public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(throughBoreEncoderPort);
+    public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(encoderPort);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
