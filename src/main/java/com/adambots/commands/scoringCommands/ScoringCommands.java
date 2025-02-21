@@ -4,10 +4,38 @@
 
 package com.adambots.commands.scoringCommands;
 
+import com.adambots.Constants.IntakeConstants;
+import com.adambots.subsystems.IntakeSubsystem;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 /**
  * Commands for scoring mechanisms
  */
 public class ScoringCommands {
-    
+
+    private final IntakeSubsystem intakeSubsystem;
+
+    public ScoringCommands(IntakeSubsystem intakeSubsystem) {
+        this.intakeSubsystem = intakeSubsystem;
+    }
+
+    public Command scoreCoral() {
+        // No coral - don't do anything
+        if (!intakeSubsystem.isDetectingCoral()) {
+            return Commands.none();
+        }
+
+        // run the intake, wait until the CANRange does not see a Coral, wait a bit,
+        // then stop the intake
+        return Commands.runOnce(() -> {
+            System.out.println("Score Command Running");
+            intakeSubsystem.intakeCoral();
+        }, intakeSubsystem)
+                .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
+                .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
+                .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
+    }
 
 }

@@ -2,6 +2,7 @@ package com.adambots;
 
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
@@ -36,6 +37,7 @@ public class TestContainer {
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
   private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem);
+  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -105,6 +107,8 @@ public class TestContainer {
     SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
     SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
     SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
+
+    SmartDashboard.putData("Score", scoringCommands.scoreCoral());
 
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
