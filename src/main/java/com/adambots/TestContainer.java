@@ -1,14 +1,17 @@
 package com.adambots;
 
+import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.*;
 
 /**
  * This class is an alternative to RobotContainer for testing purposes. Since
@@ -24,9 +27,11 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeActuator, RobotMap.CANrange);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
+  private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -73,7 +78,17 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-      
+    SmartDashboard.putData("Intake", intakeCommands.intake());
+    SmartDashboard.putData("Stop Intake", intakeCommands.stopIntake());
+    SmartDashboard.putData("Slow Intake", intakeCommands.slowIntake());
+    SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntake());
+
+    Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
+  //   SmartDashboard.putData(Commands.run( ()-> {
+  //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
+  //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());
+
+  //   }));
     }
   }
 
@@ -88,10 +103,10 @@ public class TestContainer {
    * Configure the dashboard with useful data for driving and debugging
    */
   private void setupDashboard() {
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
 
     // Adds various data to the dashboard that is useful for driving and debugging
-    SmartDashboard.putData("Auton Mode", autoChooser);
+    // SmartDashboard.putData("Auton Mode", autoChooser);
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }
@@ -107,6 +122,7 @@ public class TestContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return Commands.none();
   }
 }

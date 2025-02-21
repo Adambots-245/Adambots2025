@@ -12,15 +12,25 @@ import java.util.Map;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
+import com.adambots.actuators.TalonFXMotor;
+import com.adambots.sensors.BaseDistanceSensor;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.NEOMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.sensors.BaseGyro;
+import com.adambots.sensors.CANRangeSensor;
 import com.adambots.sensors.Gyro;
 import com.adambots.sensors.ThroughBoreEncoder;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
+import com.revrobotics.servohub.ServoHub;
+import com.adambots.actuators.BaseActuator;
+import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.BaseServo;
+import com.adambots.actuators.CRHubServo;
+import com.adambots.actuators.NEOMotor;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
@@ -50,19 +60,28 @@ public class RobotMap {
     public static final int kFrontLeftTurningMotorPort = 15;
     public static final int kFrontLeftDriveMotorPort = 22;  
 
+    // Intake Ports
+    public static final int kIntakeMotorPort = 16;
+    public static final int kFirstIntakeLimPort = 3;
+    public static final int kSecondIntakeLimPort = 4;
+    public static final int kCANrangePort = 35;
+    public static final int kServoPort = 45;
+
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
     public static final int kXboxControllerPort = 1;
-    
-    public static final int throughBoreEncoderPort = 2;
-
-    //Elevator Test Port
-    public static final int elevatorPort = 16;
 
     //Robot Devices
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+    public static final ServoHub hub = new ServoHub(kServoPort);
+    public static final BaseActuator intakeActuator = new CRHubServo(hub, 5);
+    // public static final BaseActuator intakeActuator = new NEOMotor(kIntakeMotorPort, false);
+    public static final LimitSwitch firstIntakeLimit = new LimitSwitch(kFirstIntakeLimPort, false);
+    public static final LimitSwitch secondIntakeLimit = new LimitSwitch(kSecondIntakeLimPort, false);
+    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort);
+
 
     public static final BaseMotor elevatorMotor = new NEOMotor(elevatorPort, false);
     public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(throughBoreEncoderPort);

@@ -167,6 +167,13 @@ public final class Constants {
     }
 
     // Subystem Constants go here
+    public final static class IntakeConstants {
+        public static final double kMaxSpeed = 1;
+        public static final double kLowSpeed = .5;
+        public static final double kReverseSpeed = -1;
+        public static final double kDistanceToDetect = 5;
+        public static final double kTimerThreshold = 2; // number of seconds to wait before stopping the intake after detecting a coral
 
+    }
     // Command Constants go here
 }
