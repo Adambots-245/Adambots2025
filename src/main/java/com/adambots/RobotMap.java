@@ -12,6 +12,9 @@ import java.util.Map;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
+import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.NEOMotor;
+
 import com.adambots.sensors.BaseGyro;
 import com.adambots.sensors.Gyro;
 import com.adambots.subsystems.SwerveModule;
@@ -50,10 +53,14 @@ public class RobotMap {
     public static final int kJoystickControllerPort = 0;
     public static final int kXboxControllerPort = 1;
 
+    //Elevator Test Port
+    public static final int elevatorPort = 16;
+
     //Robot Devices
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+    public static final BaseMotor elevatorMotor = new NEOMotor(elevatorPort, false);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
