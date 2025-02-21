@@ -8,5 +8,11 @@ package com.adambots.actuators;
  * Base interface for all actuators.
  */
 public interface BaseActuator {
+    /**
+     * Sets basic percent output (-1.0 to 1.0).
+     * 
+     * @param speed The speed to set (-1.0 to 1.0).
+     */
     void set(double speed);
+
 }
