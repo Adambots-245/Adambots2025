@@ -14,9 +14,10 @@ import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.NEOMotor;
-
+import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.sensors.Gyro;
+import com.adambots.sensors.ThroughBoreEncoder;
 import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
 
@@ -52,6 +53,8 @@ public class RobotMap {
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
     public static final int kXboxControllerPort = 1;
+    
+    public static final int throughBoreEncoderPort = 2;
 
     //Elevator Test Port
     public static final int elevatorPort = 16;
@@ -60,7 +63,9 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
+
     public static final BaseMotor elevatorMotor = new NEOMotor(elevatorPort, false);
+    public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(throughBoreEncoderPort);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

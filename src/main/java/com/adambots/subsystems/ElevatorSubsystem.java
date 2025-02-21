@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
@@ -17,7 +18,10 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.NEOMotor;
 import com.adambots.actuators.TalonFXMotor;
+import com.adambots.sensors.BaseAbsoluteEncoder;
+import com.adambots.sensors.ThroughBoreEncoder;
 import com.adambots.utils.StateMachine;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -47,6 +51,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Hardware
     BaseMotor wristMotor;
     BaseMotor elevatorMotor;
+    BaseAbsoluteEncoder encoder;
+
+    PIDController pid = new PIDController(0, 0, 0);
 
     // State Machine
     private final StateMachine<ElevatorState, ElevatorProperties> stateMachine;
@@ -55,12 +62,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     private static final double GEAR_RATIO = 10.0; // 10:1 gear ratio - every 10 rotations of motor is 1 rotation of
     private static final double DRUM_CIRCUMFERENCE = 2.0; // inches - drum or pulley mechanism at the top (Pi*D)
     private static final double INCHES_PER_ROTATION = DRUM_CIRCUMFERENCE / GEAR_RATIO;
-    private static final double POSITION_TOLERANCE = 0.5; // inches
+    private static final double ElEVATOR_POSITION_TOLERANCE = 0.5; // inches
+    private static final double WRIST_POSITION_TOLERANCE = 2; // degrees
 
-    public ElevatorSubsystem(BaseMotor elevatorMotor, BaseMotor wristMotor) {
+
+    public ElevatorSubsystem(BaseMotor elevatorMotor, BaseMotor wristMotor, BaseAbsoluteEncoder encoder) {
         // Initialize motor
         this.wristMotor = wristMotor;
         this.elevatorMotor = elevatorMotor;
+        this.encoder = encoder;
 
         configureMotor();
 
@@ -70,74 +80,43 @@ public class ElevatorSubsystem extends SubsystemBase {
                 message -> SmartDashboard.putString("Elevator/Status", message),
                 true // Using position control
         );
-
-        // Put mechanism to dashboard
-        // SmartDashboard.putData("Elevator Mechanism", mechanism);
     }
 
     private void configureMotor() {
-        // var config = new TalonFXConfiguration();
         elevatorMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
-
-        // Configure soft limits
-        // config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        // config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorState.L4.properties.heightInches()
-        //         / INCHES_PER_ROTATION;
-        // config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        // config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
         elevatorMotor.configureSoftLimits(ElevatorState.L4.properties.heightInches() / INCHES_PER_ROTATION, 0, true);
-
-        // Configure forward limit switch (bottom position)
-        // config.HardwareLimitSwitch.ForwardLimitEnable = true; // Enable hardware limit
-        // config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin; // Normally open
         elevatorMotor.configureHardLimits(true, false);
-
-        // elevatorMotor.getConfigurator().apply(config);
-        // elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
         elevatorMotor.setBrakeMode(true);
+
+        wristMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
+        wristMotor.configureSoftLimits(ElevatorState.L4.properties.wristAngle() / INCHES_PER_ROTATION, 0, true);
+        wristMotor.configureHardLimits(true, false);
+        wristMotor.setBrakeMode(true);
     }
 
     private void setPosition(ElevatorProperties properties) {
         // Set motor position
-        double rotations = properties.heightInches() / INCHES_PER_ROTATION;
-        // elevatorMotor.setControl(positionVoltage.withPosition(rotations));
-        elevatorMotor.setPosition(rotations);
-
-        // Update visualization
-        updateVisualization(properties);
+        double elevatorRotations = properties.heightInches() / INCHES_PER_ROTATION;
+        elevatorMotor.setPosition(elevatorRotations);
     }
 
-    private void updateVisualization(ElevatorProperties properties) {
-        // Calculate carriage position (scale height to visualization)
-        double maxHeight = ElevatorState.L4.properties.heightInches();
-        double normalizedHeight = properties.heightInches() / maxHeight;
-        // double visualHeight = normalizedHeight * 50; // 50 is max visual height
 
-        // Update carriage
-        // elevatorCarriage.setLength(5); // Keep constant length
-        // elevatorCarriage.setAngle(0); // Keep horizontal
-        // elevatorCarriage.setColor(properties.visualColor());
-
-        // // Update position directly on elevatorRoot
-        // elevatorRoot.setPosition(30, visualHeight);
-    }
-
-    private boolean isAtPosition() {
-        // double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
+    private boolean isWristAtPosition() {
         double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
-        return Math.abs(currentHeight - stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
+        // return Math.abs(currentHeight - stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
+        double wristSpeed = pid.calculate(encoder.getAbsolutePositionDegrees(), stateMachine.getTargetProperties().wristAngle());
+        wristMotor.set(wristSpeed);
+        return pid.atSetpoint();
     }
 
     @Override
     public void periodic() {
         // Get current position
-        // double currentHeight = (elevatorMotor.getPosition().getValueAsDouble() * INCHES_PER_ROTATION);
         double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
-
+        
 
         // If the limit switch at the bottom is hit, reset the encoder.
         if (elevatorMotor.getForwardLimitSwitch()) {
-            // if (elevatorMotor.getForwardLimit().getValue() == ForwardLimitValue.ClosedToGround) {
             elevatorMotor.setPosition(0);
         }
 
@@ -149,7 +128,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 stateMachine.getCurrentState().toString());
         SmartDashboard.putString("Elevator/StateDescription",
                 stateMachine.getCurrentState().properties.description());
-        SmartDashboard.putBoolean("Elevator/AtPosition", isAtPosition());
+        SmartDashboard.putBoolean("Elevator/AtPosition", isWristAtPosition());
     }
 
     // Public methods for commanding the elevator
@@ -157,28 +136,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         stateMachine.requestTransition(
                 state,
                 state.properties,
-                this::isAtPosition,
+                this::isWristAtPosition,
                 this::setPosition);
-    }
-
-    // Command factories
-    public Command moveToIntakeCommand() {
-        return Commands.runOnce(() -> moveToState(ElevatorState.INTAKE));
-    }
-
-    public Command moveToL1Command() {
-        return Commands.runOnce(() -> moveToState(ElevatorState.L1));
-    }
-
-    public Command moveToL2Command() {
-        return Commands.runOnce(() -> moveToState(ElevatorState.L2));
-    }
-
-    public Command moveToL3Command() {
-        return Commands.runOnce(() -> moveToState(ElevatorState.L3));
-    }
-
-    public Command moveToL4Command() {
-        return Commands.runOnce(() -> moveToState(ElevatorState.L4));
     }
 }
