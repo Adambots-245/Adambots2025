@@ -1,6 +1,8 @@
 package com.adambots;
 
+import com.adambots.commands.driveCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
@@ -28,10 +30,12 @@ public class TestContainer {
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
   IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.intakeActuator, RobotMap.CANrange);
+  ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor, RobotMap.wristMotor, RobotMap.encoder);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -84,6 +88,15 @@ public class TestContainer {
     SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntake());
 
     Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
+
+    SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
+    SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
+    SmartDashboard.putData("L2 State", elevatorCommands.moveToL2Command());
+    SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
+    SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
+
+
+
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
   //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());

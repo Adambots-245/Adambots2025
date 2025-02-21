@@ -35,7 +35,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Define states with their properties
     public enum ElevatorState {
-        INTAKE(new ElevatorProperties(0.0,  20, "Intake Position")),
+        INTAKE(new ElevatorProperties(0.0, 20, "Intake Position")),
         L1(new ElevatorProperties(12.0, 40, "Level 1")),
         L2(new ElevatorProperties(24.0, 60, "Level 2")),
         L3(new ElevatorProperties(36.0, 80, "Level 3")),
@@ -53,7 +53,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     BaseMotor elevatorMotor;
     BaseAbsoluteEncoder encoder;
 
-    PIDController pid = new PIDController(0, 0, 0);
+    PIDController pid = new PIDController(0.5, 0, 0);
 
     // State Machine
     private final StateMachine<ElevatorState, ElevatorProperties> stateMachine;
@@ -64,7 +64,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private static final double INCHES_PER_ROTATION = DRUM_CIRCUMFERENCE / GEAR_RATIO;
     private static final double ElEVATOR_POSITION_TOLERANCE = 0.5; // inches
     private static final double WRIST_POSITION_TOLERANCE = 2; // degrees
-
 
     public ElevatorSubsystem(BaseMotor elevatorMotor, BaseMotor wristMotor, BaseAbsoluteEncoder encoder) {
         // Initialize motor
@@ -83,15 +82,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void configureMotor() {
+        pid.setTolerance(2);
         elevatorMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
-        elevatorMotor.configureSoftLimits(ElevatorState.L4.properties.heightInches() / INCHES_PER_ROTATION, 0, true);
-        elevatorMotor.configureHardLimits(true, false);
+        // elevatorMotor.configureSoftLimits(ElevatorState.L4.properties.heightInches()
+        // / INCHES_PER_ROTATION, 0, true);
+        // elevatorMotor.configureHardLimits(true, false);
         elevatorMotor.setBrakeMode(true);
 
-        wristMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
-        wristMotor.configureSoftLimits(ElevatorState.L4.properties.wristAngle() / INCHES_PER_ROTATION, 0, true);
-        wristMotor.configureHardLimits(true, false);
-        wristMotor.setBrakeMode(true);
+        // wristMotor.setPID(0, 0.5, 0.0, 0.0, 0.0);
+        // wristMotor.configureSoftLimits(ElevatorState.L4.properties.wristAngle() /
+        // INCHES_PER_ROTATION, 0, true);
+        // wristMotor.configureHardLimits(true, false);
+        // wristMotor.setBrakeMode(true);
     }
 
     private void setPosition(ElevatorProperties properties) {
@@ -100,12 +102,20 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setPosition(elevatorRotations);
     }
 
-
     private boolean isWristAtPosition() {
         double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
-        // return Math.abs(currentHeight - stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
-        double wristSpeed = pid.calculate(encoder.getAbsolutePositionDegrees(), stateMachine.getTargetProperties().wristAngle());
+        System.out.println("ENcoder:" + encoder.getAbsolutePositionDegrees());
+        // return Math.abs(currentHeight -
+        // stateMachine.getTargetProperties().heightInches()) < POSITION_TOLERANCE;
+        double wristSpeed = pid.calculate(encoder.getAbsolutePositionDegrees(),
+                stateMachine.getTargetProperties().wristAngle());
+        System.out.println("WristSpeed: " + wristSpeed);
+
+        if (pid.atSetpoint())
+            wristSpeed = 0;
+
         wristMotor.set(wristSpeed);
+        
         return pid.atSetpoint();
     }
 
@@ -113,17 +123,20 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
         // Get current position
         double currentHeight = (elevatorMotor.getPosition() * INCHES_PER_ROTATION);
-        
+
+        stateMachine.periodic();
 
         // If the limit switch at the bottom is hit, reset the encoder.
-        if (elevatorMotor.getForwardLimitSwitch()) {
-            elevatorMotor.setPosition(0);
-        }
+        // if (elevatorMotor.getForwardLimitSwitch()) {
+        // elevatorMotor.setPosition(0);
+        // }
 
         // Update dashboard
         SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
         SmartDashboard.putNumber("Elevator/TargetHeight",
                 stateMachine.getTargetProperties().heightInches());
+        SmartDashboard.putNumber("Elevator/TargetAngle",
+                stateMachine.getTargetProperties().wristAngle());
         SmartDashboard.putString("Elevator/CurrentState",
                 stateMachine.getCurrentState().toString());
         SmartDashboard.putString("Elevator/StateDescription",
