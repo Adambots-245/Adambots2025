@@ -385,6 +385,38 @@ public class PhotonVision
 
   /**
    * Camera Enum to select each camera
+   * Google Search for WPILib Coorinate System for more information - https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
+   * 
+   * Rotation 3D:
+   * Roll: Side-to-side tilt (rarely used, usually 0)
+   * Pitch: Up/down angle
+   * 
+   * Use a digital angle finder or phone app
+   * Measure angle between horizontal and camera's forward view
+   * Positive = camera tilted up
+   * 
+   * 
+   * Yaw: Left/right angle from robot's forward direction
+   * 
+   * Positive = camera rotated left
+   * Negative = camera rotated right
+   * 
+   * Translation 3D:
+   * Define robot center (typically center of rotation between wheels)
+   * Measure with a tape measure/ruler:
+
+   * X: Distance forward(+) or back(-) from robot center to camera lens
+   * Y: Distance left(+) or right(-) from robot center to camera lens
+   * Z: Height from floor to camera lens
+   * 
+   * VecBuilder:
+   * Represents the standard deviations (uncertainty) for vision measurements.
+   * First number: X position uncertainty in meters
+   * Second number: Y position uncertainty in meters
+   * Third number: rotation uncertainty in radians
+   * 
+   * Higher values = less trust in vision
+   * Lower values =  more trust in vision
    */
   public enum Cameras
   {
