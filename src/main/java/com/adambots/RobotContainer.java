@@ -6,11 +6,14 @@ import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.subsystems.WristSubsystem;
+import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
+import com.adambots.subsystems.WristSubsystem.WristState;
 import com.adambots.utils.Buttons;
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -49,6 +52,7 @@ public class RobotContainer {
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
   private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem);
+  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -114,6 +118,31 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(Commands.none());
       Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
       Buttons.XboxRightBumper.onTrue(Commands.none());
+      
+      Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
+      Buttons.JoystickButton2.onTrue(scoringCommands.stopScoringAlgae());
+      Buttons.JoystickButton3.onTrue(scoringCommands.scoreCoral());
+      Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
+      Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));
+      Buttons.JoystickButton6.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.INTAKE));
+      Buttons.JoystickButton8.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L1));
+      Buttons.JoystickButton9.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L2));
+      Buttons.JoystickButton10.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
+      Buttons.JoystickButton11.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
+      Buttons.JoystickButton12.onTrue(elevatorCommands.moveWristToStowedCommand());
+      Buttons.JoystickButton13.onTrue(elevatorCommands.moveWristToIntakeCommand());
+      Buttons.JoystickButton14.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
+      Buttons.JoystickButton15.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
+      Buttons.JoystickButton16.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L3));
+
+      Buttons.XboxAButton.onTrue(elevatorCommands.moveToL1Command());
+      Buttons.XboxBButton.onTrue(elevatorCommands.moveToL2Command());
+      Buttons.XboxXButton.onTrue(elevatorCommands.moveToL3Command());
+      Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
+      Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeAlgae());
+      Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
+      Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
+      Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
     }
 
     // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);

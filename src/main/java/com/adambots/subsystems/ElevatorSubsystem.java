@@ -16,12 +16,6 @@ public class ElevatorSubsystem extends SubsystemBase {
             String description) {
     }
 
-    // Properties for Wrist State
-    public record WristProperties(
-            double angleDegrees,
-            String description) {
-    }
-
     // Define elevator states
     public enum ElevatorState {
         INTAKE(new ElevatorProperties(ElevatorConstants.kElevatorIntakePosition, "Intake Position")),
@@ -55,8 +49,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                 message -> SmartDashboard.putString("Elevator/Status", message),
                 true // Using position control
         );
-
-        // Initialize wrist state machine without position control
     }
 
     private void configureMotors() {
