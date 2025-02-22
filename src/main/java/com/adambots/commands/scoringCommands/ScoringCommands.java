@@ -39,4 +39,20 @@ public class ScoringCommands {
                 .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
     }
 
+    public Command scoreAlgae() {
+        return Commands.runOnce(intakeSubsystem::reverseAlgaeIntake, intakeSubsystem);
+    }
+
+    public Command stopScoringAlgae() {
+        return Commands.runOnce(intakeSubsystem::stopAlgaeIntake, intakeSubsystem);
+    }
+
+    public Command stopScoringCoral() {
+        return Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem);
+    }
+
+    public Command scoreCoralContinuous() {
+        return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem);
+    }
+
 }
