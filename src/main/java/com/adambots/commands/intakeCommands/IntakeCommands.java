@@ -13,33 +13,54 @@ public class IntakeCommands {
         this.intakeSubsystem = intakeSubsystem;
     }
 
-    public Command intake() {
+    public Command intakeCoral() {
         return Commands.runOnce(() -> {
                 System.out.println("Intake Command Running");
-                intakeSubsystem.intake();
+                intakeSubsystem.intakeCoral();
             }, intakeSubsystem)
-            .andThen(Commands.waitUntil(intakeSubsystem::isDetecting))
+            .andThen(Commands.waitUntil(intakeSubsystem::isDetectingCoral))
             .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold))
-            .andThen(Commands.runOnce(intakeSubsystem::stopIntake, intakeSubsystem));
+            .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
     }
 
-    public Command reverseIntake() {
+    public Command reverseIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::reverseIntake,
+            intakeSubsystem::reverseCoralIntake,
             intakeSubsystem
         );
     }
 
-    public Command slowIntake() {
+    public Command slowIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::slowIntake,
+            intakeSubsystem::slowCoralIntake,
             intakeSubsystem
         );
     }
 
-    public Command stopIntake() {
+    public Command stopIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::stopIntake,
+            intakeSubsystem::stopCoralIntake,
+            intakeSubsystem
+        );
+    }
+
+    public Command intakeAlgae() {
+        return Commands.runOnce(
+            intakeSubsystem::intakeAlgae,
+            intakeSubsystem
+        );
+    }
+    
+    public Command stopIntakeAlgae() {
+        return Commands.runOnce(
+            intakeSubsystem::stopAlgaeIntake,
+            intakeSubsystem
+        );
+    }
+
+    public Command reverseIntakeAlgae() {
+        return Commands.runOnce(
+            intakeSubsystem::reverseAlgaeIntake,
             intakeSubsystem
         );
     }

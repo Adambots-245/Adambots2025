@@ -11,7 +11,7 @@ public interface BaseActuator {
     /**
      * Sets basic percent output (-1.0 to 1.0).
      * 
-     * @param speed The speed to set (-1.0 to 1.0).
+     * @param speed The speed to set (-1.0 to 1.0). For servos, -1 is full CCW, 1 is full CW.
      */
     void set(double speed);
 
