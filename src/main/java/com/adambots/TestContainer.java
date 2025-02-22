@@ -4,6 +4,8 @@ import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.WristSubsystem;
+
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
@@ -31,12 +33,13 @@ public class TestContainer {
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
   IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
-  ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor, RobotMap.wristMotor, RobotMap.encoder);
+  ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
+  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.encoder);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
-  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem);
   private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
@@ -84,10 +87,10 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-    SmartDashboard.putData("Intake", intakeCommands.intakeCoral());
-    SmartDashboard.putData("Stop Intake", intakeCommands.stopIntakeCoral());
-    SmartDashboard.putData("Slow Intake", intakeCommands.slowIntakeCoral());
-    SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntakeCoral());
+    SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
+    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
+    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
+    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
 
     Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
 
@@ -99,16 +102,19 @@ public class TestContainer {
 
     SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
     SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
-    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L1));
-    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L2));
-    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L3));
-    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(ElevatorSubsystem.WristState.L4));
+    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L1));
+    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
+    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
+    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
 
     SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
     SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
     SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
 
     SmartDashboard.putData("Score", scoringCommands.scoreCoral());
+
+    SmartDashboard.putData("Servo test", Commands.runOnce(()-> RobotMap.bottomCoralActuator.set(1)));
+    Dash.add("isDetecting", () -> intakesubsystem.isDetectingCoral());
 
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
