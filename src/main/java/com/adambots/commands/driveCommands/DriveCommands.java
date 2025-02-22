@@ -108,6 +108,7 @@ public class DriveCommands {
                     swerveDrive.getMaximumChassisVelocity(), 4.0,
                     swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
     
+                    System.out.println("Working");
             // Since AutoBuilder is configured, we can use it to build pathfinding commands
             return AutoBuilder.pathfindToPose(
                     pose,
@@ -115,6 +116,56 @@ public class DriveCommands {
                     edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
             );
         }
+
+        // public Command driveToPoseAdvanced() {
+        //     Pose2d waypoint = new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)));
+        //     driveToPose(waypoint);
+        //     return null;
+        // }
+
+        /**
+     * Aligns with AprilTag and then strafes sideways relative to the tag
+     * 
+     * @param tagId              The AprilTag to align with
+     * @param strafeDistance     Distance to strafe in meters (positive = left,
+     *                           negative = right)
+     * @param strafeSpeed        Speed to strafe at in meters per second
+     * @param alignmentTolerance Tolerance in degrees for alignment
+     */
+    public Command alignAndStrafeCommand(int tagId, double strafeDistance, double strafeSpeed,
+            double alignmentTolerance) {
+        return Commands.sequence(
+                // First align with the AprilTag
+                aimAtAprilTag(tagId, alignmentTolerance),
+
+                // Then strafe the specified distance
+                Commands.sequence(
+                        // Record start position
+                        Commands.runOnce(() -> {
+                            startPose = swerveDrive.getPose();
+                        }),
+
+                        // Drive sideways
+                        Commands.run(() -> {
+                            // Sign of strafeDistance determines direction (positive = left)
+                            double speedY = Math.copySign(strafeSpeed, strafeDistance);
+                            subsystem.drive(
+                                    new Translation2d(0, speedY), // Only Y movement
+                                    0, // No rotation
+                                    true // Field relative
+                            );
+                        })
+                                .until(() -> {
+                                    // Calculate distance traveled sideways
+                                    double distanceTraveled = Math.abs(
+                                            swerveDrive.getPose().getTranslation().getY() -
+                                                    startPose.getTranslation().getY());
+                                    return distanceTraveled >= Math.abs(strafeDistance);
+                                }),
+
+                        // Stop moving
+                Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))));
+    }
     
         /**
          * Drive with {@link SwerveSetpointGenerator} from 254, implemented by

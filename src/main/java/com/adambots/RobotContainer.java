@@ -95,11 +95,10 @@ public class RobotContainer {
     } else {
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
-      // Buttons.JoystickButton7.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(14.381, 4.035), new Rotation2d(Math.toRadians(-180))), driveCommands));
-      // Buttons.JoystickButton6.whileTrue(new DriveToWaypointAdvancedCommand(swerveSubsystem, false));
       Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)))));
-      Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))) ,driveCommands));
-      Buttons.JoystickButton7.whileTrue(new DriveToWaypointAdvancedCommand(swerveSubsystem, true));
+      // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)))));
+      // Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))) ,driveCommands));
+      // Buttons.JoystickButton7.whileTrue(driveCommands.driveToPoseAdvanced());
       Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
