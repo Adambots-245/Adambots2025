@@ -4,15 +4,14 @@ import java.io.File;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
+import com.adambots.commands.driveCommands.DriveToWaypointAdvancedCommand;
+import com.adambots.commands.driveCommands.DriveToWaypointCommand;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
-import com.adambots.utils.Dash;
-import com.adambots.vision.PhotonVision;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -23,10 +22,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import swervelib.SwerveInputStream;
 import swervelib.SwerveInputStream;
 
 /**
@@ -98,7 +93,14 @@ public class RobotContainer {
       // Buttons.JoystickButton6.onTrue(new InstantCommand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+
+      // Buttons.JoystickButton7.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(14.381, 4.035), new Rotation2d(Math.toRadians(-180))), driveCommands));
+      // Buttons.JoystickButton6.whileTrue(new DriveToWaypointAdvancedCommand(swerveSubsystem, false));
+      Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)))));
+      Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))) ,driveCommands));
+      Buttons.JoystickButton7.whileTrue(new DriveToWaypointAdvancedCommand(swerveSubsystem, true));
+      Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
       Buttons.XboxBButton.whileTrue(

@@ -8,6 +8,25 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.awt.Desktop;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.PhotonUtils;
+import org.photonvision.simulation.PhotonCameraSim;
+import org.photonvision.simulation.SimCameraProperties;
+import org.photonvision.simulation.VisionSystemSim;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import com.adambots.Robot;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -26,24 +45,6 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import java.awt.Desktop;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import com.adambots.Robot;
-
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
@@ -286,6 +287,28 @@ public class PhotonVision
 
   }
 
+  public int hasID(int[] tagIDs)
+  {
+    for (Cameras camera : Cameras.values()){
+      for (PhotonPipelineResult result : camera.resultsList)
+      {
+        if (result.hasTargets())
+        {
+          for (PhotonTrackedTarget i : result.getTargets())
+          {
+            for (int id : tagIDs) {
+              if (i.getFiducialId() == id)
+              {
+                return i.getFiducialId();
+              }
+            }
+          }
+        }
+      }
+    }
+    return -1;
+  }
+
   /**
    * Vision simulation.
    *
@@ -368,20 +391,20 @@ public class PhotonVision
     /**
      * Left Camera
      */
-    LEFT_CAM("Left",
-             new Rotation3d(0, Math.toRadians(-5), Math.toRadians(0)),
-             new Translation3d(Units.inchesToMeters(-11.5),
-                               Units.inchesToMeters(11.0),
-                               Units.inchesToMeters(-7.5)),
-             VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    // LEFT_CAM("Left",
+    //          new Rotation3d(0, Math.toRadians(-5), Math.toRadians(-20)),
+    //          new Translation3d(Units.inchesToMeters(-11.5),
+    //                            Units.inchesToMeters(11.0),
+    //                            Units.inchesToMeters(-7.5)),
+    //          VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
     RIGHT_CAM("Right",
               new Rotation3d(0, Math.toRadians(-5), Math.toRadians(0)),
-              new Translation3d(Units.inchesToMeters(-11.5),
-                                Units.inchesToMeters(-11.0),
-                                Units.inchesToMeters(-7.5)),
+              new Translation3d(Units.inchesToMeters(-5.5),
+                                Units.inchesToMeters(0),
+                                Units.inchesToMeters(7)),
               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
     /**
      * Center Camera
