@@ -11,25 +11,22 @@ to get a proper path relative to the deploy directory.
 * Turn the Swerve Modules in such a way that the bevel gears are pointing to the left, when the robot's front is ahead of you.
 ![Robot Image](https://docs.yagsl.com/~gitbook/image?url=https%3A%2F%2F567506766-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252F754c0Fpq8fBi6k4ByS1k%252Fuploads%252FP8kIHNspDzTMqBiHw1U1%252Fimage.png%3Falt%3Dmedia%26token%3D9923865e-47c7-4b1e-90a5-9da9610c0764&width=768&dpr=1&quality=100&sign=6a519e95&sv=2)
 
-## Module Files (backleft, backright, frontleft, frontright - deploy/swerve/kraken/modules/)
+## Edit the Module JSON Files (backleft, backright, frontleft, frontright - deploy/swerve/kraken/modules/)
 * Note and change the drive type (Kraken uses talonfx) - talonfx for drive and sparkmax_neo for angle
-* Use Phoneix tuner (talonfx and cancoder) and Rev Robotics Tool(sparkmax_neo) to find the ID for the devices and change the CAN ID
+* Use Phoneix tuner (talonfx and cancoder) and Rev Robotics Tool(sparkmax_neo) to find the ID for the devices and set the CAN ID in the id field.
 * Rotate the drive wheel CCW (moving “forward”) - Check in Phoenix tuner that the built-in encoder value is increasing. If not, invert the drive motor (set inverted = true).
-* Rotate the angle wheel CCW (when viewed from the top) - Check in Rev Tool - The built-in encoder value should increase. If not, invert the angle motor.
-* Measure the module center relative to the robot center. Use a measuring tape to find the horizontal (left/right) and vertical (front/back) distances from the robot's center to the center of each swerve module. Distances toward the front and left are positive; distances toward the back and right are negative. So, FL (X is +ve, Y is +ve), FR (+, -), BL (-, +), BR (-, -).
-* If we are using a CANivore device to create a separate CAN bus, only then set the canbus proprty to "canivore". If not, leave it null.
+* Rotate the entire swerve CCW (when viewed from the top) - Check in Rev Tool - The built-in encoder value should increase. If not, invert the angle motor.
+* Measure the swerve module's center relative to the robot center. Use a measuring tape to find the horizontal (left/right) and vertical (front/back) distances from the robot's center to the center of each swerve module. Distances toward the front and left are positive; distances toward the back and right are negative. So, FL (X is +ve, Y is +ve), FR (+, -), BL (-, +), BR (-, -).
+* If we are using a CANivore device to create a separate CAN bus, only then set the canbus proprty to "canivore". If not, leave it null. Typically, we don't use canivore for drivetrain.
 
 ## Absolute Encoder Offset
 * Turn Robot On (Disabled so the wheels can be turned manually)
-* Manually Turn All 4 wheels so that they are all pointing forward and forward rotation results in increasing drive encoder values
+* Set the robot wheels as shown in the diagram above. Use a straight-edge to ensure that the wheels are all aligned straight.
 * Launch Phoenix Tuner: Open the Phoenix Tuner application on your computer.
-* Establish Connection: Ensure your computer is connected to the robot's control system via USB or network. Verify that Phoenix Tuner recognizes all connected CAN devices, including the CANCoders.
-* Device List: In Phoenix Tuner, navigate to the "CAN Devices" tab to view all devices on the CAN bus.
-* Select CANCoder: Locate the CANCoder corresponding to the swerve module you're calibrating. Devices are typically listed by their CAN IDs; ensure you select the correct one.
-* Self-Test Snapshot: With the CANCoder selected, perform a "Self-Test Snapshot" to retrieve the current sensor readings.
-* Note Position Value: In the self-test results, locate the "Absolute Position" value, which is usually in degrees. Record this value, as it represents the current angle of the wheel relative to the CANCoder's zero position.
-* Determine Desired Offset: Since the wheels are aligned to a known reference (e.g., facing forward), the goal is to set this position as zero degrees. The offset needed is the negative of the recorded absolute position. For instance, if the absolute position reads 150 degrees, the required offset is -150 degrees.
-* Check the SwerveSubsystem code - if pushOffsetsToEncoders is enabled, then set the offset value we got in previous step in the JSON file. If not, set the magnet offsets in Phoenix Tuner.
+* Zero out all the absoluteEncoderOffset values in all the JSON files.
+* Deploy the code to the robot and then open up shuffleboard. Locate the swerve/rawencodervalue in shuffleboard and note down the values for all the modules.
+* Determine Desired Offset: Since the wheels are aligned to a known reference (e.g., facing forward), the goal is to set this position as zero degrees. 
+* Set the values you found in the JSON files as the absoluteEncoderOffset values. Save and re-deploy. Now the shuffleboard values for the absolute encoder values should be near zero.
 
 ## Physical Properties (deploy/swerve/kraken/modules/physicalproperties.json)
 - Angle Gear Ratio - The MK4i Swerve Module from Swerve Drive Specialties features a steering (angle) gear ratio of 150/7:1, which is approximately 21.43:1. This gear ratio remains constant across all configurations of the MK4i module, including when using different drive gear ratios such as L2 or L2+. A 21.43:1 gear ratio means that the motor must rotate approximately 21.43 times to produce one complete rotation of the steering mechanism.

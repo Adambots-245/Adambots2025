@@ -1,0 +1,109 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package com.adambots.subsystems;
+
+import com.adambots.Constants.IntakeConstants;
+import com.adambots.actuators.BaseActuator;
+import com.adambots.sensors.BaseDistanceSensor;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class IntakeSubsystem extends SubsystemBase {
+  // private BaseMotor intakeMotor;
+  private BaseActuator topCoralActuator;
+  private BaseActuator bottomCoralActuator;
+  private double coralIntakeSpeed = 0.0;
+  private double algaeIntakeSpeed = 0.0;
+
+  private int counter = 0;
+  private BaseDistanceSensor CANrange;
+  private BaseActuator algaeGripper;
+  private BaseActuator algaeRunner;
+
+  /**
+   * Constructor for IntakeSubsystem - used to intake coral and algae
+   * @param topCoralActuator - top actuator for coral intake
+   * @param bottomCoralActuator - bottom actuator for coral intake; if we are using only one, pass null to this
+   * @param algaeGripper - actuator for algae gripper - a servo set to angular (SERVO) mode
+   * @param algaeRunner - actuator for algae runner - a motor set to CR mode
+   * @param CANrange - distance sensor for detecting coral
+   */
+  public IntakeSubsystem(BaseActuator topCoralActuator, BaseActuator bottomCoralActuator,
+      BaseActuator algaeGripper, BaseActuator algaeRunner, BaseDistanceSensor CANrange) {
+
+    this.CANrange = CANrange;
+    this.topCoralActuator = topCoralActuator;
+    this.bottomCoralActuator = bottomCoralActuator;
+
+    this.algaeGripper = algaeGripper;
+    this.algaeRunner = algaeRunner;
+  }
+
+  public void intakeCoral() {
+    System.out.println("Calling Intake");
+    coralIntakeSpeed = IntakeConstants.kMaxSpeed;
+  }
+
+  public void stopCoralIntake() {
+    coralIntakeSpeed = 0;
+  }
+
+  public void reverseCoralIntake() {
+    coralIntakeSpeed = IntakeConstants.kReverseSpeed;
+  }
+
+  public void slowCoralIntake() {
+    coralIntakeSpeed = IntakeConstants.kLowSpeed;
+  }
+
+  public boolean isDetectingCoral() {
+    return CANrange.getDistanceInCentimeters() < IntakeConstants.kDistanceToDetect;
+  }
+
+  public void intakeAlgae() {
+    algaeIntakeSpeed = IntakeConstants.kMaxSpeed;
+    counter = 0;
+  }
+
+  public void stopAlgaeIntake() {
+    algaeIntakeSpeed = 0;
+  }
+
+  public void reverseAlgaeIntake() {
+    algaeIntakeSpeed = IntakeConstants.kReverseSpeed;
+  } 
+
+  @Override
+  public void periodic() {
+
+    topCoralActuator.set(coralIntakeSpeed); // run CW to intake coral
+
+    if (bottomCoralActuator != null) {
+      bottomCoralActuator.set(-coralIntakeSpeed); // run CCW to intake coral
+    }
+
+
+    // Algae intake logic - there two servos, one to grip the Algae and one to run the Algae into the intake.
+    // the gripper is running in servo mode, so it will hold the algae in place until the runner is ready to intake it.
+    // the runner is running in CR mode, so it will run the algae into the intake. However, it won't be able to keep gripping it.
+    // Hence, wait for x number of secods (pulse) before stopping the runner and then restarting it. If you don't do this, the servo will stop the runner to prevent brownouts.
+    // Do this only for positive speeds. If you want to reverse the intake, don't do this.
+    if (algaeIntakeSpeed > 0) { //intake the algae
+
+      // This loop will run every 20 ms. So, convert the seconds to milliseconds and divide by 20 to get the number of loops to run.
+      if (counter >= (IntakeConstants.kAlgaeIntakePulseSeconds * 1000/20)) {
+        algaeRunner.set(0);
+        counter = 0;
+      } else {
+        algaeRunner.set(algaeIntakeSpeed);
+        algaeGripper.set(-algaeIntakeSpeed);
+        counter++;
+      }
+
+    } else { // Reverse or stop the algae intake
+      algaeRunner.set(algaeIntakeSpeed);
+      algaeGripper.set(-algaeIntakeSpeed);
+    }
+  }
+}

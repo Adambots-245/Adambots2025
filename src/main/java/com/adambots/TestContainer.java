@@ -1,14 +1,22 @@
 package com.adambots;
 
+import com.adambots.commands.elevatorCommands.ElevatorCommands;
+import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.commands.scoringCommands.ScoringCommands;
+import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.WristSubsystem;
+
+import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.*;
 
 /**
  * This class is an alternative to RobotContainer for testing purposes. Since
@@ -24,9 +32,15 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
+  ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
+  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.encoder);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
+  private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem);
+  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -73,7 +87,40 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-      
+    SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
+    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
+    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
+    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
+
+    Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
+
+    SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
+    SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
+    SmartDashboard.putData("L2 State", elevatorCommands.moveToL2Command());
+    SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
+    SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
+
+    SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
+    SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
+    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L1));
+    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
+    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
+    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
+
+    SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
+    SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
+    SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
+
+    SmartDashboard.putData("Score", scoringCommands.scoreCoral());
+
+    SmartDashboard.putData("Servo test", Commands.runOnce(()-> RobotMap.bottomCoralActuator.set(1)));
+    Dash.add("isDetecting", () -> intakesubsystem.isDetectingCoral());
+
+  //   SmartDashboard.putData(Commands.run( ()-> {
+  //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());
+  //     SmartDashboard.putBoolean("LimitSwitch2", RobotMap.secondIntakeLimit.isDetecting());
+
+  //   }));
     }
   }
 
@@ -88,10 +135,10 @@ public class TestContainer {
    * Configure the dashboard with useful data for driving and debugging
    */
   private void setupDashboard() {
-    autoChooser = AutoBuilder.buildAutoChooser();
+    // autoChooser = AutoBuilder.buildAutoChooser();
 
     // Adds various data to the dashboard that is useful for driving and debugging
-    SmartDashboard.putData("Auton Mode", autoChooser);
+    // SmartDashboard.putData("Auton Mode", autoChooser);
 
     Dash.add("getRawZ", () -> Buttons.ex3dPro.getZ());
   }
@@ -107,6 +154,7 @@ public class TestContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return Commands.none();
   }
 }

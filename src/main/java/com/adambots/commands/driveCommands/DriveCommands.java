@@ -47,83 +47,37 @@ public class DriveCommands {
     private final SwerveSubsystem subsystem;
     private final SwerveDrive swerveDrive;
     private SwerveController controller;
-        private Pose2d startPose;
-    
-        public DriveCommands(SwerveSubsystem swerveDriveSubsystem) {
-            this.subsystem = swerveDriveSubsystem;
-            this.swerveDrive = swerveDriveSubsystem.getSwerveDrive();
-            controller = swerveDrive.getSwerveController();
-        }
-    
-        /**
-         * Aim the robot at a specific Tag. Turn until it is aligned
-         *
-         * @param tolerance Tolerance in degrees within which the drive can stop
-         * @return Command to turn the robot to the Tag.
-         */
-        public Command aimAtAprilTag(int tagId, double tolerance) {
-            return Commands.run(
-                    () -> {
-                        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
-                                controller.headingCalculate(subsystem.getHeading().getRadians(),
-                                        subsystem.getAprilTagYaw(tagId).getRadians()),
-                                subsystem.getHeading());
-                        System.out.println("RObot Rotoation " + subsystem.getHeading());
-                        System.out.println("Aptil Tag Rotoation " + subsystem.getAprilTagYaw(tagId).getRadians());
-                        // System.out.println(speeds.omegaRadiansPerSecond);
-                        subsystem.drive(speeds);
-                        
-                    }).until(() -> Math.abs(
-                            subsystem.getAprilTagYaw(tagId).minus(subsystem.getHeading()).getDegrees()) < tolerance);
-        }
-    
-        /**
-         * Aim the robot at the target returned by PhotonVision.
-         *
-         * @return A {@link Command} which will run the alignment.
-         */
-        public Command aimAtTarget(Cameras camera) {
-    
-            return Commands.run(() -> {
-                Optional<PhotonPipelineResult> resultO = camera.getBestResult();
-                if (resultO.isPresent()) {
-                    var result = resultO.get();
-                    if (result.hasTargets()) {
-                        subsystem.drive(subsystem.getTargetSpeeds(0, 0,
-                                Rotation2d.fromDegrees(result.getBestTarget().getYaw())));
-                    }
-                }
-            });
-        }
-    
-        /**
-         * Use PathPlanner Path finding to go to a point on the field.
-         *
-         * @param pose Target {@link Pose2d} to go to.
-         * @return PathFinding command
-         */
-        public Command driveToPose(Pose2d pose) {
-            // Create the constraints to use while pathfinding
-            PathConstraints constraints = new PathConstraints(
-                    swerveDrive.getMaximumChassisVelocity(), 4.0,
-                    swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
-    
-                    System.out.println("Working");
-            // Since AutoBuilder is configured, we can use it to build pathfinding commands
-            return AutoBuilder.pathfindToPose(
-                    pose,
-                    constraints,
-                    edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-            );
-        }
+    private Pose2d startPose;
 
-        // public Command driveToPoseAdvanced() {
-        //     Pose2d waypoint = new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)));
-        //     driveToPose(waypoint);
-        //     return null;
-        // }
+    public DriveCommands(SwerveSubsystem swerveDriveSubsystem) {
+        this.subsystem = swerveDriveSubsystem;
+        this.swerveDrive = swerveDriveSubsystem.getSwerveDrive();
+        controller = swerveDrive.getSwerveController();
+    }
 
-        /**
+    /**
+     * Aim the robot at a specific Tag. Turn until it is aligned
+     *
+     * @param tolerance Tolerance in degrees within which the drive can stop
+     * @return Command to turn the robot to the Tag.
+     */
+    public Command aimAtAprilTag(int tagId, double tolerance) {
+        return Commands.run(
+                () -> {
+                    ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
+                            controller.headingCalculate(subsystem.getHeading().getRadians(),
+                                    subsystem.getAprilTagYaw(tagId).getRadians()),
+                            subsystem.getHeading());
+                    System.out.println("RObot Rotoation " + subsystem.getHeading());
+                    System.out.println("Aptil Tag Rotoation " + subsystem.getAprilTagYaw(tagId).getRadians());
+                    // System.out.println(speeds.omegaRadiansPerSecond);
+                    subsystem.drive(speeds);
+
+                }).until(() -> Math.abs(
+                        subsystem.getAprilTagYaw(tagId).minus(subsystem.getHeading()).getDegrees()) < tolerance);
+    }
+
+    /**
      * Aligns with AprilTag and then strafes sideways relative to the tag
      * 
      * @param tagId              The AprilTag to align with
@@ -166,127 +120,170 @@ public class DriveCommands {
                         // Stop moving
                 Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))));
     }
-    
-        /**
-         * Drive with {@link SwerveSetpointGenerator} from 254, implemented by
-         * PathPlanner.
-         *
-         * @param robotRelativeChassisSpeed Robot relative {@link ChassisSpeeds} to
-         *                                  achieve.
-         * @return {@link Command} to run.
-         * @throws IOException    If the PathPlanner GUI settings is invalid
-         * @throws ParseException If PathPlanner GUI settings is nonexistent.
-         */
-        private Command driveWithSetpointGenerator(Supplier<ChassisSpeeds> robotRelativeChassisSpeed)
-                throws IOException, ParseException {
-            SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(RobotConfig.fromGUISettings(),
-                    swerveDrive.getMaximumChassisAngularVelocity());
-            AtomicReference<SwerveSetpoint> prevSetpoint = new AtomicReference<>(
-                    new SwerveSetpoint(swerveDrive.getRobotVelocity(),
-                            swerveDrive.getStates(),
-                            DriveFeedforwards.zeros(swerveDrive.getModules().length)));
-            AtomicReference<Double> previousTime = new AtomicReference<>();
-    
-            return Commands.startRun(() -> previousTime.set(Timer.getFPGATimestamp()),
-                    () -> {
-                        double newTime = Timer.getFPGATimestamp();
-                        SwerveSetpoint newSetpoint = setpointGenerator.generateSetpoint(prevSetpoint.get(),
-                                robotRelativeChassisSpeed.get(),
-                                newTime - previousTime.get());
-                        swerveDrive.drive(newSetpoint.robotRelativeSpeeds(),
-                                newSetpoint.moduleStates(),
-                                newSetpoint.feedforwards().linearForces());
-                        prevSetpoint.set(newSetpoint);
-                        previousTime.set(newTime);
-    
-                    });
-        }
-    
-        /**
-         * Drive with 254's Setpoint generator; port written by PathPlanner.
-         *
-         * @param fieldRelativeSpeeds Field-Relative {@link ChassisSpeeds}
-         * @return Command to drive the robot using the setpoint generator.
-         */
-        public Command driveWithSetpointGeneratorFieldRelative(Supplier<ChassisSpeeds> fieldRelativeSpeeds) {
-            try {
-                return driveWithSetpointGenerator(() -> {
-                    return ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds.get(), subsystem.getHeading());
-    
-                });
-            } catch (Exception e) {
-                DriverStation.reportError(e.toString(), true);
+
+    /**
+     * Aim the robot at the target returned by PhotonVision.
+     *
+     * @return A {@link Command} which will run the alignment.
+     */
+    public Command aimAtTarget(Cameras camera) {
+
+        return Commands.run(() -> {
+            Optional<PhotonPipelineResult> resultO = camera.getBestResult();
+            if (resultO.isPresent()) {
+                var result = resultO.get();
+                if (result.hasTargets()) {
+                    subsystem.drive(subsystem.getTargetSpeeds(0, 0,
+                            Rotation2d.fromDegrees(result.getBestTarget().getYaw())));
+                }
             }
-            return Commands.none();
-        }
-    
-        /**
-         * Command to characterize the robot drive motors using SysId
-         *
-         * @return SysId Drive Command
-         */
-        public Command sysIdDriveMotorCommand() {
-            return SwerveDriveTest.generateSysIdCommand(
-                    SwerveDriveTest.setDriveSysIdRoutine(
-                            new Config(),
-                            subsystem, swerveDrive, 12.0, true),
-                    3.0, 5.0, 3.0);
-        }
-    
-        /**
-         * Command to characterize the robot angle motors using SysId
-         *
-         * @return SysId Angle Command
-         */
-        public Command sysIdAngleMotorCommand() {
-            return SwerveDriveTest.generateSysIdCommand(
-                    SwerveDriveTest.setAngleSysIdRoutine(
-                            new Config(),
-                            subsystem, swerveDrive),
-                    3.0, 5.0, 3.0);
-        }
-    
-        /**
-         * Returns a Command that centers the modules of the SwerveDrive subsystem.
-         *
-         * @return a Command that centers the modules of the SwerveDrive subsystem
-         */
-        public Command centerModulesCommand() {
-            return Commands.run(() -> Arrays.asList(swerveDrive.getModules())
-                    .forEach(it -> it.setAngle(0.0)));
-        }
-    
-        /**
-         * Returns a Command that drives the swerve drive to a specific distance at a
-         * given speed.
-         *
-         * @param distanceInMeters       the distance to drive in meters
-         * @param speedInMetersPerSecond the speed at which to drive in meters per
-         *                               second
-         * @return a Command that drives the swerve drive to a specific distance at a
-         *         given speed
-         */
-        public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond) {
-            return Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
-                    .until(() -> swerveDrive.getPose().getTranslation().getDistance(new Translation2d(0, 0)) > distanceInMeters);
-        }
-        // fixed
-        public Command driveToDistanceCommandFixed(double distanceInMeters, double speedInMetersPerSecond) {
-            // Translation2d startPos = swerveDrive.getPose().getTranslation();
-            // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: " +startPos.getY());
-    
-            return Commands.sequence(
-                Commands.runOnce(()-> {
-                    startPose = swerveDrive.getPose();
-            }),
-            Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
-                .until(() -> {
-                    // Translation2d startPos = swerveDrive.getPose().getTranslation();
-                    // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: " +startPos.getY());
-                    return (swerveDrive.getPose().getTranslation().getDistance(startPose.getTranslation()) > distanceInMeters);
-                }),
-            Commands.runOnce(()-> subsystem.drive(new ChassisSpeeds(0,0,0)))
+        });
+    }
+
+    /**
+     * Use PathPlanner Path finding to go to a point on the field.
+     *
+     * @param pose Target {@link Pose2d} to go to.
+     * @return PathFinding command
+     */
+    public Command driveToPose(Pose2d pose) {
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+                swerveDrive.getMaximumChassisVelocity(), 4.0,
+                swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+        return AutoBuilder.pathfindToPose(
+                pose,
+                constraints,
+                edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
         );
+    }
+
+    /**
+     * Drive with {@link SwerveSetpointGenerator} from 254, implemented by
+     * PathPlanner.
+     *
+     * @param robotRelativeChassisSpeed Robot relative {@link ChassisSpeeds} to
+     *                                  achieve.
+     * @return {@link Command} to run.
+     * @throws IOException    If the PathPlanner GUI settings is invalid
+     * @throws ParseException If PathPlanner GUI settings is nonexistent.
+     */
+    private Command driveWithSetpointGenerator(Supplier<ChassisSpeeds> robotRelativeChassisSpeed)
+            throws IOException, ParseException {
+        SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(RobotConfig.fromGUISettings(),
+                swerveDrive.getMaximumChassisAngularVelocity());
+        AtomicReference<SwerveSetpoint> prevSetpoint = new AtomicReference<>(
+                new SwerveSetpoint(swerveDrive.getRobotVelocity(),
+                        swerveDrive.getStates(),
+                        DriveFeedforwards.zeros(swerveDrive.getModules().length)));
+        AtomicReference<Double> previousTime = new AtomicReference<>();
+
+        return Commands.startRun(() -> previousTime.set(Timer.getFPGATimestamp()),
+                () -> {
+                    double newTime = Timer.getFPGATimestamp();
+                    SwerveSetpoint newSetpoint = setpointGenerator.generateSetpoint(prevSetpoint.get(),
+                            robotRelativeChassisSpeed.get(),
+                            newTime - previousTime.get());
+                    swerveDrive.drive(newSetpoint.robotRelativeSpeeds(),
+                            newSetpoint.moduleStates(),
+                            newSetpoint.feedforwards().linearForces());
+                    prevSetpoint.set(newSetpoint);
+                    previousTime.set(newTime);
+
+                });
+    }
+
+    /**
+     * Drive with 254's Setpoint generator; port written by PathPlanner.
+     *
+     * @param fieldRelativeSpeeds Field-Relative {@link ChassisSpeeds}
+     * @return Command to drive the robot using the setpoint generator.
+     */
+    public Command driveWithSetpointGeneratorFieldRelative(Supplier<ChassisSpeeds> fieldRelativeSpeeds) {
+        try {
+            return driveWithSetpointGenerator(() -> {
+                return ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds.get(), subsystem.getHeading());
+
+            });
+        } catch (Exception e) {
+            DriverStation.reportError(e.toString(), true);
+        }
+        return Commands.none();
+    }
+
+    /**
+     * Command to characterize the robot drive motors using SysId
+     *
+     * @return SysId Drive Command
+     */
+    public Command sysIdDriveMotorCommand() {
+        return SwerveDriveTest.generateSysIdCommand(
+                SwerveDriveTest.setDriveSysIdRoutine(
+                        new Config(),
+                        subsystem, swerveDrive, 12.0, true),
+                3.0, 5.0, 3.0);
+    }
+
+    /**
+     * Command to characterize the robot angle motors using SysId
+     *
+     * @return SysId Angle Command
+     */
+    public Command sysIdAngleMotorCommand() {
+        return SwerveDriveTest.generateSysIdCommand(
+                SwerveDriveTest.setAngleSysIdRoutine(
+                        new Config(),
+                        subsystem, swerveDrive),
+                3.0, 5.0, 3.0);
+    }
+
+    /**
+     * Returns a Command that centers the modules of the SwerveDrive subsystem.
+     *
+     * @return a Command that centers the modules of the SwerveDrive subsystem
+     */
+    public Command centerModulesCommand() {
+        return Commands.run(() -> Arrays.asList(swerveDrive.getModules())
+                .forEach(it -> it.setAngle(0.0)));
+    }
+
+    /**
+     * Returns a Command that drives the swerve drive to a specific distance at a
+     * given speed.
+     *
+     * @param distanceInMeters       the distance to drive in meters
+     * @param speedInMetersPerSecond the speed at which to drive in meters per
+     *                               second
+     * @return a Command that drives the swerve drive to a specific distance at a
+     *         given speed
+     */
+    public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond) {
+        return Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
+                .until(() -> swerveDrive.getPose().getTranslation()
+                        .getDistance(new Translation2d(0, 0)) > distanceInMeters);
+    }
+
+    // fixed
+    public Command driveToDistanceCommandFixed(double distanceInMeters, double speedInMetersPerSecond) {
+        // Translation2d startPos = swerveDrive.getPose().getTranslation();
+        // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: "
+        // +startPos.getY());
+
+        return Commands.sequence(
+                Commands.runOnce(() -> {
+                    startPose = swerveDrive.getPose();
+                }),
+                Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
+                        .until(() -> {
+                            // Translation2d startPos = swerveDrive.getPose().getTranslation();
+                            // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: "
+                            // +startPos.getY());
+                            return (swerveDrive.getPose().getTranslation()
+                                    .getDistance(startPose.getTranslation()) > distanceInMeters);
+                        }),
+                Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0))));
     }
 
     /**
@@ -368,7 +365,7 @@ public class DriveCommands {
         return new PathPlannerAuto(pathName);
     }
 
-    public SwerveDrive getSwerveDrive(){
+    public SwerveDrive getSwerveDrive() {
         return swerveDrive;
     }
 }

@@ -167,6 +167,52 @@ public final class Constants {
     }
 
     // Subystem Constants go here
+    public final static class IntakeConstants {
+        public static final double kMaxSpeed = 1;
+        public static final double kLowSpeed = .5;
+        public static final double kReverseSpeed = -1;
+        public static final double kDistanceToDetect = 7.5;
+        public static final double kTimerThreshold = 0.25; // number of seconds to wait before stopping the intake after detecting a coral
+        public static final double kAlgaeIntakePulseSeconds = 0.5;
 
+    }
+
+    public final static class ElevatorConstants {
+
+        // PID Constants
+        public static final int kPIDSlot = 0;
+        public static final double kElevatorPositionTolerance = 0.5;
+        public static final double kWristPositionTolerance = 2.0;
+        
+        public static final double kPElevatorController = 0.5;
+        public static final double kIElevatorController = 0;
+        public static final double kDElevatorController = 0;
+        public static final double kFElevatorController = 0.0;
+
+        public static final double kPWristController = 0.5;
+        public static final double kIWristController = 0;
+        public static final double kDWristController = 0;
+
+        // Elevator Positions
+        public static final double kElevatorIntakePosition = 0.0;
+        public static final double kElevatorL1Position = 12.0;
+        public static final double kElevatorL2Position = 24.0;
+        public static final double kElevatorL3Position = 36.0;
+        public static final double kElevatorL4Position = 48.0;
+
+        // Wrist Positions
+        public static final double kWristStowedPosition = 0.0;
+        public static final double kWristIntakePosition = 20.0;
+        public static final double kWristL1Position = 40.0;
+        public static final double kWristL2Position = 60.0;
+        public static final double kWristL3Position = 80.0;
+        public static final double kWristL4Position = 100.0;
+
+        // Gear Ratio and Other Elevator Constants
+        public static final double kGearRatio = 10/1.0; //10:1
+        public static final double kDrumCircumference = 2.0; // inches
+        public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
+
+    }
     // Command Constants go here
 }
