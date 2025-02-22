@@ -161,6 +161,28 @@ public class DriveCommands {
         );
     }
 
+    public Command driveToPoseSimple(Pose2d targetPose) {
+        return Commands.run(() -> {
+            // Get target speeds from YAGSL's controller
+            ChassisSpeeds speeds = controller.getTargetSpeeds(
+                    swerveDrive.getPose().getX(),
+                    swerveDrive.getPose().getY(),
+                    targetPose.getX(),
+                    targetPose.getY(),
+                    targetPose.getRotation().getRadians(),
+                    0.4);
+
+
+            // Drive using the calculated speeds
+            subsystem.driveFieldOriented(speeds);
+        })
+                .until(() -> {
+                    Pose2d currentPose = swerveDrive.getPose();
+                    return hasReachedPose(currentPose, targetPose);
+                })
+                .finallyDo((interrupted) -> subsystem.drive(new Translation2d(), 0, true));
+    }
+
     // List of potential target poses
     List<Pose2d> targetPoses = Arrays.asList(
             new Pose2d(new Translation2d(1, 1), Rotation2d.fromDegrees(90)),
@@ -177,10 +199,10 @@ public class DriveCommands {
         return Commands.run(() -> {
             // Get current robot pose
             Pose2d currentPose = swerveDrive.getPose();
-            
+
             // Find nearest target pose
             Pose2d nearestPose = findNearestPose(currentPose, targetPoses);
-            
+
             // Get visible AprilTags and their poses
             boolean hasVisibleTags = false;
             for (Cameras camera : Cameras.values()) {
@@ -188,21 +210,21 @@ public class DriveCommands {
                 if (result.isPresent() && result.get().hasTargets()) {
                     hasVisibleTags = true;
                     // Vision updates are handled by periodic() in SwerveSubsystem
-                    
+
                     // If pose changed significantly, recalculate path
                     if (poseChangedSignificantly(currentPose, swerveDrive.getPose())) {
                         driveToPose(nearestPose).schedule();
                     }
                 }
             }
-            
+
             // If no tags visible, continue with last known path
             if (!hasVisibleTags) {
                 driveToPose(nearestPose).schedule();
             }
         })
-        .until(() -> hasReachedPose(swerveDrive.getPose(), 
-               findNearestPose(swerveDrive.getPose(), targetPoses)));
+                .until(() -> hasReachedPose(swerveDrive.getPose(),
+                        findNearestPose(swerveDrive.getPose(), targetPoses)));
     }
 
     /**
