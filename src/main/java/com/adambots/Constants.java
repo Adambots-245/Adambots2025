@@ -214,5 +214,9 @@ public final class Constants {
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
 
     }
+
+    public static class HangConstants {
+        public static final double kHangMotorMaxExtension = 20;
+    }
     // Command Constants go here
 }
