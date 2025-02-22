@@ -181,6 +181,7 @@ public final class Constants {
 
         // PID Constants
         public static final int kPIDSlot = 0;
+        public static double kElevatorSpeed = 0.5; // only for free movement and not for positional control
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         

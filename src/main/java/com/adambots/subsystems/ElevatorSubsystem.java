@@ -94,6 +94,16 @@ public class ElevatorSubsystem extends SubsystemBase {
                 this::setElevatorPosition);
     }
 
+    // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
+    public void moveElevatorUp() {
+        elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
+    }
+
+    // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
+    public void moveElevatorDown() {
+        elevatorMotor.set(-ElevatorConstants.kElevatorSpeed);
+    }
+
     // Public methods for commanding the wrist
 
     public ElevatorState getCurrentElevatorState() {
