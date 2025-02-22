@@ -84,10 +84,10 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
-    SmartDashboard.putData("Intake", intakeCommands.intakeCoral());
-    SmartDashboard.putData("Stop Intake", intakeCommands.stopIntakeCoral());
-    SmartDashboard.putData("Slow Intake", intakeCommands.slowIntakeCoral());
-    SmartDashboard.putData("Reverse Intake", intakeCommands.reverseIntakeCoral());
+    SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
+    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
+    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
+    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
 
     Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
 
@@ -109,6 +109,9 @@ public class TestContainer {
     SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
 
     SmartDashboard.putData("Score", scoringCommands.scoreCoral());
+
+    SmartDashboard.putData("Servo test", Commands.runOnce(()-> RobotMap.bottomCoralActuator.set(1)));
+    Dash.add("isDetecting", () -> intakesubsystem.isDetectingCoral());
 
   //   SmartDashboard.putData(Commands.run( ()-> {
   //     SmartDashboard.putBoolean("LimitSwitch1", RobotMap.firstIntakeLimit.isDetecting());

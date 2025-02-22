@@ -37,41 +37,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 
-    // Define wrist states
-    public enum WristState {
-        STOWED(new WristProperties(ElevatorConstants.kWristStowedPosition, "Stowed")),
-        INTAKE(new WristProperties(ElevatorConstants.kWristIntakePosition, "Intake Ready")),
-        L1(new WristProperties(ElevatorConstants.kWristL1Position, "Level 1 Angle")),
-        L2(new WristProperties(ElevatorConstants.kWristL2Position, "Level 2 Angle")),
-        L3(new WristProperties(ElevatorConstants.kWristL3Position, "Level 3 Angle")),
-        L4(new WristProperties(ElevatorConstants.kWristL4Position, "Level 4 Angle"));
-
-        public final WristProperties properties;
-
-        WristState(WristProperties properties) {
-            this.properties = properties;
-        }
-    }
-
     // Hardware
-    private final BaseMotor wristMotor;
     private final BaseMotor elevatorMotor;
-    private final BaseAbsoluteEncoder wristEncoder;
-    private final PIDController wristPID;
 
     // State Machines
     private final StateMachine<ElevatorState, ElevatorProperties> elevatorStateMachine;
-    private final StateMachine<WristState, WristProperties> wristStateMachine;
 
-    public ElevatorSubsystem(BaseMotor elevatorMotor, BaseMotor wristMotor, BaseAbsoluteEncoder wristEncoder) {
-        this.wristMotor = wristMotor;
+    public ElevatorSubsystem(BaseMotor elevatorMotor) {
         this.elevatorMotor = elevatorMotor;
-        this.wristEncoder = wristEncoder;
-
-        // Initialize PID
-        this.wristPID = new PIDController(ElevatorConstants.kPWristController, ElevatorConstants.kIWristController,
-                ElevatorConstants.kDWristController);
-        this.wristPID.setTolerance(ElevatorConstants.kWristPositionTolerance);
 
         configureMotors();
 
@@ -84,12 +57,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         );
 
         // Initialize wrist state machine without position control
-        wristStateMachine = new StateMachine<>(
-                WristState.STOWED,
-                WristState.STOWED.properties,
-                message -> SmartDashboard.putString("Wrist/Status", message),
-                false // Not using position control
-        );
     }
 
     private void configureMotors() {
@@ -98,9 +65,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                 ElevatorConstants.kIElevatorController, ElevatorConstants.kDElevatorController,
                 ElevatorConstants.kFElevatorController);
         elevatorMotor.setBrakeMode(true);
-
-        // Configure wrist motor
-        wristMotor.setBrakeMode(true);
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
@@ -108,27 +72,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setPosition(rotations);
     }
 
-    private void setWristOutput(WristProperties properties) {
-        double output = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
-                properties.angleDegrees());
-        if (wristPID.atSetpoint()) {
-            output = 0;
-        }
-        wristMotor.set(output);
-    }
-
-    private boolean isWristAtTarget() {
-        return wristPID.atSetpoint();
-    }
-
     @Override
     public void periodic() {
         // Get current positions
         double currentHeight = elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
-        double currentAngle = wristEncoder.getAbsolutePositionDegrees();
-
-        // Update wrist state machine
-        wristStateMachine.periodic();
 
         // Update dashboard
         SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
@@ -136,13 +83,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                 elevatorStateMachine.getTargetProperties().heightInches());
         SmartDashboard.putString("Elevator/State",
                 elevatorStateMachine.getCurrentState().toString());
-
-        SmartDashboard.putNumber("Wrist/CurrentAngle", currentAngle);
-        SmartDashboard.putNumber("Wrist/TargetAngle",
-                wristStateMachine.getTargetProperties().angleDegrees());
-        SmartDashboard.putString("Wrist/State",
-                wristStateMachine.getCurrentState().toString());
-        SmartDashboard.putBoolean("Wrist/AtTarget", isWristAtTarget());
     }
 
     // Public methods for commanding the elevator
@@ -155,24 +95,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     // Public methods for commanding the wrist
-    public void moveWristToState(WristState state) {
-        wristStateMachine.requestTransition(
-                state,
-                state.properties,
-                this::isWristAtTarget,
-                this::setWristOutput);
-    }
-
-    // Methods to check states
-    public boolean isWristAtState(WristState state) {
-        return wristStateMachine.getCurrentState() == state && isWristAtTarget();
-    }
 
     public ElevatorState getCurrentElevatorState() {
         return elevatorStateMachine.getCurrentState();
     }
 
-    public WristState getCurrentWristState() {
-        return wristStateMachine.getCurrentState();
-    }
 }

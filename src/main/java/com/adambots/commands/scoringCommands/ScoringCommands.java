@@ -24,6 +24,7 @@ public class ScoringCommands {
     public Command scoreCoral() {
         // No coral - don't do anything
         if (!intakeSubsystem.isDetectingCoral()) {
+            System.out.println("Score stopped");
             return Commands.none();
         }
 
