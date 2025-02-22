@@ -32,8 +32,10 @@ import com.adambots.vision.PhotonVision.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -161,17 +163,47 @@ public class DriveCommands {
         );
     }
 
+    public Command driveToPoseNew(Pose2d pose) {
+        // Create a list of waypoints from poses. Each pose represents one waypoint.
+        // The rotation component of the pose should be the direction of travel. Do not
+        // use holonomic rotation.
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+                subsystem.getPose(),
+                pose);
+
+        PathConstraints constraints = new PathConstraints(1.0, 3.0, 2 * Math.PI, 4 * Math.PI); // The constraints for
+                                                                                               // this path.
+        // PathConstraints constraints = PathConstraints.unlimitedConstraints(12.0); //
+        // You can also use unlimited constraints, only limited by motor torque and
+        // nominal battery voltage
+
+        // Create the path using the waypoints created above
+        PathPlannerPath path = new PathPlannerPath(
+                waypoints,
+                constraints,
+                null, // The ideal starting state, this is only relevant for pre-planned paths, so can
+                      // be null for on-the-fly paths.
+                new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a holonomic rotation
+                                                                   // here. If using a differential drivetrain, the
+                                                                   // rotation will have no effect.
+        );
+
+        // Prevent the path from being flipped if the coordinates are already correct
+        path.preventFlipping = true;
+
+        return AutoBuilder.followPath(path);
+    }
+
     public Command driveToPoseSimple(Pose2d targetPose) {
         return Commands.run(() -> {
             // Get target speeds from YAGSL's controller
             ChassisSpeeds speeds = controller.getTargetSpeeds(
-                    swerveDrive.getPose().getX(),
+                    -swerveDrive.getPose().getX(),
                     swerveDrive.getPose().getY(),
                     targetPose.getX(),
                     targetPose.getY(),
                     targetPose.getRotation().getRadians(),
-                    0.4);
-
+                    0.1);
 
             // Drive using the calculated speeds
             subsystem.driveFieldOriented(speeds);
