@@ -84,4 +84,12 @@ public class ElevatorCommands extends Command {
     public Command moveWristToL4Command() {
         return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L4), wristSubsystem);
     }
+
+    public Command moveElevatorUp(){
+        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorUp(), elevatorSubsystem);
+    }
+
+    public Command moveElevatorDown(){
+        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorDown(), elevatorSubsystem);
+    }
 }
