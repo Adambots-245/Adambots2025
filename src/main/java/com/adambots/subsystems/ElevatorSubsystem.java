@@ -110,6 +110,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.set(-ElevatorConstants.kElevatorSpeed);
     }
 
+    public void stopElevatorSpeed() {
+        elevatorMotor.set(0);
+    }
+
     // Public methods for commanding the wrist
 
     public ElevatorState getCurrentElevatorState() {
