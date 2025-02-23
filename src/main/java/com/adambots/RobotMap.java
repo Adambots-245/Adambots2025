@@ -79,6 +79,8 @@ public class RobotMap {
     public static final int kWristMotorPort = 16;
     public static final int kEncoderPort = 0;
     public static final int kElevatorMotorPort = 50;
+    
+
 
     //Robot Devices
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
@@ -90,12 +92,13 @@ public class RobotMap {
     public static final BaseActuator algaeGripper = new CRHubServo(hub, kGripperAlgaeServoChannel);
     public static final BaseActuator algaeRunner = new CRHubServo(hub, kRunnerAlgaeServoChannel);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
-    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort);
+    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, true);
 
 
-    public static final BaseMotor wristMotor = new NEOMotor(kWristMotorPort, false);
+    public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 40, false);
     public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(kEncoderPort);
-    public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, false, kElevatorMotorPort, false);
+    public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, false);
+    public static final BaseMotor climbMotor = new TalonFXMotor(kCANdlePort, true, kBottomCoralServoChannel, false);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

@@ -18,14 +18,19 @@ public class CANRangeSensor implements BaseDistanceSensor {
      * Constructor for CANRangeSensor.
      * @param deviceId The device ID of the CANRange sensor.
      */
-    public CANRangeSensor(int deviceId) {
-        canRangeSensor = new CANrange(deviceId);
-        isSim = RobotBase.isSimulation();
-        
-        if (isSim) {
-            simState = canRangeSensor.getSimState();
-            // Set default simulation values
-            simState.setDistance(0.0);  // Start at 0 meters
+    public CANRangeSensor(int deviceId, boolean isOnCANivore) {
+
+        if (isOnCANivore) {
+            canRangeSensor = new CANrange(deviceId, "*");
+        } else {
+            canRangeSensor = new CANrange(deviceId);
+        }
+            isSim = RobotBase.isSimulation();
+            
+            if (isSim) {
+                simState = canRangeSensor.getSimState();
+                // Set default simulation values
+                simState.setDistance(0.0);  // Start at 0 meters
         }
     }
 
