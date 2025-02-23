@@ -152,7 +152,7 @@ public class PhotonVision
       Cameras.updatedCache = false;
       // System.out.println("Checkpoints 1");
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-      if (poseEst.isPresent())
+      if (poseEst != null && poseEst.isPresent())
       {
         var pose = poseEst.get();
         // counter++;
