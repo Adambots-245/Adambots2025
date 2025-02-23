@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.PIDController;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.utils.StateMachine;
+import com.adambots.RobotMap;
 import com.adambots.Constants.ElevatorConstants;
 
 public class WristSubsystem extends SubsystemBase {
@@ -37,6 +38,8 @@ public class WristSubsystem extends SubsystemBase {
   private final PIDController wristPID;
   private final BaseMotor wristMotor;
 
+  double wristSpeed;
+
   // State Machine
   private final StateMachine<WristState, WristProperties> wristStateMachine;
 
@@ -66,20 +69,27 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   private void setWristOutput(WristProperties properties) {
-    double output = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
+    wristSpeed = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
         properties.angleDegrees());
     if (wristPID.atSetpoint()) {
-      output = 0;
+      wristSpeed = 0;
     }
-    wristMotor.set(output);
   }
 
   private boolean isWristAtTarget() {
     return wristPID.atSetpoint();
   }
 
+  public void setWristSpeed(double speed) {
+    wristSpeed = speed;
+  }
+
   @Override
   public void periodic() {
+
+    checkFailSafes();
+    wristMotor.set(wristSpeed);
+
     // Get current position
     double currentAngle = wristEncoder.getAbsolutePositionDegrees();
 
@@ -111,5 +121,27 @@ public class WristSubsystem extends SubsystemBase {
 
   public WristState getCurrentWristState() {
     return wristStateMachine.getCurrentState();
+  }
+
+  public void checkFailSafes() {
+
+    double elevatorCurrentHeight = RobotMap.elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+    
+    if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle) {
+      wristSpeed = 0;
+    }
+    if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() <= ElevatorConstants.kWristMinAngle) {
+      wristSpeed = 0;
+    }
+    if (elevatorCurrentHeight >= ElevatorConstants.kElevatorDangerZoneStart
+        && elevatorCurrentHeight <= ElevatorConstants.kElevatorDangerZoneEnd) {
+
+      if (wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle) {
+
+        if (wristSpeed > 0) {
+          wristSpeed = 0;
+        }
+      }
+    }
   }
 }

@@ -201,6 +201,11 @@ public final class Constants {
         public static final double kElevatorL3Position = 36.0;
         public static final double kElevatorL4Position = 48.0;
 
+        public static final double kElevatorMaxHeight = 48;
+        public static final double kElevatorMinHeight = 0;
+        public static final double kElevatorDangerZoneStart = 20;
+        public static final double kElevatorDangerZoneEnd = 40;
+
         // Wrist Positions
         public static final double kWristStowedPosition = 0.0;
         public static final double kWristIntakePosition = 20.0;
@@ -208,6 +213,10 @@ public final class Constants {
         public static final double kWristL2Position = 60.0;
         public static final double kWristL3Position = 80.0;
         public static final double kWristL4Position = 100.0;
+
+        public static final double kWristMinAngle = 0;
+        public static final double kWristMaxAngle = 100;
+        public static final double kWristDangerZoneAngle = 40;
 
         // Gear Ratio and Other Elevator Constants
         public static final double kGearRatio = 10/1.0; //10:1
