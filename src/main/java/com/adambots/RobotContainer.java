@@ -12,6 +12,7 @@ import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.subsystems.WristSubsystem;
 import com.adambots.utils.Buttons;
+import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -114,7 +115,10 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(Commands.none());
       Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
       Buttons.XboxRightBumper.onTrue(Commands.none());
+      
+
     }
+
 
     // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
     // PhotonVision.getAprilTagPose(1, new Transform2d(new Translation2d(2.0, 2.0), new Rotation2d()));
@@ -144,6 +148,8 @@ public class RobotContainer {
 
     // Adds various data to the dashboard that is useful for driving and debugging
     SmartDashboard.putData("Auton Mode", autoChooser);
+    Dash.add("CANrange Dist", ()-> RobotMap.CANrange.getDistanceInInches());
+
 
     // SmartDashboard.putData("FrontLL Field", Constants.frontLLField);
     // SmartDashboard.putData("RearLL Field", Constants.rearLLField);
