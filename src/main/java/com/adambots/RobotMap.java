@@ -94,7 +94,7 @@ public class RobotMap {
 
 
     public static final BaseMotor wristMotor = new NEOMotor(kWristMotorPort, false);
-    public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(kEncoderPort);
+    public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
     public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, false, kElevatorMotorPort, false);
     
 //     // Robot Swerve Modules

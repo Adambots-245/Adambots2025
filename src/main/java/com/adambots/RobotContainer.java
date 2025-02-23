@@ -15,6 +15,7 @@ import com.adambots.subsystems.WristSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.WristSubsystem.WristState;
 import com.adambots.utils.Buttons;
+import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -46,7 +47,7 @@ public class RobotContainer {
   private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
   IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
-  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.encoder);
+  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -143,6 +144,39 @@ public class RobotContainer {
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
       Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
       Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
+
+    SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
+    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
+    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
+    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
+    SmartDashboard.putData("Score Coral", scoringCommands.scoreCoral());
+    SmartDashboard.putData("Stop Score Coral", scoringCommands.stopScoringCoral());
+    SmartDashboard.putData("Stop Score Algae", scoringCommands.stopScoringAlgae());
+
+
+    Dash.add("Distance", () -> RobotMap.CANrange.getDistanceInCentimeters());
+
+    SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
+    SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
+    SmartDashboard.putData("L2 State", elevatorCommands.moveToL2Command());
+    SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
+    SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
+
+    SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
+    SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
+    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L1));
+    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
+    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
+    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
+    
+    SmartDashboard.putData("Elevator L1", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));
+    SmartDashboard.putData("Elevator L2", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L2));
+    SmartDashboard.putData("Elevator L3", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L3));
+    SmartDashboard.putData("Elevator L4", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L4));
+
+    SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
+    SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
+    SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
     }
 
     // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
