@@ -6,11 +6,14 @@ import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
+import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.subsystems.WristSubsystem;
+import com.adambots.subsystems.WristSubsystem.WristState;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -50,6 +53,7 @@ public class RobotContainer {
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
   private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem);
+  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -116,9 +120,63 @@ public class RobotContainer {
       Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
       Buttons.XboxRightBumper.onTrue(Commands.none());
       
+      Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
+      Buttons.JoystickButton2.onTrue(scoringCommands.stopScoringAlgae());
+      Buttons.JoystickButton3.onTrue(scoringCommands.scoreCoral());
+      Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
+      Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));
+      Buttons.JoystickButton6.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.INTAKE));
+      Buttons.JoystickButton8.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L1));
+      Buttons.JoystickButton9.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L2));
+      Buttons.JoystickButton10.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
+      Buttons.JoystickButton11.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
+      Buttons.JoystickButton12.onTrue(elevatorCommands.moveWristToStowedCommand());
+      Buttons.JoystickButton13.onTrue(elevatorCommands.moveWristToIntakeCommand());
+      Buttons.JoystickButton14.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
+      Buttons.JoystickButton15.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
+      Buttons.JoystickButton16.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L3));
 
+      Buttons.XboxAButton.onTrue(elevatorCommands.moveToL1Command());
+      Buttons.XboxBButton.onTrue(elevatorCommands.moveToL2Command());
+      Buttons.XboxXButton.onTrue(elevatorCommands.moveToL3Command());
+      Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
+      Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeAlgae());
+      Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
+      Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
+      Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
+
+    SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
+    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
+    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
+    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
+    SmartDashboard.putData("Score Coral", scoringCommands.scoreCoral());
+    SmartDashboard.putData("Stop Score Coral", scoringCommands.stopScoringCoral());
+    SmartDashboard.putData("Stop Score Algae", scoringCommands.stopScoringAlgae());
+
+
+
+    SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
+    SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
+    SmartDashboard.putData("L2 State", elevatorCommands.moveToL2Command());
+    SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
+    SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
+
+    SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
+    SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
+    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L1));
+    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
+    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
+    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
+    
+    SmartDashboard.putData("Elevator L1", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));
+    SmartDashboard.putData("Elevator L2", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L2));
+    SmartDashboard.putData("Elevator L3", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L3));
+    SmartDashboard.putData("Elevator L4", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L4));
+
+    SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
+    SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
+    SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
     }
-
 
     // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
     // PhotonVision.getAprilTagPose(1, new Transform2d(new Translation2d(2.0, 2.0), new Rotation2d()));
@@ -149,7 +207,7 @@ public class RobotContainer {
     // Adds various data to the dashboard that is useful for driving and debugging
     SmartDashboard.putData("Auton Mode", autoChooser);
     Dash.add("CANrange Dist", ()-> RobotMap.CANrange.getDistanceInInches());
-
+    Dash.add("ServoHub", ()->RobotMap.hub.getDeviceVoltage());
 
     // SmartDashboard.putData("FrontLL Field", Constants.frontLLField);
     // SmartDashboard.putData("RearLL Field", Constants.rearLLField);
