@@ -53,7 +53,7 @@ public class TalonFXMotor implements BaseMotor {
 
         // Initialize motor on either CANivore or regular CAN bus
         if (isOnCANivore) {
-            motor = new TalonFX(portNum, "CANivore");
+            motor = new TalonFX(portNum, "*");
         } else {
             motor = new TalonFX(portNum);
         }
@@ -270,7 +270,9 @@ public class TalonFXMotor implements BaseMotor {
      */
     @Override
     public void setBrakeMode(boolean brake) {
-        motor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        var config = new MotorOutputConfigs()
+                .withNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        motor.getConfigurator().apply(config);
     }
 
     /**

@@ -76,9 +76,9 @@ public class RobotMap {
     public static final int kXboxControllerPort = 1;
 
     // Elevator Ports
-    public static final int kWristMotorPort = 16;
+    public static final int kWristMotorPort = 33;
     public static final int kEncoderPort = 0;
-    public static final int kElevatorMotorPort = 50;
+    public static final int kElevatorMotorPort = 32;
     
 
 

@@ -19,7 +19,7 @@ public final class Constants {
     public static final Boolean enableAutomaticShuffleboardRecording = false;
 
     public static final class LEDConstants {
-        public static final int LEDS_IN_STRIP = 300;
+        public static final int LEDS_IN_STRIP = 100;
         public static final LEDStripType LED_STRIP_TYPE = LEDStripType.GRB; // if this is not set properly, the colors will not work
 
         public static final Color off = new Color(0, 0, 0);
@@ -181,7 +181,7 @@ public final class Constants {
 
         // PID Constants
         public static final int kPIDSlot = 0;
-        public static double kElevatorSpeed = 0.5; // only for free movement and not for positional control
+        public static double kElevatorSpeed = 0.2; // only for free movement and not for positional control
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         

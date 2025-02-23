@@ -62,6 +62,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 ElevatorConstants.kIElevatorController, ElevatorConstants.kDElevatorController,
                 ElevatorConstants.kFElevatorController);
         elevatorMotor.setBrakeMode(true);
+        elevatorMotor.setInverted(true);
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
@@ -78,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Update elevator state machine
         elevatorStateMachine.periodic();
 
-
+        SmartDashboard.putNumber("Elevator/Encoder", elevatorMotor.getPosition());
         // Update dashboard
         SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
         SmartDashboard.putNumber("Elevator/TargetHeight",

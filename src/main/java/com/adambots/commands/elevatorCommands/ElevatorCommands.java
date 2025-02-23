@@ -86,11 +86,13 @@ public class ElevatorCommands extends Command {
     }
 
     public Command moveElevatorUp(){
-        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+        // return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorUp(), elevatorSubsystem);
     }
 
     public Command moveElevatorDown(){
-        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+        // return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorDown(), elevatorSubsystem);
     }
 
     public Command moveWristUp() {
