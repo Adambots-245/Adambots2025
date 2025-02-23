@@ -47,7 +47,7 @@ public class RobotContainer {
   private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
   IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
-  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
+  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.encoder);
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -145,6 +145,11 @@ public class RobotContainer {
       Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
       Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
 
+      Buttons.XboxDPadN.whileTrue(elevatorCommands.moveElevatorUp());
+      Buttons.XboxDPadS.whileTrue(elevatorCommands.moveElevatorDown());
+      Buttons.XboxDPadE.whileTrue(elevatorCommands.moveWristUp());
+      Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
+
     SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
     SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
     SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
@@ -152,8 +157,6 @@ public class RobotContainer {
     SmartDashboard.putData("Score Coral", scoringCommands.scoreCoral());
     SmartDashboard.putData("Stop Score Coral", scoringCommands.stopScoringCoral());
     SmartDashboard.putData("Stop Score Algae", scoringCommands.stopScoringAlgae());
-
-
 
     SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
     SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());

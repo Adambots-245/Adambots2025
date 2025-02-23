@@ -122,7 +122,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean isElevatorSafe() {
 
-        if (RobotMap.wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
+        if (RobotMap.encoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
             (currentHeight > ElevatorConstants.kElevatorDangerZoneStart && currentHeight < ElevatorConstants.kElevatorDangerZoneEnd)) {
             elevatorMotor.set(0);
             return false;

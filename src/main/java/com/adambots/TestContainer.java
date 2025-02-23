@@ -34,7 +34,7 @@ public class TestContainer {
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
   IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
-  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
+  WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.encoder);
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
