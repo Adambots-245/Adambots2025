@@ -170,11 +170,15 @@ public class RobotContainer {
     SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
     SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
     SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
+    SmartDashboard.putData("Wrist Down", elevatorCommands.moveWristDown());
+    SmartDashboard.putData("Wrist Up", elevatorCommands.moveWristUp());
     
     SmartDashboard.putData("Elevator L1", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));
     SmartDashboard.putData("Elevator L2", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L2));
     SmartDashboard.putData("Elevator L3", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L3));
     SmartDashboard.putData("Elevator L4", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L4));
+    SmartDashboard.putData("Elevator Up", elevatorCommands.moveElevatorUp());
+    SmartDashboard.putData("Elevator Down", elevatorCommands.moveElevatorDown());
 
     SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
     SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
@@ -210,7 +214,8 @@ public class RobotContainer {
     // Adds various data to the dashboard that is useful for driving and debugging
     SmartDashboard.putData("Auton Mode", autoChooser);
     Dash.add("CANrange Dist", ()-> RobotMap.CANrange.getDistanceInInches());
-    Dash.add("ServoHub", ()->RobotMap.hub.getDeviceVoltage());
+    // Dash.add("ServoHub", ()->RobotMap.hub.getDeviceVoltage());
+    // Dash.add("Wrist Encoder", ()->RobotMap.encoder.getAbsolutePositionDegrees());
 
     // SmartDashboard.putData("FrontLL Field", Constants.frontLLField);
     // SmartDashboard.putData("RearLL Field", Constants.rearLLField);

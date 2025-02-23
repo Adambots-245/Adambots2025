@@ -53,7 +53,7 @@ public class TalonFXMotor implements BaseMotor {
 
         // Initialize motor on either CANivore or regular CAN bus
         if (isOnCANivore) {
-            motor = new TalonFX(portNum, "*");
+            motor = new TalonFX(portNum, "CANivore");
         } else {
             motor = new TalonFX(portNum);
         }

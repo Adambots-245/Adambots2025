@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void intakeAlgae() {
-    algaeIntakeSpeed = IntakeConstants.kMaxSpeed;
+    algaeIntakeSpeed = -IntakeConstants.kMaxSpeed;
     counter = 0;
   }
 
@@ -71,7 +71,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void reverseAlgaeIntake() {
-    algaeIntakeSpeed = IntakeConstants.kReverseSpeed;
+    algaeIntakeSpeed = -IntakeConstants.kReverseSpeed;
   } 
 
   @Override
