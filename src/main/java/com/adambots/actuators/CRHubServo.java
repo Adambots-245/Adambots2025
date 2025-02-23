@@ -64,6 +64,8 @@ public class CRHubServo implements BaseServo {
             }
             channel.setEnabled(true);
             channel.setPowered(true);
+        } else {
+            pwmSim = new PWMSim(1);
         }
     }
 
