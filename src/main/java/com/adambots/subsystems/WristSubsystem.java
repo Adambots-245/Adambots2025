@@ -72,9 +72,9 @@ public class WristSubsystem extends SubsystemBase {
   private void setWristOutput(WristProperties properties) {
     wristSpeed = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
         properties.angleDegrees());
-    if (wristPID.atSetpoint()) {
-      wristSpeed = 0;
-    }
+    // if (wristPID.atSetpoint()) {
+    //   wristSpeed = 0;
+    // }
   }
 
   private boolean isWristAtTarget() {
@@ -83,6 +83,10 @@ public class WristSubsystem extends SubsystemBase {
 
   public void setWristSpeed(double speed) {
     wristSpeed = speed;
+  }
+
+  private void holdWristPosition() {
+    wristMotor.setPosition(wristEncoder.getAbsolutePositionDegrees());
   }
 
   @Override
@@ -126,21 +130,24 @@ public class WristSubsystem extends SubsystemBase {
 
   public void checkFailSafes() {
 
-    double elevatorCurrentHeight = RobotMap.elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+    double elevatorCurrentPosition = RobotMap.elevatorMotor.getPosition();
     
     if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle) {
-      wristSpeed = 0;
+      // wristSpeed = 0;
+      holdWristPosition();
     }
     if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() <= ElevatorConstants.kWristMinAngle) {
-      wristSpeed = 0;
+      // wristSpeed = 0;
+      holdWristPosition();
     }
-    if (elevatorCurrentHeight >= ElevatorConstants.kElevatorDangerZoneStart
-        && elevatorCurrentHeight <= ElevatorConstants.kElevatorDangerZoneEnd) {
+    if (elevatorCurrentPosition >= ElevatorConstants.kElevatorDangerZoneStart
+        && elevatorCurrentPosition <= ElevatorConstants.kElevatorDangerZoneEnd) {
 
       if (wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle) {
 
         if (wristSpeed > 0) {
-          wristSpeed = 0;
+          // wristSpeed = 0;
+          holdWristPosition();
         }
       }
     }

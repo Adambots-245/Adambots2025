@@ -2,11 +2,7 @@ package com.adambots.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.BooleanArrayEntry;
-
 import com.adambots.actuators.BaseMotor;
-import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.utils.StateMachine;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.RobotMap;
@@ -15,7 +11,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Properties for Elevator State
     public record ElevatorProperties(
-            double heightInches,
+            double position,
             String description) {
     }
 
@@ -37,7 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Hardware
     private final BaseMotor elevatorMotor;
 
-    double currentHeight;
+    double currentPosition;
 
     // State Machines
     private final StateMachine<ElevatorState, ElevatorProperties> elevatorStateMachine;
@@ -66,24 +62,36 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
-        double rotations = properties.heightInches() / ElevatorConstants.kInchesPerRotation;
+        // double rotations = properties.position() / ElevatorConstants.kInchesPerRotation;
+        double rotations = properties.position();
+
         elevatorMotor.setPosition(rotations);
+    }
+
+    public double getCurrentPosition() {
+        return elevatorMotor.getPosition();
+    }
+
+    private void holdElevatorPosition() {
+        elevatorMotor.setPosition(currentPosition);
     }
 
     @Override
     public void periodic() {
 
         // Get current positions
-        currentHeight = elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+        // currentPosition = elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+        currentPosition = elevatorMotor.getPosition();
+
 
         // Update elevator state machine
         elevatorStateMachine.periodic();
 
         SmartDashboard.putNumber("Elevator/Encoder", elevatorMotor.getPosition());
         // Update dashboard
-        SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
-        SmartDashboard.putNumber("Elevator/TargetHeight",
-                elevatorStateMachine.getTargetProperties().heightInches());
+        SmartDashboard.putNumber("Elevator/CurrentPosition", currentPosition);
+        SmartDashboard.putNumber("Elevator/TargetPosition",
+                elevatorStateMachine.getTargetProperties().position());
         SmartDashboard.putString("Elevator/State",
                 elevatorStateMachine.getCurrentState().toString());
     }
@@ -97,22 +105,32 @@ public class ElevatorSubsystem extends SubsystemBase {
                 () -> true, // No check needed for position control
                 this::setElevatorPosition);
         } else {
-            elevatorMotor.set(0);
+            holdElevatorPosition();
         }
     }
 
     // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
     public void moveElevatorUp() {
-        elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
+        if (isElevatorSafe()) {
+            elevatorMotor.setPosition(getCurrentPosition() + ElevatorConstants.kElevatorPositionIncrement);
+        } else {
+            holdElevatorPosition();
+        }
+        // elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
     }
 
     // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
     public void moveElevatorDown() {
-        elevatorMotor.set(-ElevatorConstants.kElevatorSpeed);
+        if (isElevatorSafe()) {
+            elevatorMotor.setPosition(getCurrentPosition() - ElevatorConstants.kElevatorPositionIncrement);
+        } else {
+            holdElevatorPosition();
+        }
+        // elevatorMotor.set(-ElevatorConstants.kElevatorSpeed);
     }
 
     public void stopElevatorSpeed() {
-        elevatorMotor.set(0);
+        holdElevatorPosition();
     }
 
     // Public methods for commanding the wrist
@@ -123,9 +141,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean isElevatorSafe() {
 
-        if (RobotMap.encoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
-            (currentHeight > ElevatorConstants.kElevatorDangerZoneStart && currentHeight < ElevatorConstants.kElevatorDangerZoneEnd)) {
-            elevatorMotor.set(0);
+        if (RobotMap.wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
+            (currentPosition > ElevatorConstants.kElevatorDangerZoneStart && currentPosition < ElevatorConstants.kElevatorDangerZoneEnd)) {
+            holdElevatorPosition();
             return false;
         }
         return true;

@@ -77,7 +77,7 @@ public class RobotMap {
 
     // Elevator Ports
     public static final int kWristMotorPort = 33;
-    public static final int kEncoderPort = 0;
+    public static final int kEncoderPort = 2;
     public static final int kElevatorMotorPort = 32;
     
 
@@ -96,7 +96,7 @@ public class RobotMap {
 
 
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 40, false);
-    public static final BaseAbsoluteEncoder encoder = new ThroughBoreEncoder(kEncoderPort);
+    public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
     public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, false);
     public static final BaseMotor climbMotor = new TalonFXMotor(kCANdlePort, true, kBottomCoralServoChannel, false);
     
