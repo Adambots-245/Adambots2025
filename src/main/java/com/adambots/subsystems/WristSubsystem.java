@@ -66,7 +66,7 @@ public class WristSubsystem extends SubsystemBase {
   private void configureMotors() {
     // Configure wrist motor
     wristMotor.setBrakeMode(true);
-    // wristMotor.setInverted(true);
+    wristMotor.setInverted(true);
   }
 
   private void setWristOutput(WristProperties properties) {

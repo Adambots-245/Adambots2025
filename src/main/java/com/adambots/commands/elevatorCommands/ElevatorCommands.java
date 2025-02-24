@@ -87,19 +87,19 @@ public class ElevatorCommands extends Command {
 
     public Command moveElevatorUp(){
         // return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorUp(), elevatorSubsystem);
+        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), ()-> elevatorSubsystem.holdElevatorPosition(), elevatorSubsystem);
     }
 
     public Command moveElevatorDown(){
         // return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorDown(), elevatorSubsystem);
+        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(), ()-> elevatorSubsystem.holdElevatorPosition(), elevatorSubsystem);
     }
 
     public Command moveWristUp() {
-        return Commands.runEnd(() -> wristSubsystem.setWristSpeed(0.2), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
+        return Commands.runEnd(() -> wristSubsystem.setWristSpeed(0.1), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
     }
 
     public Command moveWristDown() {
-        return Commands.runEnd(()-> wristSubsystem.setWristSpeed(-0.2), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
+        return Commands.runEnd(()-> wristSubsystem.setWristSpeed(-0.1), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
     }
 }

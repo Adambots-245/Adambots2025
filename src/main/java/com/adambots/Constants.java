@@ -197,10 +197,10 @@ public final class Constants {
 
         // Elevator Positions
         public static final double kElevatorIntakePosition = 0.0;
-        public static final double kElevatorL1Position = 12.0;
-        public static final double kElevatorL2Position = 24.0;
-        public static final double kElevatorL3Position = 36.0;
-        public static final double kElevatorL4Position = 48.0;
+        public static final double kElevatorL1Position = 21.01;
+        public static final double kElevatorL2Position = 32.3;
+        public static final double kElevatorL3Position = 58.63;
+        public static final double kElevatorL4Position = 91.72;
 
         public static final double kElevatorMaxHeight = 48;
         public static final double kElevatorMinHeight = 0;

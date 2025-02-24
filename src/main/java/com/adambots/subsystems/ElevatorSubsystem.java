@@ -57,7 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setPID(ElevatorConstants.kPIDSlot, ElevatorConstants.kPElevatorController,
                 ElevatorConstants.kIElevatorController, ElevatorConstants.kDElevatorController,
                 ElevatorConstants.kFElevatorController);
-        elevatorMotor.setBrakeMode(true);
+        elevatorMotor.setBrakeMode(false);
         elevatorMotor.setInverted(true);
     }
 
@@ -72,7 +72,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return elevatorMotor.getPosition();
     }
 
-    private void holdElevatorPosition() {
+    public void holdElevatorPosition() {
         elevatorMotor.setPosition(currentPosition);
     }
 
@@ -91,6 +91,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Update dashboard
         SmartDashboard.putNumber("Elevator/CurrentPosition", currentPosition);
         SmartDashboard.putNumber("Elevator/TargetPosition",
+
                 elevatorStateMachine.getTargetProperties().position());
         SmartDashboard.putString("Elevator/State",
                 elevatorStateMachine.getCurrentState().toString());
@@ -140,6 +141,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public boolean isElevatorSafe() {
+
+        if (currentPosition <= ElevatorConstants.kElevatorMinHeight || currentPosition >= ElevatorConstants.kElevatorMaxHeight) {
+            holdElevatorPosition();
+        }
 
         if (RobotMap.wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
             (currentPosition > ElevatorConstants.kElevatorDangerZoneStart && currentPosition < ElevatorConstants.kElevatorDangerZoneEnd)) {
