@@ -7,6 +7,8 @@
 
 package com.adambots;
 
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -36,6 +38,8 @@ public class Robot extends TimedRobot {
     // DriveTrainSubsystem
 
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    FollowPathCommand.warmupCommand().schedule();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.

@@ -60,6 +60,8 @@ public class DriveToWaypointCommand extends Command {
     drive_output_y = yController.calculate(yPos, waypoint.getY());
     drive_output_theta = thetaController.calculate(swerveSubsystem.getHeading().getRadians(), waypoint.getRotation().getRadians());
     
+    System.out.println("X Distance " + (Math.abs(waypoint.getX() - xPos)));
+    System.out.println("Y Distance " + (Math.abs(waypoint.getY() - yPos)));
 
     if(swerveSubsystem.getVision().hasTarget()){
     //   framesGone = 0;
@@ -70,7 +72,7 @@ public class DriveToWaypointCommand extends Command {
     System.out.println(framesSeen);
     
     if(framesSeen > 10){
-      // swerveSubsystem.drive(new ChassisSpeeds(-drive_output_x,-drive_output_y,drive_output_theta));
+      swerveSubsystem.drive(new ChassisSpeeds(-drive_output_x,-drive_output_y,drive_output_theta));
     }else{
       // SwerveInputStream driveAngularVelocity = SwerveInputStream.of(swerveSubsystem.getSwerveDrive(),
       //   ()-> Buttons.forwardSupplier.getAsDouble(),
@@ -81,7 +83,9 @@ public class DriveToWaypointCommand extends Command {
       //   .allianceRelativeControl(true);
       
       // driveCommands.driveFieldOriented(driveAngularVelocity);
-      swerveSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.getDriveAngularVelocity().get(), swerveSubsystem.getHeading()));
+
+
+      // swerveSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(RobotContainer.getDriveAngularVelocity().get(), swerveSubsystem.getHeading()));
 
 
       //allow human control

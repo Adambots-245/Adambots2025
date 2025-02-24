@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import swervelib.SwerveInputStream;
 
 /**
@@ -108,7 +109,14 @@ public class RobotContainer {
       // Buttons.JoystickButton6.onTrue(new InstantCommand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton7.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+
+      Buttons.JoystickButton5.onTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))))
+        );
+      // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)))));
+      // Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))) ,driveCommands));
+      // Buttons.JoystickButton7.whileTrue(driveCommands.driveToPoseAdvanced());
+      Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
       Buttons.XboxBButton.whileTrue(
