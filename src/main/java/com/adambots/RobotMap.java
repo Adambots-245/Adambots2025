@@ -77,7 +77,7 @@ public class RobotMap {
 
     // Elevator Ports
     public static final int kWristMotorPort = 33;
-    public static final int kEncoderPort = 2;
+    public static final int kEncoderPort = 3;
     public static final int kElevatorMotorPort = 32;
     
 
