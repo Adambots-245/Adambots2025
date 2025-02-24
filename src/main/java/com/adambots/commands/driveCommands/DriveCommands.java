@@ -6,6 +6,7 @@ package com.adambots.commands.driveCommands;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
@@ -118,7 +119,7 @@ public class DriveCommands {
                                 }),
 
                         // Stop moving
-                Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))));
+                        Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))));
     }
 
     /**
@@ -158,6 +159,110 @@ public class DriveCommands {
                 constraints,
                 edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
         );
+    }
+
+    public Command driveToPoseSimple(Pose2d targetPose) {
+        return Commands.run(() -> {
+            // Get target speeds from YAGSL's controller
+            ChassisSpeeds speeds = controller.getTargetSpeeds(
+                    swerveDrive.getPose().getX(),
+                    swerveDrive.getPose().getY(),
+                    targetPose.getX(),
+                    targetPose.getY(),
+                    targetPose.getRotation().getRadians(),
+                    0.4);
+
+
+            // Drive using the calculated speeds
+            subsystem.driveFieldOriented(speeds);
+        })
+                .until(() -> {
+                    Pose2d currentPose = swerveDrive.getPose();
+                    return hasReachedPose(currentPose, targetPose);
+                })
+                .finallyDo((interrupted) -> subsystem.drive(new Translation2d(), 0, true));
+    }
+
+    // List of potential target poses
+    List<Pose2d> targetPoses = Arrays.asList(
+            new Pose2d(new Translation2d(1, 1), Rotation2d.fromDegrees(90)),
+            new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(180)));
+
+    /**
+     * Drives to the nearest specified pose while continuously updating based on
+     * AprilTag vision
+     * 
+     * @param targetPoses List of poses to potentially drive to
+     * @return Command that continuously drives to nearest pose with vision updates
+     */
+    public Command driveToNearestPoseWithVision(List<Pose2d> targetPoses) {
+        return Commands.run(() -> {
+            // Get current robot pose
+            Pose2d currentPose = swerveDrive.getPose();
+
+            // Find nearest target pose
+            Pose2d nearestPose = findNearestPose(currentPose, targetPoses);
+
+            // Get visible AprilTags and their poses
+            boolean hasVisibleTags = false;
+            for (Cameras camera : Cameras.values()) {
+                var result = camera.getLatestResult();
+                if (result.isPresent() && result.get().hasTargets()) {
+                    hasVisibleTags = true;
+                    // Vision updates are handled by periodic() in SwerveSubsystem
+
+                    // If pose changed significantly, recalculate path
+                    if (poseChangedSignificantly(currentPose, swerveDrive.getPose())) {
+                        driveToPose(nearestPose).schedule();
+                    }
+                }
+            }
+
+            // If no tags visible, continue with last known path
+            if (!hasVisibleTags) {
+                driveToPose(nearestPose).schedule();
+            }
+        })
+                .until(() -> hasReachedPose(swerveDrive.getPose(),
+                        findNearestPose(swerveDrive.getPose(), targetPoses)));
+    }
+
+    /**
+     * Find the nearest pose from a list of target poses
+     */
+    private Pose2d findNearestPose(Pose2d currentPose, List<Pose2d> targetPoses) {
+        return targetPoses.stream()
+                .min((p1, p2) -> Double.compare(
+                        currentPose.getTranslation().getDistance(p1.getTranslation()),
+                        currentPose.getTranslation().getDistance(p2.getTranslation())))
+                .orElse(targetPoses.get(0));
+    }
+
+    /**
+     * Check if pose has changed enough to warrant path recalculation
+     */
+    private boolean poseChangedSignificantly(Pose2d oldPose, Pose2d newPose) {
+        double poseDifference = oldPose.getTranslation()
+                .getDistance(newPose.getTranslation());
+        double rotationDifference = Math.abs(
+                oldPose.getRotation().minus(newPose.getRotation()).getDegrees());
+
+        return poseDifference > 0.1 || rotationDifference > 5.0; // Adjust these thresholds
+    }
+
+    /**
+     * Check if robot has reached target pose within tolerance
+     */
+    private boolean hasReachedPose(Pose2d currentPose, Pose2d targetPose) {
+        double poseTolerance = 0.05; // meters
+        double rotationTolerance = 5.0; // degrees
+
+        double poseError = currentPose.getTranslation()
+                .getDistance(targetPose.getTranslation());
+        double rotationError = Math.abs(
+                currentPose.getRotation().minus(targetPose.getRotation()).getDegrees());
+
+        return poseError < poseTolerance && rotationError < rotationTolerance;
     }
 
     /**
