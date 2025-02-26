@@ -16,6 +16,7 @@ import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.adambots.subsystems.SwerveSubsystem;
+import com.adambots.utils.Buttons;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import swervelib.SwerveController;
 import com.adambots.vision.PhotonVision.*;
@@ -152,7 +154,7 @@ public class DriveCommands {
     public Command driveToPose(Pose2d pose) {
         // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
-                swerveDrive.getMaximumChassisVelocity(), 4.0,
+                1, 1.0,
                 swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
         // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -161,6 +163,49 @@ public class DriveCommands {
                 constraints,
                 edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
         );
+    }
+
+    public Command driveToPoseAdvanced() {
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+                1, 1.0,
+                swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+
+        return AutoBuilder.pathfindToPose(
+                subsystem.getGoalPose().get(),
+                constraints,
+                edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+        ).alongWith(new PrintCommand(subsystem.getGoalPose().get().toString()));
+    }
+
+    int counter = 0;
+
+    public Command testPrint(){
+        return Commands.runOnce(() -> {
+            counter++;
+            System.out.println("Initial Counter:"+ counter);
+        }).andThen(printerCommand());
+    }
+
+    public Command printerCommand(){
+        return Commands.run(() -> Commands.print(Integer.toString(counter)).schedule());
+    }
+
+    int countNew = 0;
+
+    public Command print() {
+        AtomicReference<Double> count = new AtomicReference<>();
+
+        count.set(0.0);
+
+        return Commands.run(() -> count.set(count.get() + 1)).alongWith(Commands.print(Double.toString(count.get())));
+    }
+
+    private double getCount(){
+        countNew ++;
+        return countNew;
     }
 
     public Command driveToPoseNew(Pose2d pose) {
@@ -183,7 +228,7 @@ public class DriveCommands {
                 constraints,
                 null, // The ideal starting state, this is only relevant for pre-planned paths, so can
                       // be null for on-the-fly paths.
-                new GoalEndState(0.0, Rotation2d.fromDegrees(-90)) // Goal end state. You can set a holonomic rotation
+                new GoalEndState(0.0, pose.getRotation()) // Goal end state. You can set a holonomic rotation
                                                                    // here. If using a differential drivetrain, the
                                                                    // rotation will have no effect.
         );

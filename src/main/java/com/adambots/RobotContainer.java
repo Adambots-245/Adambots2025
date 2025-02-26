@@ -1,9 +1,11 @@
 package com.adambots;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicReference;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
+import com.adambots.commands.driveCommands.DriveToWaypointAdvancedCommand;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
@@ -21,6 +23,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -30,6 +33,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import swervelib.SwerveInputStream;
 
@@ -60,6 +64,8 @@ public class RobotContainer {
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   private static SwerveInputStream driveAngularVelocity;
+
+  private Pose2d goalPose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -97,6 +103,7 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
       Buttons.XboxStartButton
           .onTrue(Commands.runOnce(() -> swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      
     }
 
     if (DriverStation.isTest()) {
@@ -106,13 +113,14 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(driveCommands.centerModulesCommand());
       Buttons.XboxLeftBumper.onTrue(Commands.none());
       // RobotMap.gyro.resetYaw();
-      // Buttons.JoystickButton6.onTrue(new InstantCommand(RobotMap.gyro.resetYaw()));
+      // Buttons.JoystickButton6.onTrue(new InstantCommaaand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
-
-      Buttons.JoystickButton5.onTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))))
-        );
+      Buttons.JoystickButton2.onTrue(new InstantCommand(()-> swerveSubsystem.setGoalPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))))));
+      Buttons.JoystickButton3.whileTrue(driveCommands.driveToPoseAdvanced());
+      // Buttons.JoystickButton3.onFalse(new InstantCommand(()-> swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0,0,0))));
+      Buttons.JoystickButton4.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)))));
       // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)))));
       // Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))) ,driveCommands));
       // Buttons.JoystickButton7.whileTrue(driveCommands.driveToPoseAdvanced());

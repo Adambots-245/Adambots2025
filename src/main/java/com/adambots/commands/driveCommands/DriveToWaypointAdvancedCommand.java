@@ -4,12 +4,15 @@ import com.adambots.RobotContainer;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.utils.Buttons;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import swervelib.SwerveInputStream;
 
@@ -33,6 +36,9 @@ public class DriveToWaypointAdvancedCommand extends Command {
   private int idSeen = -1;
   private boolean isOffsetRight;
   private int reefAngle;
+
+  PathConstraints constraints;
+
   private Pose2d offsetWaypoint;
 
   private boolean isCalculated = false;
@@ -56,6 +62,11 @@ public class DriveToWaypointAdvancedCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    constraints = new PathConstraints(
+      4, 3.0,
+      swerveSubsystem.getSwerveDrive().getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+    waypoint = new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)));
     xPos = 0;
     yPos = 0;
   }
@@ -123,6 +134,12 @@ public class DriveToWaypointAdvancedCommand extends Command {
 
       isCalculated = true;
     } 
+
+    AutoBuilder.pathfindToPose(
+                waypoint,
+                constraints,
+                edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+        ).schedule();
 
     if (isCalculated){
       
