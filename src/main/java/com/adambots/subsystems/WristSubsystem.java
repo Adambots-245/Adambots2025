@@ -66,12 +66,11 @@ public class WristSubsystem extends SubsystemBase {
   private void configureMotors() {
     // Configure wrist motor
     wristMotor.setBrakeMode(true);
-    wristMotor.setInverted(true);
+    // wristMotor.setInverted(true);
   }
 
   private void setWristOutput(WristProperties properties) {
-    wristSpeed = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
-        properties.angleDegrees());
+    setWristPosition(properties.angleDegrees());
     // if (wristPID.atSetpoint()) {
     //   wristSpeed = 0;
     // }
@@ -85,8 +84,20 @@ public class WristSubsystem extends SubsystemBase {
     wristSpeed = speed;
   }
 
+  public void setWristPosition(double angleDegrees) {
+    wristSpeed = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
+        angleDegrees);
+  }
+
+  public void moveWristDown() {
+    setWristPosition(wristEncoder.getAbsolutePositionDegrees() - ElevatorConstants.kElevatorPositionIncrement);
+}
+public void moveWristUp() {
+    setWristPosition(wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kElevatorPositionIncrement);
+}
+
   private void holdWristPosition() {
-    wristMotor.setPosition(wristEncoder.getAbsolutePositionDegrees());
+    setWristPosition(wristEncoder.getAbsolutePositionDegrees());
   }
 
   @Override

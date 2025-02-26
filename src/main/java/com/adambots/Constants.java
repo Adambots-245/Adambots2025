@@ -191,7 +191,7 @@ public final class Constants {
         public static final double kDElevatorController = 0;
         public static final double kFElevatorController = 0.0;
 
-        public static final double kPWristController = 0.5;
+        public static final double kPWristController = 0.05;
         public static final double kIWristController = 0;
         public static final double kDWristController = 0;
 
@@ -208,18 +208,19 @@ public final class Constants {
         public static final double kElevatorDangerZoneEnd = 40;
 
         // Wrist Positions
-        public static final double kWristStowedPosition = 0.0;
-        public static final double kWristIntakePosition = 20.0;
-        public static final double kWristL1Position = 40.0;
-        public static final double kWristL2Position = 60.0;
-        public static final double kWristL3Position = 80.0;
-        public static final double kWristL4Position = 100.0;
+        public static final double kWristStowedPosition = 212.0;
+        public static final double kWristIntakePosition = 280.0;
+        public static final double kWristL1Position = 238.0;
+        public static final double kWristL2Position = 243.0;
+        public static final double kWristL3Position = 243.0;
+        public static final double kWristL4Position = 260.0;
 
         public static final double kWristMinAngle = 0;
         public static final double kWristMaxAngle = 100;
         public static final double kWristDangerZoneAngle = 40;
 
         // Gear Ratio and Other Elevator Constants
+        public static final double stateChangeDelay = 2;
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;

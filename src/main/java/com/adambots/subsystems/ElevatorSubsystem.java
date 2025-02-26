@@ -59,12 +59,18 @@ public class ElevatorSubsystem extends SubsystemBase {
                 ElevatorConstants.kFElevatorController);
         elevatorMotor.setBrakeMode(false);
         elevatorMotor.setInverted(true);
+
+        elevatorMotor.configureHardLimits(true,true, ElevatorConstants.kElevatorL4Position, 0);
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
         // double rotations = properties.position() / ElevatorConstants.kInchesPerRotation;
         double rotations = properties.position();
 
+        setPosition(rotations);
+    }
+
+    private void setPosition(double rotations) {
         elevatorMotor.setPosition(rotations);
     }
 
@@ -73,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void holdElevatorPosition() {
-        elevatorMotor.setPosition(currentPosition);
+        setPosition(currentPosition);
     }
 
     @Override
@@ -113,7 +119,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
     public void moveElevatorUp() {
         if (isElevatorSafe()) {
-            elevatorMotor.setPosition(getCurrentPosition() + ElevatorConstants.kElevatorPositionIncrement);
+            setPosition(getCurrentPosition() + ElevatorConstants.kElevatorPositionIncrement);
         } else {
             holdElevatorPosition();
         }
@@ -123,7 +129,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
     public void moveElevatorDown() {
         if (isElevatorSafe()) {
-            elevatorMotor.setPosition(getCurrentPosition() - ElevatorConstants.kElevatorPositionIncrement);
+           setPosition(getCurrentPosition() - ElevatorConstants.kElevatorPositionIncrement);
         } else {
             holdElevatorPosition();
         }

@@ -95,7 +95,7 @@ public class RobotMap {
     public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, true);
 
 
-    public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 40, false);
+    public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);
     public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
     public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, false);
     public static final BaseMotor climbMotor = new TalonFXMotor(kCANdlePort, true, kBottomCoralServoChannel, false);
