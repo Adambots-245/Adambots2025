@@ -154,10 +154,13 @@ public class RobotContainer {
 
       Buttons.XboxAButton.onTrue(elevatorCommands.moveToL1Command());
       Buttons.XboxBButton.onTrue(elevatorCommands.moveToL2Command());
-      Buttons.XboxXButton.onTrue(elevatorCommands.moveToL3Command());
-      Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
-      Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeAlgae());
-      Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
+      Buttons.XboxXButton.whileTrue(elevatorCommands.moveWristToStowedCommand());
+      Buttons.XboxYButton.whileTrue(elevatorCommands.moveWristToIntakeCommand());
+      // Buttons.XboxLeftStickButton.onTrue(intakeCommnds.intakeAlgae());
+      Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
+      // Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
+      Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeCoral());
+
       Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
       Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
 
@@ -165,6 +168,8 @@ public class RobotContainer {
       Buttons.XboxDPadS.whileTrue(elevatorCommands.moveElevatorDown());
       Buttons.XboxDPadE.whileTrue(elevatorCommands.moveWristUp());
       Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
+      // Buttons.XboxDPadE.whileTrue(new InstantCommand(()-> System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")));
+      // Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
 
     SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
     SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());

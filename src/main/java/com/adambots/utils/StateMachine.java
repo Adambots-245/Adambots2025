@@ -47,6 +47,7 @@ public class StateMachine<S extends Enum<S>, P> {
             // For non-position control, check if target is reached
             if (atTargetCheck != null && atTargetCheck.getAsBoolean()) {
                 logger.accept("Reached target state: " + targetState);
+                System.out.println("TRYING TO GO TO STATE");
                 currentState = targetState;
             }
         }

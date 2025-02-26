@@ -149,13 +149,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public boolean isElevatorSafe() {
 
         if (currentPosition <= ElevatorConstants.kElevatorMinHeight || currentPosition >= ElevatorConstants.kElevatorMaxHeight) {
-            holdElevatorPosition();
+            // holdElevatorPosition();
         }
 
         if (RobotMap.wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
             (currentPosition > ElevatorConstants.kElevatorDangerZoneStart && currentPosition < ElevatorConstants.kElevatorDangerZoneEnd)) {
-            holdElevatorPosition();
-            return false;
+            // holdElevatorPosition();
+            // return false;
         }
         return true;
     }

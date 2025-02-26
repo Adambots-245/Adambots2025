@@ -51,6 +51,8 @@ public class WristSubsystem extends SubsystemBase {
     this.wristPID = new PIDController(ElevatorConstants.kPWristController, ElevatorConstants.kIWristController,
         ElevatorConstants.kDWristController);
     this.wristPID.setTolerance(ElevatorConstants.kWristPositionTolerance);
+    wristPID.enableContinuousInput(0.0, 360.0);
+
 
     configureMotors();
 
@@ -66,7 +68,7 @@ public class WristSubsystem extends SubsystemBase {
   private void configureMotors() {
     // Configure wrist motor
     wristMotor.setBrakeMode(true);
-    // wristMotor.setInverted(true);
+    wristMotor.setInverted(true);
   }
 
   private void setWristOutput(WristProperties properties) {
@@ -96,14 +98,14 @@ public void moveWristUp() {
     setWristPosition(wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kElevatorPositionIncrement);
 }
 
-  private void holdWristPosition() {
+  public void holdWristPosition() {
     setWristPosition(wristEncoder.getAbsolutePositionDegrees());
   }
 
   @Override
   public void periodic() {
 
-    checkFailSafes();
+    // checkFailSafes();
     wristMotor.set(wristSpeed);
 
     // Get current position
@@ -114,6 +116,7 @@ public void moveWristUp() {
 
     // Update dashboard
     SmartDashboard.putNumber("Wrist/CurrentAngle", currentAngle);
+    SmartDashboard.putNumber("Wrist/Speed", wristSpeed);
     SmartDashboard.putNumber("Wrist/TargetAngle",
         wristStateMachine.getTargetProperties().angleDegrees());
     SmartDashboard.putString("Wrist/State",

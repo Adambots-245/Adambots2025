@@ -78,7 +78,7 @@ public class ElevatorCommands extends Command {
     }
 
     public Command moveWristToIntakeCommand() {
-        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE), wristSubsystem);
+        return Commands.runEnd(() -> wristSubsystem.moveWristToState(WristState.INTAKE), ()-> wristSubsystem.holdWristPosition(), wristSubsystem);
     }
 
     public Command moveWristToL1Command() {
@@ -108,10 +108,10 @@ public class ElevatorCommands extends Command {
     }
 
     public Command moveWristUp() {
-        return Commands.runEnd(() -> wristSubsystem.moveWristUp(), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
+        return Commands.runEnd(() -> wristSubsystem.moveWristUp(), ()-> wristSubsystem.holdWristPosition(), wristSubsystem);
     }
 
     public Command moveWristDown() {
-        return Commands.runEnd(()-> wristSubsystem.moveWristDown(), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
+        return Commands.runEnd(()-> wristSubsystem.moveWristDown(), ()-> wristSubsystem.holdWristPosition(), wristSubsystem);
     }
 }

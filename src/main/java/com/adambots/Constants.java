@@ -187,19 +187,19 @@ public final class Constants {
         public static final double kWristPositionTolerance = 2.0;
         
         public static final double kPElevatorController = 0.5;
-        public static final double kIElevatorController = 0;
+        public static final double kIElevatorController = 0.001;
         public static final double kDElevatorController = 0;
         public static final double kFElevatorController = 0.0;
 
-        public static final double kPWristController = 0.05;
-        public static final double kIWristController = 0;
+        public static final double kPWristController = 0.001;
+        public static final double kIWristController = 0.00;
         public static final double kDWristController = 0;
 
         // Elevator Positions
         public static final double kElevatorIntakePosition = 0.0;
         public static final double kElevatorL1Position = 21.01;
         public static final double kElevatorL2Position = 32.3;
-        public static final double kElevatorL3Position = 58.63;
+        public static final double kElevatorL3Position = 56.47;
         public static final double kElevatorL4Position = 91.72;
 
         public static final double kElevatorMaxHeight = 48;
@@ -208,11 +208,11 @@ public final class Constants {
         public static final double kElevatorDangerZoneEnd = 40;
 
         // Wrist Positions
-        public static final double kWristStowedPosition = 212.0;
-        public static final double kWristIntakePosition = 280.0;
+        public static final double kWristStowedPosition = 20;
+        public static final double kWristIntakePosition = 10;
         public static final double kWristL1Position = 238.0;
         public static final double kWristL2Position = 243.0;
-        public static final double kWristL3Position = 243.0;
+        public static final double kWristL3Position = 61.09;
         public static final double kWristL4Position = 260.0;
 
         public static final double kWristMinAngle = 0;
