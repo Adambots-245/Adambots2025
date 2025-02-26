@@ -1,6 +1,7 @@
 package com.adambots.commands.driveCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
@@ -18,13 +19,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.adambots.Robot;
 import com.adambots.subsystems.SwerveSubsystem;
 
 public class DriveToPoseReefAdvanced extends Command {
     private final SwerveSubsystem swerveSubsystem;
 
-    private int[] redTagIDs = { 6, 7, 8, 9, 10, 11 };
-    private int[] blueTagIDs = { 17, 18, 19, 20, 21, 22 };
+    private int[] tagIds;
     private double offset = 0.162;
     private Supplier<Integer> aprilTagId;
 
@@ -59,13 +60,19 @@ public class DriveToPoseReefAdvanced extends Command {
         isSeen = false;
         isCalculated = false;
         targetPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0)));
+
+        if (Robot.isOnRedAlliance()) {
+            tagIds = new int[]{6,7,8,9,10,11};
+        } else {
+            tagIds = new int[]{17,18,19,20,21,22};
+        }
     }
 
     @Override
     public void execute() {
         Pose2d currentPose = swerveSubsystem.getPose();
 
-        // idSeen = swerveSubsystem.getVision().hasID(redTagIDs);
+        // idSeen = swerveSubsystem.getVision().hasID(tagIds);
         idSeen = aprilTagId.get();
 
         if (idSeen > -1) {
