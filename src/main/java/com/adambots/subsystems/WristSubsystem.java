@@ -103,14 +103,17 @@ public void moveWristUp() {
   @Override
   public void periodic() {
 
+    
+    // Update wrist state machine
+    wristStateMachine.periodic();
+    
+    WristState currentState = wristStateMachine.getCurrentState();
+    setWristPosition(currentState.properties.angleDegrees());
     checkFailSafes();
     wristMotor.set(wristSpeed);
 
     // Get current position
     double currentAngle = wristEncoder.getAbsolutePositionDegrees();
-
-    // Update wrist state machine
-    wristStateMachine.periodic();
 
     // Update dashboard
     SmartDashboard.putNumber("Wrist/CurrentAngle", currentAngle);
