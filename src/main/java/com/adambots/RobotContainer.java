@@ -117,8 +117,8 @@ public class RobotContainer {
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(()-> swerveSubsystem.setGoalPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))))));
-      Buttons.JoystickButton3.whileTrue(driveCommands.driveToPoseAdvanced());
+      Buttons.JoystickButton2.onTrue(new InstantCommand(()-> goalPose = new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)))));
+      Buttons.JoystickButton3.whileTrue(driveCommands.driveToPoseAdvanced(()->goalPose));
       // Buttons.JoystickButton3.onFalse(new InstantCommand(()-> swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0,0,0))));
       Buttons.JoystickButton4.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)))));
       // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)))));

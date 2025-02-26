@@ -165,7 +165,7 @@ public class DriveCommands {
         );
     }
 
-    public Command driveToPoseAdvanced() {
+    public Command driveToPoseAdvanced(Supplier<Pose2d> goalPose) {
         // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
                 1, 1.0,
@@ -174,7 +174,7 @@ public class DriveCommands {
         // Since AutoBuilder is configured, we can use it to build pathfinding commands
 
         return AutoBuilder.pathfindToPose(
-                subsystem.getGoalPose().get(),
+                goalPose.get(),
                 constraints,
                 edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
         ).alongWith(new PrintCommand(subsystem.getGoalPose().get().toString()));
