@@ -159,12 +159,6 @@ public class RobotContainer {
       Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
 
     SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
-    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
-    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
-    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
-    SmartDashboard.putData("Score Coral", scoringCommands.scoreCoral());
-    SmartDashboard.putData("Stop Score Coral", scoringCommands.stopScoringCoral());
-    SmartDashboard.putData("Stop Score Algae", scoringCommands.stopScoringAlgae());
 
     SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
     SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
