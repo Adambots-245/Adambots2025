@@ -5,7 +5,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.adambots.Constants.DriveConstants;
 import com.adambots.commands.driveCommands.DriveCommands;
-import com.adambots.commands.driveCommands.DriveToWaypointAdvancedCommand;
+import com.adambots.commands.driveCommands.DriveToPose;
+import com.adambots.commands.driveCommands.DriveToPoseReefAdvanced;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
@@ -50,7 +51,8 @@ public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
   private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator,
+      RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
 
@@ -65,7 +67,7 @@ public class RobotContainer {
 
   private static SwerveInputStream driveAngularVelocity;
 
-  private Pose2d goalPose = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
+  private Integer aprilTagId = 6;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -103,7 +105,7 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
       Buttons.XboxStartButton
           .onTrue(Commands.runOnce(() -> swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      
+
     }
 
     if (DriverStation.isTest()) {
@@ -113,17 +115,19 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(driveCommands.centerModulesCommand());
       Buttons.XboxLeftBumper.onTrue(Commands.none());
       // RobotMap.gyro.resetYaw();
-      // Buttons.JoystickButton6.onTrue(new InstantCommaaand(RobotMap.gyro.resetYaw()));
+      // Buttons.JoystickButton6.onTrue(new
+      // InstantCommaaand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(()-> swerveSubsystem.setGoalPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))))));
-      Buttons.JoystickButton3.whileTrue(driveCommands.driveToPoseAdvanced());
-      // Buttons.JoystickButton3.onFalse(new InstantCommand(()-> swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0,0,0))));
-      Buttons.JoystickButton4.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120)))));
-      // Buttons.JoystickButton5.whileTrue(driveCommands.driveToPose(new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)))));
-      // Buttons.JoystickButton6.whileTrue(new DriveToWaypointCommand(swerveSubsystem, new Pose2d(new Translation2d(13.728, 2.884), new Rotation2d(Math.toRadians(120))) ,driveCommands));
-      // Buttons.JoystickButton7.whileTrue(driveCommands.driveToPoseAdvanced());
+      // Buttons.JoystickButton1.onTrue(new InstantCommand(()-> aprilTagId = 7));
+      // Buttons.JoystickButton3.whileTrue(driveCommands.driveToPoseAdvanced(()->goalPose));
+
+      Buttons.JoystickButton1.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, false));
+      Buttons.JoystickButton2.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, true));
+      Buttons.JoystickButton3.whileTrue(new InstantCommand(() -> aprilTagId = 8));
+      Buttons.JoystickButton4.whileTrue(new InstantCommand(() -> aprilTagId = 9));
+
       Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
       Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
@@ -135,7 +139,7 @@ public class RobotContainer {
       Buttons.XboxBackButton.whileTrue(Commands.none());
       Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
       Buttons.XboxRightBumper.onTrue(Commands.none());
-      
+
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
       Buttons.JoystickButton2.onTrue(scoringCommands.stopScoringAlgae());
       Buttons.JoystickButton3.onTrue(scoringCommands.scoreCoral());
@@ -171,43 +175,49 @@ public class RobotContainer {
       // Buttons.XboxDPadE.whileTrue(new InstantCommand(()-> System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")));
       // Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
 
-    SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
-    SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
-    SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
-    SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
-    SmartDashboard.putData("Score Coral", scoringCommands.scoreCoral());
-    SmartDashboard.putData("Stop Score Coral", scoringCommands.stopScoringCoral());
-    SmartDashboard.putData("Stop Score Algae", scoringCommands.stopScoringAlgae());
+      SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
+      SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
+      SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
+      SmartDashboard.putData("Reverse Intake Coral", intakeCommands.reverseIntakeCoral());
+      SmartDashboard.putData("Score Coral", scoringCommands.scoreCoral());
+      SmartDashboard.putData("Stop Score Coral", scoringCommands.stopScoringCoral());
+      SmartDashboard.putData("Stop Score Algae", scoringCommands.stopScoringAlgae());
 
-    SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
-    SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
-    SmartDashboard.putData("L2 State", elevatorCommands.moveToL2Command());
-    SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
-    SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
+      SmartDashboard.putData("Intake State", elevatorCommands.moveToIntakeCommand());
+      SmartDashboard.putData("L1 State", elevatorCommands.moveToL1Command());
+      SmartDashboard.putData("L2 State", elevatorCommands.moveToL2Command());
+      SmartDashboard.putData("L3 State", elevatorCommands.moveToL3Command());
+      SmartDashboard.putData("L4 State", elevatorCommands.moveToL4Command());
 
-    SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
-    SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
-    SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L1));
-    SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
-    SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
-    SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
-    SmartDashboard.putData("Wrist Down", elevatorCommands.moveWristDown());
-    SmartDashboard.putData("Wrist Up", elevatorCommands.moveWristUp());
-    
-    SmartDashboard.putData("Elevator L1", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));
-    SmartDashboard.putData("Elevator L2", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L2));
-    SmartDashboard.putData("Elevator L3", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L3));
-    SmartDashboard.putData("Elevator L4", elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L4));
-    SmartDashboard.putData("Elevator Up", elevatorCommands.moveElevatorUp());
-    SmartDashboard.putData("Elevator Down", elevatorCommands.moveElevatorDown());
+      SmartDashboard.putData("Wrist Stowed", elevatorCommands.moveWristToIntakeCommand());
+      SmartDashboard.putData("Wrist Intake", elevatorCommands.moveWristToStowedCommand());
+      SmartDashboard.putData("Wrist L1", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L1));
+      SmartDashboard.putData("Wrist L2", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L2));
+      SmartDashboard.putData("Wrist L3", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L3));
+      SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
+      SmartDashboard.putData("Wrist Down", elevatorCommands.moveWristDown());
+      SmartDashboard.putData("Wrist Up", elevatorCommands.moveWristUp());
 
-    SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
-    SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
-    SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
+      SmartDashboard.putData("Elevator L1",
+          elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));
+      SmartDashboard.putData("Elevator L2",
+          elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L2));
+      SmartDashboard.putData("Elevator L3",
+          elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L3));
+      SmartDashboard.putData("Elevator L4",
+          elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L4));
+      SmartDashboard.putData("Elevator Up", elevatorCommands.moveElevatorUp());
+      SmartDashboard.putData("Elevator Down", elevatorCommands.moveElevatorDown());
+
+      SmartDashboard.putData("Intake Algae", intakeCommands.intakeAlgae());
+      SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
+      SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
     }
 
-    // swerveSubsystem.getVision().getTargetFromId(1, PhotonVision.Cameras.CENTER_CAM);
-    // PhotonVision.getAprilTagPose(1, new Transform2d(new Translation2d(2.0, 2.0), new Rotation2d()));
+    // swerveSubsystem.getVision().getTargetFromId(1,
+    // PhotonVision.Cameras.CENTER_CAM);
+    // PhotonVision.getAprilTagPose(1, new Transform2d(new Translation2d(2.0, 2.0),
+    // new Rotation2d()));
     // swerveSubsystem.getVision().getDistanceFromAprilTag(1);
 
   }
@@ -234,7 +244,7 @@ public class RobotContainer {
 
     // Adds various data to the dashboard that is useful for driving and debugging
     SmartDashboard.putData("Auton Mode", autoChooser);
-    Dash.add("CANrange Dist", ()-> RobotMap.CANrange.getDistanceInInches());
+    Dash.add("CANrange Dist", () -> RobotMap.CANrange.getDistanceInInches());
     // Dash.add("ServoHub", ()->RobotMap.hub.getDeviceVoltage());
     // Dash.add("Wrist Encoder", ()->RobotMap.encoder.getAbsolutePositionDegrees());
 
@@ -297,16 +307,19 @@ public class RobotContainer {
 
     // Derive the heading axis with math!
     // Creates a new SwerveInputStream for driving with direct angle simulation.
-    // 
-    // The controller heading axis is calculated using the sine and cosine of the 
-    // rotation supplier's value multiplied by π (Math.PI), and then scaled by 2π (2 * Math.PI).
-    // 
-    // The sine function is used to calculate the x-axis component of the heading, 
-    // while the cosine function is used to calculate the y-axis component of the heading.
-    // 
+    //
+    // The controller heading axis is calculated using the sine and cosine of the
+    // rotation supplier's value multiplied by π (Math.PI), and then scaled by 2π (2
+    // * Math.PI).
+    //
+    // The sine function is used to calculate the x-axis component of the heading,
+    // while the cosine function is used to calculate the y-axis component of the
+    // heading.
+    //
     // The headingWhile method is called with a true value to maintain the heading.
-    // 
-    // @return A new SwerveInputStream with the specified controller heading axis and heading behavior.
+    //
+    // @return A new SwerveInputStream with the specified controller heading axis
+    // and heading behavior.
     SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
         .withControllerHeadingAxis(() -> Math.sin(
             Buttons.rotateSupplier.getAsDouble() * Math.PI)
