@@ -126,8 +126,8 @@ public class RobotContainer {
     } else {
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
-      Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, false));
-      Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, true));
+      // Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, false));
+      // Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, true));
       // Buttons.JoystickButton3.whileTrue(new InstantCommand(() -> aprilTagId = 10));
       // Buttons.JoystickButton4.whileTrue(new InstantCommand(() -> aprilTagId = 11));
 
@@ -148,12 +148,15 @@ public class RobotContainer {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
-      Buttons.JoystickButton3.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(1)));
-      Buttons.JoystickButton4.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(-0.1)));
-      Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0)));
 
-      Buttons.JoystickButton9.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(true)));
-      Buttons.JoystickButton10.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(false)));
+      Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true));
+
+      // Buttons.JoystickButton3.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(1)));
+      // Buttons.JoystickButton4.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(-0.1)));
+      // Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0)));
+
+      // Buttons.JoystickButton9.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(true)));
+      // Buttons.JoystickButton10.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(false)));
 
       // Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
       // Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));

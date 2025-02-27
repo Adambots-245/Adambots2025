@@ -171,14 +171,14 @@ public void moveWristUp() {
 
     double elevatorCurrentPosition = RobotMap.elevatorMotor.getPosition();
     
-    if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle && wristEncoder.getAbsolutePositionDegrees() <= 350) {
-      // wristSpeed = 0;
-      holdWristPosition();
-    }
-    if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMinAngle) {
-      // wristSpeed = 0;
-      holdWristPosition();
-    }
+    // if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle && wristEncoder.getAbsolutePositionDegrees() <= 350) {
+    //   // wristSpeed = 0;
+    //   holdWristPosition();
+    // }
+    // if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMinAngle) {
+    //   // wristSpeed = 0;
+    //   holdWristPosition();
+    // }
     // if (elevatorCurrentPosition >= ElevatorConstants.kElevatorDangerZoneStart
     //     && elevatorCurrentPosition <= ElevatorConstants.kElevatorDangerZoneEnd) {
 

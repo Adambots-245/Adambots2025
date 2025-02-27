@@ -173,7 +173,7 @@ public final class Constants {
         public static final double kReverseSpeed = 1;
         public static final double kDistanceToDetect = 10;//cm
         public static final double kTimerThreshold = 0.4; // number of seconds to wait before stopping the intake after detecting a coral
-        public static final double kAlgaeIntakePulseSeconds = 1.0;
+        public static final double kAlgaeIntakePulseSeconds = 0.2;
 
     }
 
@@ -202,9 +202,9 @@ public final class Constants {
         public static final double kElevatorL2Position = 32.3;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 91;
-        public static final double kElevatorHighAlgaePosition = 0000000000;
-        public static final double kElevatorLowAlgaePosition = 000000000;
-        public static final double kElevatorProcessorPosition = 00000000;
+        public static final double kElevatorHighAlgaePosition = 61;
+        public static final double kElevatorLowAlgaePosition = 32;
+        public static final double kElevatorProcessorPosition = 0;
 
         public static final double kElevatorMaxHeight = 90;
         public static final double kElevatorMinHeight = 0;
@@ -218,10 +218,11 @@ public final class Constants {
         public static final double kWristL2Position = 66;
         public static final double kWristL3Position = 66;
         public static final double kWristL4Position = 74;
-        public static final double kWristHighAlgaePosition = 000000000;
-        public static final double kWristLowAlgaePosition = 000000000;
-        public static final double kWristProcessorPosition = 000000000;
-        public static final double kWristGroundIntakePosition = 000000000;
+        public static final double kWristHighAlgaePosition = 12;
+        public static final double kWristLowAlgaePosition = 12;
+        public static final double kWristProcessorPosition = 12;
+        public static final double kWristGroundIntakePosition = 350
+        ;
 
 
         public static final double kWristMinAngle = 355;

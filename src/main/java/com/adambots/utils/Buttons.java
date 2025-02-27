@@ -45,11 +45,11 @@ public class Buttons {
         public static final Trigger XboxRightTriggerButton = XboxController.rightTrigger(0.5);
 
         // Xbox Stick Throttles
-        public static final Trigger rightStickUp = new Trigger(()-> XboxController.getRightY() > 0.5);
-        public static final Trigger rightStickDown = new Trigger(()-> XboxController.getRightY() < -0.5);
+        public static final Trigger rightStickUp = new Trigger(()-> XboxController.getRightY() < -0.8);
+        public static final Trigger rightStickDown = new Trigger(()-> XboxController.getRightY() > 0.8);
 
-        public static final Trigger leftStickUp = new Trigger(()-> XboxController.getLeftY() > 0.5);
-        public static final Trigger leftStickDown = new Trigger(()-> XboxController.getLeftY() < -0.5);
+        public static final Trigger leftStickUp = new Trigger(()-> XboxController.getLeftY() < -0.8);
+        public static final Trigger leftStickDown = new Trigger(()-> XboxController.getLeftY() > 0.8);
 
         // Xbox DPad
         public static final Trigger XboxDPadN = XboxController.pov(0);

@@ -39,10 +39,10 @@ public class DriveToPoseReefAdvanced extends Command {
 
     private final HolonomicDriveController holonomicController;
 
-    public DriveToPoseReefAdvanced(SwerveSubsystem swerveSubsystem, Supplier<Integer> aprilTagId, boolean isRight) {
+    public DriveToPoseReefAdvanced(SwerveSubsystem swerveSubsystem, boolean isRight) {
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
-        this.aprilTagId = aprilTagId;
+        // this.aprilTagId = aprilTagId;
         this.isOffsetRight = isRight;
 
         // PID Controllers for X, Y movement & theta (rotation)
