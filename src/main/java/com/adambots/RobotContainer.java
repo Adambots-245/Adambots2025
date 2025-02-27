@@ -149,14 +149,15 @@ public class RobotContainer {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
 
+      Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, false));
       Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true));
 
       // Buttons.JoystickButton3.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(1)));
       // Buttons.JoystickButton4.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(-0.1)));
       // Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0)));
 
-      // Buttons.JoystickButton9.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(true)));
-      // Buttons.JoystickButton10.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(false)));
+      Buttons.JoystickButton9.onTrue(Commands.runOnce(()-> hangSubsystem.setSolenoids(true)));
+      Buttons.JoystickButton10.onTrue(Commands.runOnce(()-> hangSubsystem.releaseServo()));
 
       // Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
       // Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));

@@ -401,8 +401,8 @@ public class PhotonVision {
      */
     LEFT_CAM("LEFT_CAM",
         new Rotation3d(0, Units.degreesToRadians(55), Units.degreesToRadians(0)),
-        new Translation3d(Units.inchesToMeters(8),
-            Units.inchesToMeters(13.5),
+        new Translation3d(Units.inchesToMeters(12),
+            Units.inchesToMeters(11),
             Units.inchesToMeters(41)),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 

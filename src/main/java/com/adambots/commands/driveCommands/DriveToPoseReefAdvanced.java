@@ -26,7 +26,7 @@ public class DriveToPoseReefAdvanced extends Command {
     private final SwerveSubsystem swerveSubsystem;
 
     private int[] tagIds;
-    private double offset = 0.162;
+    private double offset = 0.172;
     private Supplier<Integer> aprilTagId;
 
     private boolean isSeen;
