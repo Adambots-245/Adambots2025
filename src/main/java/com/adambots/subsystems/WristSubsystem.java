@@ -37,6 +37,8 @@ public class WristSubsystem extends SubsystemBase {
   private final BaseAbsoluteEncoder wristEncoder;
   private final PIDController wristPID;
   private final BaseMotor wristMotor;
+  public static boolean isManual = true;
+  public static double goalWristAngle;
 
   double wristSpeed;
 
@@ -63,7 +65,13 @@ public class WristSubsystem extends SubsystemBase {
         message -> SmartDashboard.putString("Wrist/Status", message),
         false // Not using position control
     );
+
+    goalWristAngle = 40;
   }
+
+  // public static void setWristAngle()_{
+  //   goalWristAngle = wristEncoder.getAbsolutePositionDegrees();
+  // }
 
   private void configureMotors() {
     // Configure wrist motor
@@ -92,14 +100,19 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public void moveWristDown() {
-    setWristPosition(wristEncoder.getAbsolutePositionDegrees() - ElevatorConstants.kElevatorPositionIncrement);
+    isManual = true;
+    // setWristPosition(wristEncoder.getAbsolutePositionDegrees() - ElevatorConstants.kWristPositionIncrement);
+    goalWristAngle = wristEncoder.getAbsolutePositionDegrees() - ElevatorConstants.kWristPositionIncrement;
 }
 public void moveWristUp() {
-    setWristPosition(wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kElevatorPositionIncrement);
+    isManual = true;
+    // setWristPosition(wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kWristPositionIncrement);
+    goalWristAngle = wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kWristPositionIncrement;
 }
 
   public void holdWristPosition() {
     setWristPosition(wristEncoder.getAbsolutePositionDegrees());
+    goalWristAngle = wristEncoder.getAbsolutePositionDegrees();
   }
 
   @Override
@@ -109,9 +122,13 @@ public void moveWristUp() {
     // Update wrist state machine
     wristStateMachine.periodic();
     
-    WristState currentState = wristStateMachine.getCurrentState();
-    setWristPosition(currentState.properties.angleDegrees());
-    // checkFailSafes();
+    if (!isManual){
+      WristState currentState = wristStateMachine.getCurrentState();
+      setWristPosition(currentState.properties.angleDegrees());
+    } else {
+      setWristPosition(goalWristAngle);
+    }
+    checkFailSafes();
     wristMotor.set(wristSpeed);
 
     // Get current position
@@ -129,6 +146,7 @@ public void moveWristUp() {
 
   // Public methods for commanding the wrist
   public void moveWristToState(WristState state) {
+    isManual = false;
     wristStateMachine.requestTransition(
         state,
         state.properties,
@@ -149,24 +167,24 @@ public void moveWristUp() {
 
     double elevatorCurrentPosition = RobotMap.elevatorMotor.getPosition();
     
-    if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle) {
+    if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle && wristEncoder.getAbsolutePositionDegrees() <= 350) {
       // wristSpeed = 0;
       holdWristPosition();
     }
-    if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() <= ElevatorConstants.kWristMinAngle) {
+    if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMinAngle) {
       // wristSpeed = 0;
       holdWristPosition();
     }
-    if (elevatorCurrentPosition >= ElevatorConstants.kElevatorDangerZoneStart
-        && elevatorCurrentPosition <= ElevatorConstants.kElevatorDangerZoneEnd) {
+    // if (elevatorCurrentPosition >= ElevatorConstants.kElevatorDangerZoneStart
+    //     && elevatorCurrentPosition <= ElevatorConstants.kElevatorDangerZoneEnd) {
 
-      if (wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle) {
+    //   if (wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle) {
 
-        if (wristSpeed > 0) {
-          // wristSpeed = 0;
-          holdWristPosition();
-        }
-      }
-    }
+    //     if (wristSpeed > 0) {
+    //       // wristSpeed = 0;
+    //       holdWristPosition();
+    //     }
+    //   }
+    // }
   }
 }

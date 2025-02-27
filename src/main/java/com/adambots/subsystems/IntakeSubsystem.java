@@ -7,6 +7,8 @@ package com.adambots.subsystems;
 import com.adambots.Constants.IntakeConstants;
 import com.adambots.actuators.BaseActuator;
 import com.adambots.sensors.BaseDistanceSensor;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -82,6 +84,8 @@ public class IntakeSubsystem extends SubsystemBase {
     if (bottomCoralActuator != null) {
       bottomCoralActuator.set(-coralIntakeSpeed); // run CCW to intake coral
     }
+
+    SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());
 
 
     // Algae intake logic - there two servos, one to grip the Algae and one to run the Algae into the intake.

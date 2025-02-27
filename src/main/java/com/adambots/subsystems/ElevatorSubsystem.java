@@ -93,6 +93,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Update elevator state machine
         elevatorStateMachine.periodic();
 
+        SmartDashboard.putNumber("Elevator/Speed", elevatorMotor.getVelocity());
         SmartDashboard.putNumber("Elevator/Encoder", elevatorMotor.getPosition());
         // Update dashboard
         SmartDashboard.putNumber("Elevator/CurrentPosition", currentPosition);

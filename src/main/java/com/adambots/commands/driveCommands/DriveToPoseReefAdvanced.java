@@ -46,8 +46,8 @@ public class DriveToPoseReefAdvanced extends Command {
         this.isOffsetRight = isRight;
 
         // PID Controllers for X, Y movement & theta (rotation)
-        PIDController xController = new PIDController(2.0, 0, 0);
-        PIDController yController = new PIDController(2.0, 0, 0);
+        PIDController xController = new PIDController(1.0, 0, 0);
+        PIDController yController = new PIDController(1.0, 0, 0);
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 3.0, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -72,8 +72,8 @@ public class DriveToPoseReefAdvanced extends Command {
     public void execute() {
         Pose2d currentPose = swerveSubsystem.getPose();
 
-        // idSeen = swerveSubsystem.getVision().hasID(tagIds);
-        idSeen = aprilTagId.get();
+        idSeen = swerveSubsystem.getVision().hasID(tagIds);
+        // idSeen = aprilTagId.get();
 
         if (idSeen > -1) {
             isSeen = true;
@@ -107,10 +107,14 @@ public class DriveToPoseReefAdvanced extends Command {
                     isInveresed = false;
                     break;
                 case 10:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(11.749, 4.025), new Rotation2d(0));
+                    reefAngle = 90;
+                    isInveresed = false;
                     break;
                 case 11:
-                    targetPose = new Pose2d(new Translation2d(12.412, 2.913), new Rotation2d(Math.toRadians(60)));
+                    targetPose = new Pose2d(new Translation2d(12.412, 2.884), new Rotation2d(Math.toRadians(60)));
+                    reefAngle = 150;
+                    isInveresed = false;
                     break;
                 case 17:
                     targetPose = new Pose2d(new Translation2d(), new Rotation2d());

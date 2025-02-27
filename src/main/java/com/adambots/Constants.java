@@ -171,8 +171,8 @@ public final class Constants {
         public static final double kMaxSpeed = -1;
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 1;
-        public static final double kDistanceToDetect = 7.5; //inches
-        public static final double kTimerThreshold = 0.25; // number of seconds to wait before stopping the intake after detecting a coral
+        public static final double kDistanceToDetect = 10;//cm
+        public static final double kTimerThreshold = 0.4; // number of seconds to wait before stopping the intake after detecting a coral
         public static final double kAlgaeIntakePulseSeconds = 1.0;
 
     }
@@ -181,46 +181,47 @@ public final class Constants {
 
         // PID Constants
         public static final int kPIDSlot = 0;
-        public static double kElevatorSpeed = 0.2; // only for free movement and not for positional control
-        public static double kElevatorPositionIncrement = 1;
+        public static final double kElevatorSpeed = 0.2; // only for free movement and not for positional control
+        public static final double kElevatorPositionIncrement = 0.7;
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         
         public static final double kPElevatorController = 0.5;
-        public static final double kIElevatorController = 0.001;
-        public static final double kDElevatorController = 0;
+        public static final double kIElevatorController = 0.000;
+        public static final double kDElevatorController = 0.01;
         public static final double kFElevatorController = 0.0;
 
-        public static final double kPWristController = 0.001;
+        public static final double kWristPositionIncrement = 3;
+        public static final double kPWristController = 0.022;
         public static final double kIWristController = 0.00;
-        public static final double kDWristController = 0;
+        public static final double kDWristController = 0.0001;
 
         // Elevator Positions
         public static final double kElevatorIntakePosition = 0.0;
         public static final double kElevatorL1Position = 21.01;
         public static final double kElevatorL2Position = 32.3;
-        public static final double kElevatorL3Position = 56.47;
-        public static final double kElevatorL4Position = 91.72;
+        public static final double kElevatorL3Position = 55;
+        public static final double kElevatorL4Position = 91;
 
-        public static final double kElevatorMaxHeight = 48;
+        public static final double kElevatorMaxHeight = 90;
         public static final double kElevatorMinHeight = 0;
         public static final double kElevatorDangerZoneStart = 20;
         public static final double kElevatorDangerZoneEnd = 40;
 
         // Wrist Positions
-        public static final double kWristStowedPosition = 20;
-        public static final double kWristIntakePosition = 10;
-        public static final double kWristL1Position = 238.0;
-        public static final double kWristL2Position = 243.0;
-        public static final double kWristL3Position = 61.09;
-        public static final double kWristL4Position = 260.0;
+        public static final double kWristStowedPosition = 55;
+        public static final double kWristIntakePosition = 77;
+        public static final double kWristL1Position = 66;
+        public static final double kWristL2Position = 66;
+        public static final double kWristL3Position = 66;
+        public static final double kWristL4Position = 74;
 
-        public static final double kWristMinAngle = 0;
-        public static final double kWristMaxAngle = 100;
-        public static final double kWristDangerZoneAngle = 40;
+        public static final double kWristMinAngle = 355;
+        public static final double kWristMaxAngle = 85;
+        public static final double kWristDangerZoneAngle = 58;
 
         // Gear Ratio and Other Elevator Constants
-        public static final double stateChangeDelay = 2;
+        public static final double stateChangeDelay = 1;
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;

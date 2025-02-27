@@ -20,6 +20,7 @@ import com.adambots.subsystems.WristSubsystem.WristState;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import swervelib.SwerveInputStream;
 
 /**
@@ -119,59 +121,65 @@ public class RobotContainer {
       // InstantCommaaand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
-      // Buttons.JoystickButton1.onTrue(new InstantCommand(()-> aprilTagId = 7));
-      // Buttons.JoystickButton3.whileTrue(driveCommands.driveToPoseAdvanced(()->goalPose));
+      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
-      Buttons.JoystickButton1.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, false));
-      Buttons.JoystickButton2.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, true));
-      Buttons.JoystickButton3.whileTrue(new InstantCommand(() -> aprilTagId = 8));
-      Buttons.JoystickButton4.whileTrue(new InstantCommand(() -> aprilTagId = 9));
+      Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, false));
+      Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, true));
+      // Buttons.JoystickButton3.whileTrue(new InstantCommand(() -> aprilTagId = 10));
+      // Buttons.JoystickButton4.whileTrue(new InstantCommand(() -> aprilTagId = 11));
 
-      Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
+      // Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
 
-      Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
-      Buttons.XboxBButton.whileTrue(
-          driveCommands.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
-      Buttons.XboxStartButton.whileTrue(Commands.none());
-      Buttons.XboxBackButton.whileTrue(Commands.none());
-      Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
-      Buttons.XboxRightBumper.onTrue(Commands.none());
+      // Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
+      // Buttons.XboxBButton.whileTrue(
+      //     driveCommands.driveToPose(
+      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+      // Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
+      // Buttons.XboxStartButton.whileTrue(Commands.none());
+      // Buttons.XboxBackButton.whileTrue(Commands.none());
+      // Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
+      // Buttons.XboxRightBumper.onTrue(Commands.none());
 
+      // Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
+      // Buttons.JoystickButton2.onTrue(scoringCommands.stopScoringAlgae());
+      Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
-      Buttons.JoystickButton2.onTrue(scoringCommands.stopScoringAlgae());
-      Buttons.JoystickButton3.onTrue(scoringCommands.scoreCoral());
-      Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
-      Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));
-      Buttons.JoystickButton6.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.INTAKE));
-      Buttons.JoystickButton8.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L1));
-      Buttons.JoystickButton9.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L2));
-      Buttons.JoystickButton10.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
-      Buttons.JoystickButton11.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
-      Buttons.JoystickButton12.onTrue(elevatorCommands.moveWristToStowedCommand());
-      Buttons.JoystickButton13.onTrue(elevatorCommands.moveWristToIntakeCommand());
-      Buttons.JoystickButton14.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
-      Buttons.JoystickButton15.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
-      Buttons.JoystickButton16.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L3));
+      Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
+      // Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
+      // Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));
+      // Buttons.JoystickButton6.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.INTAKE));
+      // Buttons.JoystickButton8.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L1));
+      // Buttons.JoystickButton9.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L2));
+      // Buttons.JoystickButton10.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
+      // Buttons.JoystickButton11.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
+      // Buttons.JoystickButton12.onTrue(elevatorCommands.moveWristToStowedCommand());
+      // Buttons.JoystickButton13.onTrue(elevatorCommands.moveWristToIntakeCommand());
+      // Buttons.JoystickButton14.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L1));
+      // Buttons.JoystickButton15.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
+      // Buttons.JoystickButton16.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L3));
 
       Buttons.XboxAButton.onTrue(elevatorCommands.moveToL1Command());
       Buttons.XboxBButton.onTrue(elevatorCommands.moveToL2Command());
-      Buttons.XboxXButton.whileTrue(elevatorCommands.moveWristToStowedCommand());
-      Buttons.XboxYButton.whileTrue(elevatorCommands.moveWristToIntakeCommand());
-      // Buttons.XboxLeftStickButton.onTrue(intakeCommnds.intakeAlgae());
+      Buttons.XboxXButton.onTrue(elevatorCommands.moveToL3Command());
+      Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
+      Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
+      // Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeAlgae());
       Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
+      Buttons.XboxDPadE.onTrue(intakeCommands.intakeAlgae());
+      Buttons.XboxDPadW.onTrue(intakeCommands.intakeAlgae());
+
       // Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeCoral());
+      Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
 
-      Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
+      // Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
       Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
+      Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeAlgae());
 
-      Buttons.XboxDPadN.whileTrue(elevatorCommands.moveElevatorUp());
-      Buttons.XboxDPadS.whileTrue(elevatorCommands.moveElevatorDown());
-      Buttons.XboxDPadE.whileTrue(elevatorCommands.moveWristUp());
-      Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
+      Buttons.XboxDPadN.whileTrue(elevatorCommands.moveWristUp());
+      Buttons.XboxDPadS.whileTrue(elevatorCommands.moveWristDown());
+      Buttons.XboxRightBumper.whileTrue(elevatorCommands.moveElevatorUp());
+      Buttons.XboxLeftBumper.whileTrue(elevatorCommands.moveElevatorDown());
       // Buttons.XboxDPadE.whileTrue(new InstantCommand(()-> System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")));
       // Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
 
@@ -226,14 +234,9 @@ public class RobotContainer {
    * Register named commands for use in PathPlanner
    */
   private void registerNamedCommands() {
-    // NamedCommands.registerCommand("ShootPreload", new SequentialCommandGroup(
-    // new PrimeShooterCommand(armSubsystem, shooterSubsystem, intakeSubsystem,
-    // candleSubsytem, ShooterConstants.mediumSpeed, ArmConstants.speakerState),
-    // new WaitCommand(1),
-    // new ForceFeedShooterCommand(intakeSubsystem, shooterSubsystem),
-    // new InstantCommand(() ->
-    // armSubsystem.setCurrentState(ArmConstants.closeFloorShootState))
-    // ));
+    NamedCommands.registerCommand("Score", scoringCommands.scoreCoral());
+    NamedCommands.registerCommand("L4Position", elevatorCommands.moveToL4Command());
+    NamedCommands.registerCommand("IntakePosition", elevatorCommands.moveToIntakeCommand());
   }
 
   /**

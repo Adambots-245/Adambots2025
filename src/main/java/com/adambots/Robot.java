@@ -7,6 +7,7 @@
 
 package com.adambots;
 
+import com.adambots.subsystems.WristSubsystem;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -99,6 +100,8 @@ public class Robot extends TimedRobot {
       System.out.println("Autonomous Shuffleboard recording started - " + DriverStation.getMatchTime());
     }
 
+    WristSubsystem.isManual = false;
+
     Command m_autonomousCommand = null;
 
     if (TEST_CONTAINER) {
@@ -129,6 +132,9 @@ public class Robot extends TimedRobot {
       Shuffleboard.startRecording();
       System.out.println("Teleop Shuffleboard recording started - " + DriverStation.getMatchTime());
     }
+
+    WristSubsystem.isManual = true;
+    // WristSubsystem.goalWristAngle;
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
