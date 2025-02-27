@@ -12,6 +12,7 @@ import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.HangSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
@@ -57,6 +58,7 @@ public class RobotContainer {
       RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
+  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo);
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -145,6 +147,13 @@ public class RobotContainer {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
+      Buttons.JoystickButton3.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(1)));
+      Buttons.JoystickButton4.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(-0.1)));
+      Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0)));
+
+      Buttons.JoystickButton9.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(true)));
+      Buttons.JoystickButton10.onTrue(new InstantCommand(()-> hangSubsystem.setSolenoids(false)));
+
       // Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
       // Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));
       // Buttons.JoystickButton6.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.INTAKE));

@@ -13,6 +13,7 @@ import java.util.Map;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.actuators.TalonFXMotor;
+import com.adambots.actuators.BaseServo.ServoMode;
 import com.adambots.sensors.BaseDistanceSensor;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.NEOMotor;
@@ -27,7 +28,10 @@ import com.revrobotics.servohub.ServoHub;
 import com.adambots.actuators.BaseActuator;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseServo;
+import com.adambots.actuators.BaseSolenoid;
 import com.adambots.actuators.CRHubServo;
+import com.adambots.actuators.DirectServo;
+import com.adambots.actuators.ElectricalSolenoid;
 import com.adambots.actuators.NEOMotor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -98,7 +102,9 @@ public class RobotMap {
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);
     public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
     public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, false);
-    public static final BaseMotor climbMotor = new TalonFXMotor(kCANdlePort, true, kBottomCoralServoChannel, false);
+    public static final BaseMotor climbMotor = new TalonFXMotor(19, true, kBottomCoralServoChannel, false);
+    public static final BaseServo climbServo = new DirectServo(0, ServoMode.ANGULAR);
+    public static final BaseSolenoid climbSolenoid = new ElectricalSolenoid(0);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
