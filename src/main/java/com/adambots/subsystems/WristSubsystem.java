@@ -24,7 +24,11 @@ public class WristSubsystem extends SubsystemBase {
     L1(new WristProperties(ElevatorConstants.kWristL1Position, "Level 1 Angle")),
     L2(new WristProperties(ElevatorConstants.kWristL2Position, "Level 2 Angle")),
     L3(new WristProperties(ElevatorConstants.kWristL3Position, "Level 3 Angle")),
-    L4(new WristProperties(ElevatorConstants.kWristL4Position, "Level 4 Angle"));
+    L4(new WristProperties(ElevatorConstants.kWristL4Position, "Level 4 Angle")),
+    HighAlgae(new WristProperties(ElevatorConstants.kWristHighAlgaePosition, "High Algae Angle")),
+    LowAlgae(new WristProperties(ElevatorConstants.kWristLowAlgaePosition, "Low Algae Angle")),
+    PROCESSOR(new WristProperties(ElevatorConstants.kWristProcessorPosition, "Processor Angle")),
+    GROUND_INTAKE(new WristProperties(ElevatorConstants.kWristGroundIntakePosition, "Ground Intake Angle"));
 
     public final WristProperties properties;
 

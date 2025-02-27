@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import swervelib.SwerveInputStream;
 
 /**
@@ -158,28 +159,42 @@ public class RobotContainer {
       // Buttons.JoystickButton15.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L2));
       // Buttons.JoystickButton16.onTrue(elevatorCommands.moveWristToStateCommand(WristState.L3));
 
-      Buttons.XboxAButton.onTrue(elevatorCommands.moveToL1Command());
-      Buttons.XboxBButton.onTrue(elevatorCommands.moveToL2Command());
-      Buttons.XboxXButton.onTrue(elevatorCommands.moveToL3Command());
+      Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
+      Buttons.XboxAButton.onTrue(elevatorCommands.moveToL2Command());
+      Buttons.XboxBButton.onTrue(elevatorCommands.moveToL3Command());
       Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
-      Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
       // Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeAlgae());
+      
       Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
-      Buttons.XboxDPadE.onTrue(intakeCommands.intakeAlgae());
-      Buttons.XboxDPadW.onTrue(intakeCommands.intakeAlgae());
+      
+      Buttons.XboxDPadNE.onTrue(intakeCommands.intakeAlgae());
+      Buttons.XboxDPadNW.onTrue(intakeCommands.intakeAlgae());
+      Buttons.XboxDPadN.onTrue(intakeCommands.intakeAlgae());
 
-      // Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
+      Buttons.XboxDPadS.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadSW.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadSE.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeCoral());
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
 
-      // Buttons.XboxStartButton.onTrue(intakeCommands.reverseIntakeAlgae());
-      Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeCoral());
-      Buttons.XboxBackButton.onTrue(intakeCommands.reverseIntakeAlgae());
+      Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeCoral());
+      // Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeAlgae());
 
-      Buttons.XboxDPadN.whileTrue(elevatorCommands.moveWristUp());
-      Buttons.XboxDPadS.whileTrue(elevatorCommands.moveWristDown());
-      Buttons.XboxRightBumper.whileTrue(elevatorCommands.moveElevatorUp());
-      Buttons.XboxLeftBumper.whileTrue(elevatorCommands.moveElevatorDown());
+      Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
+      Buttons.XboxBackButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.STOWED));
+
+      Buttons.XboxRightBumper.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.PROCESSOR, WristState.PROCESSOR));
+
+      Buttons.XboxLeftTriggerButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
+      Buttons.XboxRightTriggerButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
+
+      Buttons.rightStickUp.whileTrue(elevatorCommands.moveElevatorUp());
+      Buttons.rightStickDown.whileTrue(elevatorCommands.moveElevatorDown());
+      
+      Buttons.leftStickUp.whileTrue(elevatorCommands.moveWristUp());
+      Buttons.leftStickDown.whileTrue(elevatorCommands.moveWristDown());
+
       // Buttons.XboxDPadE.whileTrue(new InstantCommand(()-> System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")));
       // Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
 

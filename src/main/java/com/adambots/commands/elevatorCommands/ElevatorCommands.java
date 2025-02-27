@@ -65,6 +65,14 @@ public class ElevatorCommands extends Command {
                 .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L4))));
     }
 
+    public Command moveToStateCommand(ElevatorState elevatorState, WristState wristState) {
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(elevatorState), wristSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(wristState))));
+    }
+
     public Command moveWristToStateCommand(WristState state) {
         return Commands.runOnce(() -> wristSubsystem.moveWristToState(state), wristSubsystem);
     }

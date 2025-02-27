@@ -21,7 +21,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         L1(new ElevatorProperties(ElevatorConstants.kElevatorL1Position, "Level 1")),
         L2(new ElevatorProperties(ElevatorConstants.kElevatorL2Position, "Level 2")),
         L3(new ElevatorProperties(ElevatorConstants.kElevatorL3Position, "Level 3")),
-        L4(new ElevatorProperties(ElevatorConstants.kElevatorL4Position, "Level 4"));
+        L4(new ElevatorProperties(ElevatorConstants.kElevatorL4Position, "Level 4")),
+        HighAlgae(new ElevatorProperties(ElevatorConstants.kElevatorHighAlgaePosition, "High Algae")),
+        LowAlgae(new ElevatorProperties(ElevatorConstants.kElevatorLowAlgaePosition, "Low Algae")),
+        PROCESSOR(new ElevatorProperties(ElevatorConstants.kElevatorProcessorPosition, "Processor"));
 
         public final ElevatorProperties properties;
 
