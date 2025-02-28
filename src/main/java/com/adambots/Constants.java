@@ -149,11 +149,7 @@ public final class Constants {
         // PD values for auton rotational movement
         public static final double kPThetaController = 1.5; 
         public static final double kIThetaController = 0; 
-        public static final double kDThetaController = 0.03;
-
-        // public static final double kPThetaController = 0.5; 
-        // public static final double kIThetaController = 0; 
-        // public static final double kDThetaController = 0;
+        public static final double kDThetaController = 0.06;
 
         public static final double kPWaypointTranslation = 5; 
         public static final double kDWaypointTranslation = 0.55;
@@ -221,8 +217,8 @@ public final class Constants {
         public static final double kWristHighAlgaePosition = 12;
         public static final double kWristLowAlgaePosition = 12;
         public static final double kWristProcessorPosition = 12;
-        public static final double kWristGroundIntakePosition = 350
-        ;
+        public static final double kWristGroundIntakePosition = 350;
+        public static final double kWristHangPosition = 80;
 
 
         public static final double kWristMinAngle = 355;

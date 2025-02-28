@@ -195,7 +195,7 @@ public class RobotContainer {
       // Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeAlgae());
 
       Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
-      Buttons.XboxBackButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.STOWED));
+      Buttons.XboxBackButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.HANG));
 
       Buttons.XboxRightBumper.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.PROCESSOR, WristState.PROCESSOR));
 
