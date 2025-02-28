@@ -26,7 +26,8 @@ public class DriveToPoseReefAdvanced extends Command {
     private final SwerveSubsystem swerveSubsystem;
 
     private int[] tagIds;
-    private double offset = 0.172;
+    // private double offset = 0;
+    private double offset = 0.17;
     private Supplier<Integer> aprilTagId;
 
     private boolean isSeen;
@@ -46,8 +47,8 @@ public class DriveToPoseReefAdvanced extends Command {
         this.isOffsetRight = isRight;
 
         // PID Controllers for X, Y movement & theta (rotation)
-        PIDController xController = new PIDController(1.0, 0, 0);
-        PIDController yController = new PIDController(1.0, 0, 0);
+        PIDController xController = new PIDController(2, 0, 0);
+        PIDController yController = new PIDController(2, 0, 0);
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 3.0, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -62,9 +63,9 @@ public class DriveToPoseReefAdvanced extends Command {
         targetPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(Math.toRadians(0)));
 
         if (Robot.isOnRedAlliance()) {
-            tagIds = new int[]{6,7,8,9,10,11};
+            tagIds = new int[] { 6, 7, 8, 9, 10, 11 };
         } else {
-            tagIds = new int[]{17,18,19,20,21,22};
+            tagIds = new int[] { 17, 18, 19, 20, 21, 22 };
         }
     }
 
@@ -73,9 +74,11 @@ public class DriveToPoseReefAdvanced extends Command {
         Pose2d currentPose = swerveSubsystem.getPose();
 
         idSeen = swerveSubsystem.getVision().hasID(tagIds);
+        // System.out.println("Working");
         // idSeen = aprilTagId.get();
 
         if (idSeen > -1) {
+            System.out.println("AHHHHHHHHHHHH");
             isSeen = true;
         }
 
@@ -112,27 +115,40 @@ public class DriveToPoseReefAdvanced extends Command {
                     isInveresed = false;
                     break;
                 case 11:
+                    System.out.println("CASE 11");
                     targetPose = new Pose2d(new Translation2d(12.412, 2.884), new Rotation2d(Math.toRadians(60)));
                     reefAngle = 150;
                     isInveresed = false;
                     break;
                 case 17:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(3.822, 2.884), new Rotation2d(Math.toRadians(60)));
+                    reefAngle = 30;
+                    isInveresed = false;
                     break;
                 case 18:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(3.841, 5.146), new Rotation2d(Math.toRadians(-60)));
+                    reefAngle = 90;
+                    isInveresed = false;
                     break;
                 case 19:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(3.822, 2.884), new Rotation2d(Math.toRadians(60)));
+                    reefAngle = 30;
+                    isInveresed = false;
                     break;
                 case 20:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(5.148, 5.166), new Rotation2d(Math.toRadians(-120)));
+                    reefAngle = 30;
+                    isInveresed = false;
                     break;
                 case 21:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(5.801, 4.025), new Rotation2d(Math.toRadians(180)));
+                    reefAngle = 90;
+                    isInveresed = false;
                     break;
                 case 22:
-                    targetPose = new Pose2d(new Translation2d(), new Rotation2d());
+                    targetPose = new Pose2d(new Translation2d(5.148, 2.894), new Rotation2d(Math.toRadians(120)));
+                    reefAngle = 150;
+                    isInveresed = false;
                     break;
             }
 

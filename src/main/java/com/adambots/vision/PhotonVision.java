@@ -270,7 +270,11 @@ public class PhotonVision {
   public int hasID(int[] tagIDs) {
     for (Cameras camera : Cameras.values()) {
       for (PhotonPipelineResult result : camera.resultsList) {
+        // System.out.println("RESULTS " + result);
+
         if (result.hasTargets()) {
+          System.out.println("HAS TARGETS " + camera.name());
+
           for (PhotonTrackedTarget i : result.getTargets()) {
             for (int id : tagIDs) {
               if (i.getFiducialId() == id) {
@@ -283,6 +287,7 @@ public class PhotonVision {
     }
     return -1;
   }
+
 
   /**
    * Vision simulation.
@@ -399,30 +404,30 @@ public class PhotonVision {
     /**
      * Right Camera
      */
-    LEFT_CAM("LEFT_CAM",
-        new Rotation3d(0, Units.degreesToRadians(55), Units.degreesToRadians(0)),
-        new Translation3d(Units.inchesToMeters(12),
-            Units.inchesToMeters(11),
-            Units.inchesToMeters(41)),
-        VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    // LEFT_CAM("Left",
+    //     new Rotation3d(0, Units.degreesToRadians(55), Units.degreesToRadians(0)),
+    //     new Translation3d(Units.inchesToMeters(12.5),
+    //         Units.inchesToMeters(11),
+    //         Units.inchesToMeters(41)),
+    //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
 
     // RIGHT_CAM("Left",new Rotation3d(0,Units.degreesToRadians(-35),Units.degreesToRadians(60)),new Translation3d(Units.inchesToMeters(-8),Units.inchesToMeters(-13.5),Units.inchesToMeters(41)),VecBuilder.fill(4,4,8),VecBuilder.fill(0.5,0.5,1));
     /**
      * Center Camera
      * //
      */
-    // CENTER_CAM("CENTER_CAM",
-    // new Rotation3d(0, Units.degreesToRadians(18), 0),
-    // new Translation3d(Units.inchesToMeters(15),
-    // Units.inchesToMeters(0),
-    // Units.inchesToMeters(6)),
-    // VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    LEFT_CAM("Middle",
+    new Rotation3d(0, Units.degreesToRadians(40), 0),
+    new Translation3d(Units.inchesToMeters(4),
+    Units.inchesToMeters(0),
+    Units.inchesToMeters(41)),
+    VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
-    // CENTER_CAM("CENTER_CAM",
-    // new Rotation3d(0, Units.degreesToRadians(18), 0),
-    // new Translation3d(Units.inchesToMeters(-4.628),
-    // Units.inchesToMeters(-10.687),
-    // Units.inchesToMeters(16.129)),
+    // RIGHT_CAM("Right",
+    // new Rotation3d(0, Units.degreesToRadians(55), 0),
+    // new Translation3d(Units.inchesToMeters(12.5),
+    // Units.inchesToMeters(-11),
+    // Units.inchesToMeters(41)),
     // VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     /**

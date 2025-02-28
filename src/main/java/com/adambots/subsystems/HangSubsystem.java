@@ -8,6 +8,7 @@ import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseSolenoid;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class HangSubsystem extends SubsystemBase {
@@ -21,7 +22,6 @@ public class HangSubsystem extends SubsystemBase {
     this.hangMotor = hangMotor;
     this.hangSolenoid = hangSolenoid;
     this.hangServo = hangServo;
-
   }
 
   public void setMotorSpeed(double newMotorSpeed) {
@@ -49,6 +49,8 @@ public class HangSubsystem extends SubsystemBase {
 
     // failSafes();
     hangMotor.set(hangMotorSpeed);
+
+    SmartDashboard.putBoolean("Hang/Solinoid", hangSolenoid.get());
 
   }
 

@@ -70,8 +70,8 @@ public class RobotMap {
     // public static final int kSecondIntakeLimPort = 4;
     public static final int kTopCoralServoChannel = 3;
     public static final int kBottomCoralServoChannel = 2;
-    public static final int kGripperAlgaeServoChannel = 4;
-    public static final int kRunnerAlgaeServoChannel = 5;
+    public static final int kGripperAlgaeServoChannel = 5;
+    public static final int kRunnerAlgaeServoChannel = 4;
     public static final int kCANrangePort = 35;
     public static final int kServoHubPort = 45;
 

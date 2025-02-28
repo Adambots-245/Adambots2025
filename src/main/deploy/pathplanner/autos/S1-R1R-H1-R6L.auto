@@ -21,7 +21,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.1
                       }
                     },
                     {
@@ -43,6 +43,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.75
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -59,12 +65,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
           }
         },
         {
@@ -103,6 +103,12 @@
           "type": "named",
           "data": {
             "name": "Score"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
           }
         }
       ]

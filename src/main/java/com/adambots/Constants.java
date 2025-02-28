@@ -178,18 +178,19 @@ public final class Constants {
         // PID Constants
         public static final int kPIDSlot = 0;
         public static final double kElevatorSpeed = 0.2; // only for free movement and not for positional control
-        public static final double kElevatorPositionIncrement = 0.7;
+        public static final double kElevatorPositionIncrement = 0.9;
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         
         public static final double kPElevatorController = 0.5;
         public static final double kIElevatorController = 0.000;
-        public static final double kDElevatorController = 0.01;
+        public static final double kDElevatorController = 0.035;
         public static final double kFElevatorController = 0.0;
 
-        public static final double kWristPositionIncrement = 3;
+        public static final double kWristPositionIncrement = 3.7;
         public static final double kPWristController = 0.022;
         public static final double kIWristController = 0.00;
+
         public static final double kDWristController = 0.0001;
 
         // Elevator Positions
@@ -209,7 +210,7 @@ public final class Constants {
 
         // Wrist Positions
         public static final double kWristStowedPosition = 55;
-        public static final double kWristIntakePosition = 77;
+        public static final double kWristIntakePosition = 80.7;
         public static final double kWristL1Position = 66;
         public static final double kWristL2Position = 66;
         public static final double kWristL3Position = 66;
@@ -218,7 +219,7 @@ public final class Constants {
         public static final double kWristLowAlgaePosition = 12;
         public static final double kWristProcessorPosition = 12;
         public static final double kWristGroundIntakePosition = 350;
-        public static final double kWristHangPosition = 80;
+        public static final double kWristHangPosition = 70;
 
 
         public static final double kWristMinAngle = 355;
@@ -226,7 +227,8 @@ public final class Constants {
         public static final double kWristDangerZoneAngle = 58;
 
         // Gear Ratio and Other Elevator Constants
-        public static final double stateChangeDelay = 1;
+        public static final double stateFirstChangeDelay = 0.15;
+        public static final double stateChangeDelay = 0.5;
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;

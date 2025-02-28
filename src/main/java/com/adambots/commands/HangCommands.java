@@ -17,7 +17,7 @@ public class HangCommands {
     public Command pushOutHang() {
         return new InstantCommand(
             ()-> {
-                hangSubsystem.setSolenoids(false);
+                hangSubsystem.setSolenoids(true);
                 hangSubsystem.setMotorSpeed(-0.5);
             },
             hangSubsystem
@@ -27,7 +27,7 @@ public class HangCommands {
     public Command pullInHang() {
         return new InstantCommand(
             ()-> {
-                hangSubsystem.setSolenoids(true);
+                hangSubsystem.setSolenoids(false);
                 hangSubsystem.setMotorSpeed(1);
             },
             hangSubsystem

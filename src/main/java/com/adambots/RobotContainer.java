@@ -133,8 +133,10 @@ public class RobotContainer {
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
 
-      Buttons.JoystickButton3.onTrue(new RotateToAngleCommand(swerveSubsystem, 125));
-      Buttons.JoystickButton4.onTrue(new RotateToAngleCommand(swerveSubsystem, -125));
+      Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem, 125));
+      Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem, -125));
+
+      Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
 
       Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, false));
       Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true));
