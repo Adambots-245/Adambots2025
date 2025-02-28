@@ -39,7 +39,7 @@ public class TestContainer {
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
-  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem, intakeCommands);
   private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons

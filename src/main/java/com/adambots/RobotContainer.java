@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.adambots.Constants.DriveConstants;
+import com.adambots.commands.HangCommands;
 import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.commands.driveCommands.DriveToPose;
 import com.adambots.commands.driveCommands.DriveToPoseReefAdvanced;
+import com.adambots.commands.driveCommands.RotateToAngleCommand;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
@@ -64,8 +66,9 @@ public class RobotContainer {
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
-  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem, intakeCommands);
   private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
+  private final HangCommands hangCommands = new HangCommands(hangSubsystem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -124,40 +127,28 @@ public class RobotContainer {
       // InstantCommaaand(RobotMap.gyro.resetYaw()));
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
-      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
-      // Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, false));
-      // Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, () -> aprilTagId, true));
-      // Buttons.JoystickButton3.whileTrue(new InstantCommand(() -> aprilTagId = 10));
-      // Buttons.JoystickButton4.whileTrue(new InstantCommand(() -> aprilTagId = 11));
-
-      // Buttons.JoystickButton12.onTrue((Commands.runOnce(swerveSubsystem::zeroGyro)));
-
-      // Buttons.XboxXButton.onTrue(Commands.runOnce(swerveSubsystem::addFakeVisionReading));
-      // Buttons.XboxBButton.whileTrue(
-      //     driveCommands.driveToPose(
-      //         new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      // Buttons.XboxYButton.whileTrue(driveCommands.aimAtAprilTag(2, 1));
-      // Buttons.XboxStartButton.whileTrue(Commands.none());
-      // Buttons.XboxBackButton.whileTrue(Commands.none());
-      // Buttons.XboxLeftBumper.whileTrue(Commands.runOnce(swerveSubsystem::lock, swerveSubsystem).repeatedly());
-      // Buttons.XboxRightBumper.onTrue(Commands.none());
-
-      // Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
-      // Buttons.JoystickButton2.onTrue(scoringCommands.stopScoringAlgae());
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
+      Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
+
+      Buttons.JoystickButton3.onTrue(new RotateToAngleCommand(swerveSubsystem, 125));
+      Buttons.JoystickButton4.onTrue(new RotateToAngleCommand(swerveSubsystem, -125));
 
       Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, false));
       Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true));
 
       // Buttons.JoystickButton3.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(1)));
       // Buttons.JoystickButton4.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(-0.1)));
-      // Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0)));
+      Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
+      Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.releaseServo()));
+      Buttons.JoystickButton8.onFalse(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0.0)));
 
-      Buttons.JoystickButton9.onTrue(Commands.runOnce(()-> hangSubsystem.setSolenoids(true)));
-      Buttons.JoystickButton10.onTrue(Commands.runOnce(()-> hangSubsystem.releaseServo()));
+      // Buttons.JoystickButton9.onTrue(Commands.runOnce(()-> hangSubsystem.setSolenoids(true)));
+      // Buttons.JoystickButton10.onTrue(Commands.runOnce(()-> hangSubsystem.releaseServo()));
+
+      Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
       // Buttons.JoystickButton4.onTrue(scoringCommands.stopScoringCoral());
       // Buttons.JoystickButton5.onTrue(elevatorCommands.moveElevatorToStateCommand(ElevatorState.L4));
@@ -184,14 +175,15 @@ public class RobotContainer {
       Buttons.XboxDPadNW.onTrue(intakeCommands.intakeAlgae());
       Buttons.XboxDPadN.onTrue(intakeCommands.intakeAlgae());
 
-      Buttons.XboxDPadS.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
-      Buttons.XboxDPadSW.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
-      Buttons.XboxDPadSE.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadS.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadSW.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadSE.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
 
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeCoral());
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
 
-      Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeCoral());
+      Buttons.XboxLeftBumper.onTrue(hangCommands.pushOutHang());
+      Buttons.XboxLeftBumper.onFalse(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0.0)));
       // Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeAlgae());
 
       Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
@@ -199,8 +191,8 @@ public class RobotContainer {
 
       Buttons.XboxRightBumper.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.PROCESSOR, WristState.PROCESSOR));
 
-      Buttons.XboxLeftTriggerButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
-      Buttons.XboxRightTriggerButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
+      Buttons.XboxLeftTriggerButton.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
+      Buttons.XboxRightTriggerButton.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
 
       Buttons.rightStickUp.whileTrue(elevatorCommands.moveElevatorUp());
       Buttons.rightStickDown.whileTrue(elevatorCommands.moveElevatorDown());
@@ -262,7 +254,7 @@ public class RobotContainer {
    * Register named commands for use in PathPlanner
    */
   private void registerNamedCommands() {
-    NamedCommands.registerCommand("Score", scoringCommands.scoreCoral());
+    NamedCommands.registerCommand("Score", scoringCommands.scoreCoralAuton());
     NamedCommands.registerCommand("L4Position", elevatorCommands.moveToL4Command());
     NamedCommands.registerCommand("IntakePosition", elevatorCommands.moveToIntakeCommand());
   }

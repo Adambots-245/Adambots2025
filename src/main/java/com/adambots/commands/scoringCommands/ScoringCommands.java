@@ -30,6 +30,18 @@ public class ScoringCommands {
 
         // run the intake, wait until the CANRange does not see a Coral, wait a bit,
         // then stop the intake
+        // return Commands.runOnce(() -> {
+        //     System.out.println("Score Command Running");
+        //     intakeSubsystem.intakeCoral();
+        // }, intakeSubsystem).andThen(Commands.waitSeconds(2))
+        //         // .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
+        //         // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
+        //         .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
+
+        return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem);
+    }
+
+    public Command scoreCoralAuton() {
         return Commands.runOnce(() -> {
             System.out.println("Score Command Running");
             intakeSubsystem.intakeCoral();
@@ -37,6 +49,8 @@ public class ScoringCommands {
                 // .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
                 // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
                 .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
+
+        // return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem);
     }
 
     // public Command scoreCoralAndAlgae(){
