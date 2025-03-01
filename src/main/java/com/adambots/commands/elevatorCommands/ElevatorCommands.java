@@ -38,7 +38,7 @@ public class ElevatorCommands extends Command {
             Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
-                .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                .andThen(Commands.waitSeconds(0.75))
                 .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE)))
                 .andThen(intakeCommands.intakeCoral()), 
             ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));

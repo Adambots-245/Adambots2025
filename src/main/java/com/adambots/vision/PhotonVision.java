@@ -273,7 +273,7 @@ public class PhotonVision {
         // System.out.println("RESULTS " + result);
 
         if (result.hasTargets()) {
-          System.out.println("HAS TARGETS " + camera.name());
+          // System.out.println("HAS TARGETS " + camera.name());
 
           for (PhotonTrackedTarget i : result.getTargets()) {
             for (int id : tagIDs) {
@@ -418,10 +418,10 @@ public class PhotonVision {
      */
     LEFT_CAM("Middle",
     new Rotation3d(0, Units.degreesToRadians(40), 0),
-    new Translation3d(Units.inchesToMeters(4),
+    new Translation3d(Units.inchesToMeters(8),
     Units.inchesToMeters(0),
     Units.inchesToMeters(41)),
-    VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1));
 
     // RIGHT_CAM("Right",
     // new Rotation3d(0, Units.degreesToRadians(55), 0),

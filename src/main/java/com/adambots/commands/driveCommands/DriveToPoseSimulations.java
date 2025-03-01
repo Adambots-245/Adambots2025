@@ -21,13 +21,14 @@ import java.util.function.Supplier;
 
 import com.adambots.Robot;
 import com.adambots.subsystems.SwerveSubsystem;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-public class DriveToPoseReefAdvanced extends Command {
+public class DriveToPoseSimulations extends Command {
     private final SwerveSubsystem swerveSubsystem;
 
     private int[] tagIds;
     // private double offset = 0;
-    private double offset = 0.18;
+    private double offset = 0.17;
     private Supplier<Integer> aprilTagId;
 
     private boolean isSeen;
@@ -37,20 +38,22 @@ public class DriveToPoseReefAdvanced extends Command {
     private int reefAngle;
     private boolean isCalculated;
     private Pose2d targetPose;
+    private Supplier<Integer> aprilTagSupplier;
 
     private final HolonomicDriveController holonomicController;
 
-    public DriveToPoseReefAdvanced(SwerveSubsystem swerveSubsystem, boolean isRight) {
+    public DriveToPoseSimulations(SwerveSubsystem swerveSubsystem, Supplier<Integer> aprilTagSupplier, boolean isRight) {
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
         // this.aprilTagId = aprilTagId;
         this.isOffsetRight = isRight;
+        this.aprilTagSupplier = aprilTagSupplier;
 
         // PID Controllers for X, Y movement & theta (rotation)
-        PIDController xController = new PIDController(1, 0, 0);
-        PIDController yController = new PIDController(1, 0, 0);
+        PIDController xController = new PIDController(2, 0, 0);
+        PIDController yController = new PIDController(2, 0, 0);
         ProfiledPIDController thetaController = new ProfiledPIDController(
-                2.5, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2));
+                3.0, 0, 0, new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.holonomicController = new HolonomicDriveController(xController, yController, thetaController);
@@ -74,6 +77,8 @@ public class DriveToPoseReefAdvanced extends Command {
         Pose2d currentPose = swerveSubsystem.getPose();
 
         idSeen = swerveSubsystem.getVision().hasID(tagIds);
+
+        idSeen = aprilTagSupplier.get();
         // System.out.println("Working");
         // idSeen = aprilTagId.get();
 
@@ -152,57 +157,30 @@ public class DriveToPoseReefAdvanced extends Command {
                     isInveresed = false;
                     break;
             }
+
             if (isOffsetRight) {
-                if (Robot.isOnRedAlliance()){
-                    if (isInveresed) {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() + offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() + offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    } else {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() - offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() - offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    }
+                if (isInveresed) {
+                    targetPose = new Pose2d(
+                            new Translation2d(targetPose.getX() + offset * Math.cos(Math.toRadians(reefAngle)),
+                                    targetPose.getY() + offset * Math.sin(Math.toRadians(reefAngle))),
+                            targetPose.getRotation());
                 } else {
-                    if (isInveresed) {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() - offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() - offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    } else {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() + offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() + offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    }
+                    targetPose = new Pose2d(
+                            new Translation2d(targetPose.getX() - offset * Math.cos(Math.toRadians(reefAngle)),
+                                    targetPose.getY() - offset * Math.sin(Math.toRadians(reefAngle))),
+                            targetPose.getRotation());
                 }
             } else {
-                if (Robot.isOnRedAlliance()){
-                    if (isInveresed) {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() - offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() - offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    } else {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() + offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() + offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    }
+                if (isInveresed) {
+                    targetPose = new Pose2d(
+                            new Translation2d(targetPose.getX() - offset * Math.cos(Math.toRadians(reefAngle)),
+                                    targetPose.getY() - offset * Math.sin(Math.toRadians(reefAngle))),
+                            targetPose.getRotation());
                 } else {
-                    if (isInveresed) {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() + offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() + offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    } else {
-                        targetPose = new Pose2d(
-                                new Translation2d(targetPose.getX() - offset * Math.cos(Math.toRadians(reefAngle)),
-                                        targetPose.getY() - offset * Math.sin(Math.toRadians(reefAngle))),
-                                targetPose.getRotation());
-                    }
+                    targetPose = new Pose2d(
+                            new Translation2d(targetPose.getX() + offset * Math.cos(Math.toRadians(reefAngle)),
+                                    targetPose.getY() + offset * Math.sin(Math.toRadians(reefAngle))),
+                            targetPose.getRotation());
                 }
             }
 

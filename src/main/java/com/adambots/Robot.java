@@ -40,14 +40,14 @@ public class Robot extends TimedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
-    FollowPathCommand.warmupCommand().schedule();
-
+    
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     if (TEST_CONTAINER) {
       m_testContainer = new TestContainer();
     } else {
       m_robotContainer = new RobotContainer();
+      FollowPathCommand.warmupCommand().schedule();
     }
   }
 
@@ -77,10 +77,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    if (Constants.enableAutomaticShuffleboardRecording) {
-      Shuffleboard.stopRecording();
-      System.out.println("Shuffleboard recording ended");
-    }
+    // if (Constants.enableAutomaticShuffleboardRecording) {
+    //   Shuffleboard.stopRecording();
+    //   System.out.println("Shuffleboard recording ended");
+    // }
   }
 
   @Override
@@ -95,10 +95,10 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CommandScheduler.getInstance().cancelAll(); // Cancel all teleop or lingering commands
 
-    if (Constants.enableAutomaticShuffleboardRecording) {
-      Shuffleboard.startRecording();
-      System.out.println("Autonomous Shuffleboard recording started - " + DriverStation.getMatchTime());
-    }
+    // if (Constants.enableAutomaticShuffleboardRecording) {
+    //   Shuffleboard.startRecording();
+    //   System.out.println("Autonomous Shuffleboard recording started - " + DriverStation.getMatchTime());
+    // }
 
     WristSubsystem.isManual = false;
 

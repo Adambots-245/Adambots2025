@@ -8,6 +8,7 @@ import com.adambots.commands.HangCommands;
 import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.commands.driveCommands.DriveToPose;
 import com.adambots.commands.driveCommands.DriveToPoseReefAdvanced;
+import com.adambots.commands.driveCommands.DriveToPoseSimulations;
 import com.adambots.commands.driveCommands.RotateToAngleCommand;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
@@ -66,7 +67,8 @@ public class RobotContainer {
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
-  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem, intakeCommands);
+  private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem,
+      intakeCommands);
   private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
   private final HangCommands hangCommands = new HangCommands(hangSubsystem);
 
@@ -114,6 +116,11 @@ public class RobotContainer {
       Buttons.XboxStartButton
           .onTrue(Commands.runOnce(() -> swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
 
+      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
+      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 18));
+      Buttons.JoystickButton3.whileTrue(new DriveToPoseSimulations(swerveSubsystem, () -> aprilTagId, false));
+      Buttons.JoystickButton4.whileTrue(new DriveToPoseSimulations(swerveSubsystem, () -> aprilTagId, true));
+
     }
 
     if (DriverStation.isTest()) {
@@ -128,10 +135,17 @@ public class RobotContainer {
       Buttons.XboxRightBumper.onTrue(Commands.none());
     } else {
 
+      // Buttons.JoysickButton1.onTrue(new InstantCommand(() -> aprilTagId = 21));
+      // Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 22));
+      // Buttons.JoystickButton3.whileTrue(new DriveToPoseSimulations(swerveSubsystem, () -> aprilTagId, false));
+      // Buttons.JoystickBtutton4.whileTrue(new DriveToPoseSimulations(swerveSubsystem, () -> aprilTagId, true));
+
+
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
-      Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgae());
-      Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
+
+      Buttons.JoystickButton5.onTrue(scoringCommands.scoreAlgae());
+      Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringAlgae());
 
       Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem, 125));
       Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem, -125));
@@ -141,14 +155,22 @@ public class RobotContainer {
       Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, false));
       Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true));
 
-      // Buttons.JoystickButton3.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(1)));
-      // Buttons.JoystickButton4.onTrue(new InstantCommand(()-> hangSubsystem.setMotorSpeed(-0.1)));
+      // Buttons.JoystickButton3.onTrue(new InstantCommand(()->
+      // hangSubsystem.setMotorSpeed(1)));
+      // Buttons.JoystickButton4.onTrue(new InstantCommand(()->
+      // hangSubsystem.setMotorSpeed(-0.1)));
       Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
-      Buttons.JoystickButton8.onTrue(new InstantCommand(()-> hangSubsystem.releaseServo()));
-      Buttons.JoystickButton8.onFalse(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0.0)));
+      Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
+      Buttons.JoystickButton8.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
 
-      // Buttons.JoystickButton9.onTrue(Commands.runOnce(()-> hangSubsystem.setSolenoids(true)));
-      // Buttons.JoystickButton10.onTrue(Commands.runOnce(()-> hangSubsystem.releaseServo()));
+
+      // Buttons.JoystickButton16.onTrue(new InstantCommand(swerveSubsystem.getSwerveDrive().setPose));
+
+
+      // Buttons.JoystickButton9.onTrue(Commands.runOnce(()->
+      // hangSubsystem.setSolenoids(true)));
+      // Buttons.JoystickButton10.onTrue(Commands.runOnce(()->
+      // hangSubsystem.releaseServo()));
 
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
@@ -170,39 +192,46 @@ public class RobotContainer {
       Buttons.XboxBButton.onTrue(elevatorCommands.moveToL3Command());
       Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
       // Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeAlgae());
-      
+
       Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
-      
+
       Buttons.XboxDPadNE.onTrue(intakeCommands.intakeAlgae());
       Buttons.XboxDPadNW.onTrue(intakeCommands.intakeAlgae());
       Buttons.XboxDPadN.onTrue(intakeCommands.intakeAlgae());
 
-      Buttons.XboxDPadS.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
-      Buttons.XboxDPadSW.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
-      Buttons.XboxDPadSE.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadS
+          .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadSW
+          .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+      Buttons.XboxDPadSE
+          .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
 
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeCoral());
       Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
 
       Buttons.XboxLeftBumper.onTrue(hangCommands.pushOutHang());
-      Buttons.XboxLeftBumper.onFalse(new InstantCommand(()-> hangSubsystem.setMotorSpeed(0.0)));
+      Buttons.XboxLeftBumper.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
       // Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeAlgae());
 
       Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
       Buttons.XboxBackButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.HANG));
 
-      Buttons.XboxRightBumper.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.PROCESSOR, WristState.PROCESSOR));
+      Buttons.XboxRightBumper
+          .onTrue(elevatorCommands.moveToStateCommand(ElevatorState.PROCESSOR, WristState.PROCESSOR));
 
-      Buttons.XboxLeftTriggerButton.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
-      Buttons.XboxRightTriggerButton.onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
+      Buttons.XboxLeftTriggerButton
+          .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
+      Buttons.XboxRightTriggerButton
+          .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
 
       Buttons.rightStickUp.whileTrue(elevatorCommands.moveElevatorUp());
       Buttons.rightStickDown.whileTrue(elevatorCommands.moveElevatorDown());
-      
+
       Buttons.leftStickUp.whileTrue(elevatorCommands.moveWristUp());
       Buttons.leftStickDown.whileTrue(elevatorCommands.moveWristDown());
 
-      // Buttons.XboxDPadE.whileTrue(new InstantCommand(()-> System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")));
+      // Buttons.XboxDPadE.whileTrue(new InstantCommand(()->
+      // System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH")));
       // Buttons.XboxDPadW.whileTrue(elevatorCommands.moveWristDown());
 
       SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
@@ -259,6 +288,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", scoringCommands.scoreCoralAuton());
     NamedCommands.registerCommand("L4Position", elevatorCommands.moveToL4Command());
     NamedCommands.registerCommand("IntakePosition", elevatorCommands.moveToIntakeCommand());
+    NamedCommands.registerCommand("DriveToRight", new DriveToPoseReefAdvanced(swerveSubsystem, true));
   }
 
   /**
