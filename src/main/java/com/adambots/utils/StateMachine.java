@@ -9,7 +9,7 @@ public class StateMachine<S extends Enum<S>, P> {
     private P targetProperties;
     private final Consumer<String> logger;
     private final boolean usePositionControl;  // New: flag for position control mode
-    private BooleanSupplier atTargetCheck;    // New: store the at-target check
+    // private BooleanSupplier atTargetCheck;    // New: store the at-target check
 
     public StateMachine(S initialState, P initialProperties, Consumer<String> logger, boolean usePositionControl) {
         this.currentState = initialState;
@@ -32,7 +32,7 @@ public class StateMachine<S extends Enum<S>, P> {
             logger.accept("Transitioning from " + currentState + " to " + newState);
             this.targetState = newState;
             this.targetProperties = properties;
-            this.atTargetCheck = atTarget;
+            // this.atTargetCheck = atTarget;
             action.accept(properties);
             
             if (usePositionControl) {

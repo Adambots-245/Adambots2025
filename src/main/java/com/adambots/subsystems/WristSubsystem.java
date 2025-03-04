@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.PIDController;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.utils.StateMachine;
-import com.adambots.RobotMap;
 import com.adambots.Constants.ElevatorConstants;
 
 public class WristSubsystem extends SubsystemBase {
@@ -171,7 +170,7 @@ public void moveWristUp() {
 
   public void checkFailSafes() {
 
-    double elevatorCurrentPosition = RobotMap.elevatorMotor.getPosition();
+    // double elevatorCurrentPosition = RobotMap.elevatorMotor.getPosition();
     
     // if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle && wristEncoder.getAbsolutePositionDegrees() <= 350) {
     //   // wristSpeed = 0;

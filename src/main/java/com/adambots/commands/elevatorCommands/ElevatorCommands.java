@@ -7,7 +7,6 @@ package com.adambots.commands.elevatorCommands;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
-import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.WristSubsystem;
 import com.adambots.subsystems.WristSubsystem.WristState;

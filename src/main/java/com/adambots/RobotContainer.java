@@ -105,10 +105,10 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
 
       Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 1));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 6));
+      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 2));
 
       Buttons.JoystickButton3
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 0, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 3, candleSubsytem));
       Buttons.JoystickButton4
           .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 4, candleSubsytem));
 
@@ -269,16 +269,16 @@ public class RobotContainer {
         .scaleTranslation(0.8)
         .allianceRelativeControl(true);
 
-    SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-        .withControllerHeadingAxis(Buttons.sidewaysSupplier, Buttons.forwardSupplier)
-        .headingWhile(true);
+    // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
+    //     .withControllerHeadingAxis(Buttons.sidewaysSupplier, Buttons.forwardSupplier)
+    //     .headingWhile(true);
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
     // controls are front-left positive
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
-    Command driveFieldOrientedDirectAngle = driveCommands.driveFieldOriented(driveDirectAngle);
+    // Command driveFieldOrientedDirectAngle = driveCommands.driveFieldOriented(driveDirectAngle);
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -310,17 +310,17 @@ public class RobotContainer {
     //
     // @return A new SwerveInputStream with the specified controller heading axis
     // and heading behavior.
-    SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
-        .withControllerHeadingAxis(() -> Math.sin(
-            Buttons.rotateSupplier.getAsDouble() * Math.PI)
-            * (Math.PI * 2),
-            () -> Math.cos(
-                Buttons.rotateSupplier.getAsDouble() * Math.PI)
-                *
-                (Math.PI * 2))
-        .headingWhile(true);
+    // SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
+    //     .withControllerHeadingAxis(() -> Math.sin(
+    //         Buttons.rotateSupplier.getAsDouble() * Math.PI)
+    //         * (Math.PI * 2),
+    //         () -> Math.cos(
+    //             Buttons.rotateSupplier.getAsDouble() * Math.PI)
+    //             *
+    //             (Math.PI * 2))
+    //     .headingWhile(true);
 
-    Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
+    // Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAngularVelocitySim = driveCommands.driveFieldOriented(driveAngularVelocitySim);
 
     swerveSubsystem.setDefaultCommand(

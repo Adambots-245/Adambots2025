@@ -4,7 +4,6 @@
 
 package com.adambots.commands.scoringCommands;
 
-import com.adambots.Constants.IntakeConstants;
 import com.adambots.subsystems.IntakeSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;

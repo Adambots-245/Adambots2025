@@ -7,34 +7,24 @@
 
 package com.adambots;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.adambots.Constants.DriveConstants;
-import com.adambots.Constants.DriveConstants.ModulePosition;
 import com.adambots.actuators.TalonFXMotor;
 import com.adambots.actuators.BaseServo.ServoMode;
 import com.adambots.sensors.BaseDistanceSensor;
 import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.NEOMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.sensors.CANRangeSensor;
 import com.adambots.sensors.Gyro;
 import com.adambots.sensors.ThroughBoreEncoder;
-import com.adambots.subsystems.SwerveModule;
 import com.ctre.phoenix.led.CANdle;
 import com.revrobotics.servohub.ServoHub;
 import com.adambots.actuators.BaseActuator;
-import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseSolenoid;
 import com.adambots.actuators.CRHubServo;
 import com.adambots.actuators.DirectServo;
 import com.adambots.actuators.ElectricalSolenoid;
-import com.adambots.actuators.NEOMotor;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
