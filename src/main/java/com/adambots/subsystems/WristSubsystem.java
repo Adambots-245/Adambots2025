@@ -24,7 +24,13 @@ public class WristSubsystem extends SubsystemBase {
     L1(new WristProperties(ElevatorConstants.kWristL1Position, "Level 1 Angle")),
     L2(new WristProperties(ElevatorConstants.kWristL2Position, "Level 2 Angle")),
     L3(new WristProperties(ElevatorConstants.kWristL3Position, "Level 3 Angle")),
-    L4(new WristProperties(ElevatorConstants.kWristL4Position, "Level 4 Angle"));
+    L4(new WristProperties(ElevatorConstants.kWristL4Position, "Level 4 Angle")),
+    HighAlgae(new WristProperties(ElevatorConstants.kWristHighAlgaePosition, "High Algae Angle")),
+    LowAlgae(new WristProperties(ElevatorConstants.kWristLowAlgaePosition, "Low Algae Angle")),
+    PROCESSOR(new WristProperties(ElevatorConstants.kWristProcessorPosition, "Processor Angle")),
+    GROUND_INTAKE(new WristProperties(ElevatorConstants.kWristGroundIntakePosition, "Ground Intake Angle")),
+    HANG(new WristProperties(ElevatorConstants.kWristHangPosition, "Hang Angle"));
+
 
     public final WristProperties properties;
 
@@ -37,6 +43,8 @@ public class WristSubsystem extends SubsystemBase {
   private final BaseAbsoluteEncoder wristEncoder;
   private final PIDController wristPID;
   private final BaseMotor wristMotor;
+  public static boolean isManual = true;
+  public static double goalWristAngle;
 
   double wristSpeed;
 
@@ -51,6 +59,8 @@ public class WristSubsystem extends SubsystemBase {
     this.wristPID = new PIDController(ElevatorConstants.kPWristController, ElevatorConstants.kIWristController,
         ElevatorConstants.kDWristController);
     this.wristPID.setTolerance(ElevatorConstants.kWristPositionTolerance);
+    wristPID.enableContinuousInput(0.0, 360.0);
+
 
     configureMotors();
 
@@ -61,19 +71,25 @@ public class WristSubsystem extends SubsystemBase {
         message -> SmartDashboard.putString("Wrist/Status", message),
         false // Not using position control
     );
+
+    goalWristAngle = 40;
   }
+
+  // public static void setWristAngle()_{
+  //   goalWristAngle = wristEncoder.getAbsolutePositionDegrees();
+  // }
 
   private void configureMotors() {
     // Configure wrist motor
     wristMotor.setBrakeMode(true);
+    wristMotor.setInverted(true);
   }
 
   private void setWristOutput(WristProperties properties) {
-    wristSpeed = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
-        properties.angleDegrees());
-    if (wristPID.atSetpoint()) {
-      wristSpeed = 0;
-    }
+    setWristPosition(properties.angleDegrees());
+    // if (wristPID.atSetpoint()) {
+    //   wristSpeed = 0;
+    // }
   }
 
   private boolean isWristAtTarget() {
@@ -84,20 +100,49 @@ public class WristSubsystem extends SubsystemBase {
     wristSpeed = speed;
   }
 
+  public void setWristPosition(double angleDegrees) {
+    wristSpeed = wristPID.calculate(wristEncoder.getAbsolutePositionDegrees(),
+        angleDegrees);
+  }
+
+  public void moveWristDown() {
+    isManual = true;
+    // setWristPosition(wristEncoder.getAbsolutePositionDegrees() - ElevatorConstants.kWristPositionIncrement);
+    goalWristAngle = wristEncoder.getAbsolutePositionDegrees() - ElevatorConstants.kWristPositionIncrement;
+}
+public void moveWristUp() {
+    isManual = true;
+    // setWristPosition(wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kWristPositionIncrement);
+    goalWristAngle = wristEncoder.getAbsolutePositionDegrees() + ElevatorConstants.kWristPositionIncrement;
+}
+
+  public void holdWristPosition() {
+    setWristPosition(wristEncoder.getAbsolutePositionDegrees());
+    goalWristAngle = wristEncoder.getAbsolutePositionDegrees();
+  }
+
   @Override
   public void periodic() {
 
+    
+    // Update wrist state machine
+    wristStateMachine.periodic();
+    
+    if (!isManual){
+      WristState currentState = wristStateMachine.getCurrentState();
+      setWristPosition(currentState.properties.angleDegrees());
+    } else {
+      setWristPosition(goalWristAngle);
+    }
     checkFailSafes();
     wristMotor.set(wristSpeed);
 
     // Get current position
     double currentAngle = wristEncoder.getAbsolutePositionDegrees();
 
-    // Update wrist state machine
-    wristStateMachine.periodic();
-
     // Update dashboard
     SmartDashboard.putNumber("Wrist/CurrentAngle", currentAngle);
+    SmartDashboard.putNumber("Wrist/Speed", wristSpeed);
     SmartDashboard.putNumber("Wrist/TargetAngle",
         wristStateMachine.getTargetProperties().angleDegrees());
     SmartDashboard.putString("Wrist/State",
@@ -107,6 +152,7 @@ public class WristSubsystem extends SubsystemBase {
 
   // Public methods for commanding the wrist
   public void moveWristToState(WristState state) {
+    isManual = false;
     wristStateMachine.requestTransition(
         state,
         state.properties,
@@ -125,23 +171,26 @@ public class WristSubsystem extends SubsystemBase {
 
   public void checkFailSafes() {
 
-    double elevatorCurrentHeight = RobotMap.elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+    double elevatorCurrentPosition = RobotMap.elevatorMotor.getPosition();
     
-    if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle) {
-      wristSpeed = 0;
-    }
-    if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() <= ElevatorConstants.kWristMinAngle) {
-      wristSpeed = 0;
-    }
-    if (elevatorCurrentHeight >= ElevatorConstants.kElevatorDangerZoneStart
-        && elevatorCurrentHeight <= ElevatorConstants.kElevatorDangerZoneEnd) {
+    // if (wristSpeed > 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMaxAngle && wristEncoder.getAbsolutePositionDegrees() <= 350) {
+    //   // wristSpeed = 0;
+    //   holdWristPosition();
+    // }
+    // if (wristSpeed < 0 && wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristMinAngle) {
+    //   // wristSpeed = 0;
+    //   holdWristPosition();
+    // }
+    // if (elevatorCurrentPosition >= ElevatorConstants.kElevatorDangerZoneStart
+    //     && elevatorCurrentPosition <= ElevatorConstants.kElevatorDangerZoneEnd) {
 
-      if (wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle) {
+    //   if (wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle) {
 
-        if (wristSpeed > 0) {
-          wristSpeed = 0;
-        }
-      }
-    }
+    //     if (wristSpeed > 0) {
+    //       // wristSpeed = 0;
+    //       holdWristPosition();
+    //     }
+    //   }
+    // }
   }
 }

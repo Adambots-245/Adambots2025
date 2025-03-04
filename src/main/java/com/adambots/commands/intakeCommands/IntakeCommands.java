@@ -18,9 +18,9 @@ public class IntakeCommands {
                 System.out.println("Intake Command Running");
                 intakeSubsystem.intakeCoral();
             }, intakeSubsystem)
-            .andThen(Commands.waitUntil(intakeSubsystem::isDetectingCoral))
-            .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold))
-            .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
+            .andThen(Commands.waitUntil(intakeSubsystem::isDetectingCoral)).andThen(() -> System.out.println("DETECTED"))
+            .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)).andThen(() -> System.out.println("STOPPED"))
+            .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
     }
 
     public Command reverseIntakeCoral() {
@@ -39,29 +39,25 @@ public class IntakeCommands {
 
     public Command stopIntakeCoral() {
         return Commands.runOnce(
-            intakeSubsystem::stopCoralIntake,
-            intakeSubsystem
+            intakeSubsystem::stopCoralIntake, intakeSubsystem
         );
     }
 
     public Command intakeAlgae() {
         return Commands.runOnce(
-            intakeSubsystem::intakeAlgae,
-            intakeSubsystem
+            intakeSubsystem::intakeAlgae, intakeSubsystem
         );
     }
     
     public Command stopIntakeAlgae() {
         return Commands.runOnce(
-            intakeSubsystem::stopAlgaeIntake,
-            intakeSubsystem
+            intakeSubsystem::stopAlgaeIntake, intakeSubsystem
         );
     }
 
     public Command reverseIntakeAlgae() {
         return Commands.runOnce(
-            intakeSubsystem::reverseAlgaeIntake,
-            intakeSubsystem
+            intakeSubsystem::reverseAlgaeIntake
         );
     }
 }

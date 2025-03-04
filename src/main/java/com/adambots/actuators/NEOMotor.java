@@ -296,7 +296,7 @@ public class NEOMotor implements BaseMotor {
      * @param enableReverse  True to enable the reverse limit switch, false otherwise.
      */
     @Override
-    public void configureHardLimits(boolean enableForward, boolean enableReverse) {
+    public void configureHardLimits(boolean enableForward, boolean enableReverse, double forwardValue, double reverseValue) {
         config.limitSwitch.setSparkMaxDataPortConfig()
                 .forwardLimitSwitchEnabled(enableForward)
                 .reverseLimitSwitchEnabled(enableReverse);

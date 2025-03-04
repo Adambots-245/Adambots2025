@@ -7,6 +7,9 @@
 
 package com.adambots;
 
+import com.adambots.subsystems.WristSubsystem;
+import com.pathplanner.lib.commands.FollowPathCommand;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -37,12 +40,14 @@ public class Robot extends TimedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
+    
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     if (TEST_CONTAINER) {
       m_testContainer = new TestContainer();
     } else {
       m_robotContainer = new RobotContainer();
+      FollowPathCommand.warmupCommand().schedule();
     }
   }
 
@@ -72,10 +77,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    if (Constants.enableAutomaticShuffleboardRecording) {
-      Shuffleboard.stopRecording();
-      System.out.println("Shuffleboard recording ended");
-    }
+    // if (Constants.enableAutomaticShuffleboardRecording) {
+    //   Shuffleboard.stopRecording();
+    //   System.out.println("Shuffleboard recording ended");
+    // }
   }
 
   @Override
@@ -90,10 +95,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CommandScheduler.getInstance().cancelAll(); // Cancel all teleop or lingering commands
 
-    if (Constants.enableAutomaticShuffleboardRecording) {
-      Shuffleboard.startRecording();
-      System.out.println("Autonomous Shuffleboard recording started - " + DriverStation.getMatchTime());
-    }
+    // if (Constants.enableAutomaticShuffleboardRecording) {
+    //   Shuffleboard.startRecording();
+    //   System.out.println("Autonomous Shuffleboard recording started - " + DriverStation.getMatchTime());
+    // }
+
+    WristSubsystem.isManual = false;
 
     Command m_autonomousCommand = null;
 
@@ -125,6 +132,9 @@ public class Robot extends TimedRobot {
       Shuffleboard.startRecording();
       System.out.println("Teleop Shuffleboard recording started - " + DriverStation.getMatchTime());
     }
+
+    WristSubsystem.isManual = true;
+    // WristSubsystem.goalWristAngle;
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -158,4 +168,16 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 
+  /**
+   * Returns {@code True} if the robot is on the red alliance according to driverstation, {@code False} otherwise
+   *
+   * @return Whether the robot is on the red alliance
+   */
+  public static boolean isOnRedAlliance(){
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+      return alliance.get() == DriverStation.Alliance.Red;
+    }
+    return false;
+  }
 }

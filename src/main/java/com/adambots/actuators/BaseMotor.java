@@ -171,6 +171,10 @@ public interface BaseMotor extends BaseActuator{
      * 
      * @param enableForward Whether to enable the forward limit switch.
      * @param enableReverse Whether to enable the reverse limit switch.
+     * @param forwardValue Value to reset the encoder when the forward limit switch is hit
+     * @param reverseValue Value to reset the encoder when the reverse limit switch is hit
      */
-    void configureHardLimits(boolean enableForward, boolean enableReverse);
+    void configureHardLimits(boolean enableForward, boolean enableReverse, double forwardValue, double reverseValue);
+
+    
 }

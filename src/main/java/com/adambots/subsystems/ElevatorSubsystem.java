@@ -2,11 +2,7 @@ package com.adambots.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.BooleanArrayEntry;
-
 import com.adambots.actuators.BaseMotor;
-import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.utils.StateMachine;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.RobotMap;
@@ -15,7 +11,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Properties for Elevator State
     public record ElevatorProperties(
-            double heightInches,
+            double position,
             String description) {
     }
 
@@ -25,7 +21,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         L1(new ElevatorProperties(ElevatorConstants.kElevatorL1Position, "Level 1")),
         L2(new ElevatorProperties(ElevatorConstants.kElevatorL2Position, "Level 2")),
         L3(new ElevatorProperties(ElevatorConstants.kElevatorL3Position, "Level 3")),
-        L4(new ElevatorProperties(ElevatorConstants.kElevatorL4Position, "Level 4"));
+        L4(new ElevatorProperties(ElevatorConstants.kElevatorL4Position, "Level 4")),
+        HighAlgae(new ElevatorProperties(ElevatorConstants.kElevatorHighAlgaePosition, "High Algae")),
+        LowAlgae(new ElevatorProperties(ElevatorConstants.kElevatorLowAlgaePosition, "Low Algae")),
+        PROCESSOR(new ElevatorProperties(ElevatorConstants.kElevatorProcessorPosition, "Processor"));
 
         public final ElevatorProperties properties;
 
@@ -37,7 +36,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Hardware
     private final BaseMotor elevatorMotor;
 
-    double currentHeight;
+    double currentPosition;
 
     // State Machines
     private final StateMachine<ElevatorState, ElevatorProperties> elevatorStateMachine;
@@ -61,28 +60,49 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setPID(ElevatorConstants.kPIDSlot, ElevatorConstants.kPElevatorController,
                 ElevatorConstants.kIElevatorController, ElevatorConstants.kDElevatorController,
                 ElevatorConstants.kFElevatorController);
-        elevatorMotor.setBrakeMode(true);
+        elevatorMotor.setBrakeMode(false);
+        elevatorMotor.setInverted(true);
+
+        elevatorMotor.configureHardLimits(true,true, ElevatorConstants.kElevatorL4Position, 0);
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
-        double rotations = properties.heightInches() / ElevatorConstants.kInchesPerRotation;
+        // double rotations = properties.position() / ElevatorConstants.kInchesPerRotation;
+        double rotations = properties.position();
+
+        setPosition(rotations);
+    }
+
+    private void setPosition(double rotations) {
         elevatorMotor.setPosition(rotations);
+    }
+
+    public double getCurrentPosition() {
+        return elevatorMotor.getPosition();
+    }
+
+    public void holdElevatorPosition() {
+        setPosition(currentPosition);
     }
 
     @Override
     public void periodic() {
 
         // Get current positions
-        currentHeight = elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+        // currentPosition = elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+        currentPosition = elevatorMotor.getPosition();
+
 
         // Update elevator state machine
         elevatorStateMachine.periodic();
 
-
+        SmartDashboard.putNumber("Elevator/Speed", elevatorMotor.getVelocity());
+        SmartDashboard.putNumber("Elevator/Encoder", elevatorMotor.getPosition());
         // Update dashboard
-        SmartDashboard.putNumber("Elevator/CurrentHeight", currentHeight);
-        SmartDashboard.putNumber("Elevator/TargetHeight",
-                elevatorStateMachine.getTargetProperties().heightInches());
+        SmartDashboard.putNumber("Elevator/CurrentPosition", currentPosition);
+        SmartDashboard.putNumber("Elevator/TargetPosition",
+
+                elevatorStateMachine.getTargetProperties().position());
         SmartDashboard.putString("Elevator/State",
                 elevatorStateMachine.getCurrentState().toString());
     }
@@ -96,22 +116,32 @@ public class ElevatorSubsystem extends SubsystemBase {
                 () -> true, // No check needed for position control
                 this::setElevatorPosition);
         } else {
-            elevatorMotor.set(0);
+            holdElevatorPosition();
         }
     }
 
     // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
     public void moveElevatorUp() {
-        elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
+        if (isElevatorSafe()) {
+            setPosition(getCurrentPosition() + ElevatorConstants.kElevatorPositionIncrement);
+        } else {
+            holdElevatorPosition();
+        }
+        // elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
     }
 
     // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
     public void moveElevatorDown() {
-        elevatorMotor.set(-ElevatorConstants.kElevatorSpeed);
+        if (isElevatorSafe()) {
+           setPosition(getCurrentPosition() - ElevatorConstants.kElevatorPositionIncrement);
+        } else {
+            holdElevatorPosition();
+        }
+        // elevatorMotor.set(-ElevatorConstants.kElevatorSpeed);
     }
 
     public void stopElevatorSpeed() {
-        elevatorMotor.set(0);
+        holdElevatorPosition();
     }
 
     // Public methods for commanding the wrist
@@ -122,10 +152,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean isElevatorSafe() {
 
+        if (currentPosition <= ElevatorConstants.kElevatorMinHeight || currentPosition >= ElevatorConstants.kElevatorMaxHeight) {
+            // holdElevatorPosition();
+        }
+
         if (RobotMap.wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
-            (currentHeight > ElevatorConstants.kElevatorDangerZoneStart && currentHeight < ElevatorConstants.kElevatorDangerZoneEnd)) {
-            elevatorMotor.set(0);
-            return false;
+            (currentPosition > ElevatorConstants.kElevatorDangerZoneStart && currentPosition < ElevatorConstants.kElevatorDangerZoneEnd)) {
+            // holdElevatorPosition();
+            // return false;
         }
         return true;
     }

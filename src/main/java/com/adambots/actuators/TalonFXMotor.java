@@ -270,7 +270,9 @@ public class TalonFXMotor implements BaseMotor {
      */
     @Override
     public void setBrakeMode(boolean brake) {
-        motor.setNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        var config = new MotorOutputConfigs()
+                .withNeutralMode(brake ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+        motor.getConfigurator().apply(config);
     }
 
     /**
@@ -391,12 +393,16 @@ public class TalonFXMotor implements BaseMotor {
      * @param enableReverse True to enable the reverse hard limit, false otherwise
      */
     @Override
-    public void configureHardLimits(boolean enableForward, boolean enableReverse) {
+    public void configureHardLimits(boolean enableForward, boolean enableReverse, double forwardValue, double reverseValue) {
         var limitSwitchConfigs = new HardwareLimitSwitchConfigs()
                 .withForwardLimitEnable(enableForward)
-                .withForwardLimitType(ForwardLimitTypeValue.NormallyClosed)
+                .withForwardLimitAutosetPositionEnable(enableForward)
+                .withForwardLimitAutosetPositionValue(forwardValue)
+                .withForwardLimitType(ForwardLimitTypeValue.NormallyOpen)
                 .withReverseLimitEnable(enableReverse)
-                .withReverseLimitType(ReverseLimitTypeValue.NormallyClosed);
+                .withReverseLimitAutosetPositionEnable(enableReverse)
+                .withReverseLimitAutosetPositionValue(reverseValue)
+                .withReverseLimitType(ReverseLimitTypeValue.NormallyOpen);
 
         motor.getConfigurator().apply(limitSwitchConfigs);
 

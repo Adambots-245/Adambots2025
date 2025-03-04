@@ -44,6 +44,13 @@ public class Buttons {
         public static final Trigger XboxLeftTriggerButton = XboxController.leftTrigger(0.5);
         public static final Trigger XboxRightTriggerButton = XboxController.rightTrigger(0.5);
 
+        // Xbox Stick Throttles
+        public static final Trigger rightStickUp = new Trigger(()-> XboxController.getRightY() < -0.8);
+        public static final Trigger rightStickDown = new Trigger(()-> XboxController.getRightY() > 0.8);
+
+        public static final Trigger leftStickUp = new Trigger(()-> XboxController.getLeftY() < -0.8);
+        public static final Trigger leftStickDown = new Trigger(()-> XboxController.getLeftY() > 0.8);
+
         // Xbox DPad
         public static final Trigger XboxDPadN = XboxController.pov(0);
         public static final Trigger XboxDPadNE = XboxController.pov(45);
@@ -204,11 +211,11 @@ public class Buttons {
 
         public static DoubleSupplier forwardSupplier = () -> {
                 // System.out.println("Forward: " + ex3dPro.getY());
-                return applyCurve(ex3dPro.getY());
+                return -applyCurve(ex3dPro.getY());
         };
         public static DoubleSupplier sidewaysSupplier = () ->{
                 // System.out.println("Sideways: " + ex3dPro.getX());
-                return applyCurve(ex3dPro.getX());
+                return -applyCurve(ex3dPro.getX());
         };
         public static DoubleSupplier rotateSupplier = () -> {
                 // System.out.println("Rotate: " + ex3dPro.getZ());

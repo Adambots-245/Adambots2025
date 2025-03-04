@@ -16,24 +16,29 @@ import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.adambots.subsystems.SwerveSubsystem;
+import com.adambots.utils.Buttons;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import swervelib.SwerveController;
 import com.adambots.vision.PhotonVision.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -150,7 +155,7 @@ public class DriveCommands {
     public Command driveToPose(Pose2d pose) {
         // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
-                swerveDrive.getMaximumChassisVelocity(), 4.0,
+                1, 1.0,
                 swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
         // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -161,27 +166,80 @@ public class DriveCommands {
         );
     }
 
-    public Command driveToPoseSimple(Pose2d targetPose) {
-        return Commands.run(() -> {
-            // Get target speeds from YAGSL's controller
-            ChassisSpeeds speeds = controller.getTargetSpeeds(
-                    swerveDrive.getPose().getX(),
-                    swerveDrive.getPose().getY(),
-                    targetPose.getX(),
-                    targetPose.getY(),
-                    targetPose.getRotation().getRadians(),
-                    0.4);
+    private Command activePathCommand = null;
 
+    public Command driveToPoseAdvanced(Supplier<Pose2d> goalPoseSupplier) {
 
-            // Drive using the calculated speeds
-            subsystem.driveFieldOriented(speeds);
-        })
-                .until(() -> {
-                    Pose2d currentPose = swerveDrive.getPose();
-                    return hasReachedPose(currentPose, targetPose);
-                })
-                .finallyDo((interrupted) -> subsystem.drive(new Translation2d(), 0, true));
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+
+        return Commands.runEnd(
+            () -> {
+                // Create the constraints to use while pathfinding
+                PathConstraints constraints = new PathConstraints(
+                1, 1.0,
+                swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+
+                // Get current robot position
+                Pose2d currentPose = subsystem.getPose();
+                Pose2d goalPose = goalPoseSupplier.get();
+
+                // Create dynamic waypoints
+                List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(currentPose, goalPose);
+
+                PathPlannerPath path = new PathPlannerPath(waypoints, constraints, null, new GoalEndState(0.0, goalPoseSupplier.get().getRotation()));
+
+                // Store and schedule the new path command
+                // activePathCommand = AutoBuilder.followPath(path);
+                activePathCommand = AutoBuilder.pathfindToPose(
+                    goalPoseSupplier.get(),
+                    constraints,
+                    edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+                );
+
+                activePathCommand.schedule();
+                System.out.println("RUNNING PATH");
+            },
+            ()-> {
+                if (activePathCommand != null) {
+                    System.out.println("Cancelling Path");
+                    activePathCommand.end(true);
+                    activePathCommand = null;
+                }
+                subsystem.setChassisSpeeds(new ChassisSpeeds(0,0,0));
+                subsystem.getCurrentCommand().cancel();
+            },
+        subsystem);
     }
+
+    // int counter = 0;
+
+    // public Command testPrint(){
+    // return Commands.runOnce(() -> {
+    // counter++;
+    // System.out.println("Initial Counter:"+ counter);
+    // }).andThen(printerCommand());
+    // }
+
+    // public Command printerCommand(){
+    // return Commands.run(() ->
+    // Commands.print(Integer.toString(counter)).schedule());
+    // }
+
+    // int countNew = 0;
+
+    // public Command print() {
+    // AtomicReference<Double> count = new AtomicReference<>();
+
+    // count.set(0.0);
+
+    // return Commands.run(() -> count.set(count.get() +
+    // 1)).alongWith(Commands.print(Double.toString(count.get())));
+    // }
+
+    // private double getCount(){
+    // countNew ++;
+    // return countNew;
+    // }
 
     // List of potential target poses
     List<Pose2d> targetPoses = Arrays.asList(

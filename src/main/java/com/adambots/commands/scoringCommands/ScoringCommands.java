@@ -23,24 +23,42 @@ public class ScoringCommands {
 
     public Command scoreCoral() {
         // No coral - don't do anything
-        if (!intakeSubsystem.isDetectingCoral()) {
-            System.out.println("Score stopped");
-            return Commands.none();
-        }
+        // if (!intakeSubsystem.isDetectingCoral()) {
+        //     System.out.println("Score stopped");
+        //     return Commands.none();
+        // }
 
         // run the intake, wait until the CANRange does not see a Coral, wait a bit,
         // then stop the intake
+        // return Commands.runOnce(() -> {
+        //     System.out.println("Score Command Running");
+        //     intakeSubsystem.intakeCoral();
+        // }, intakeSubsystem).andThen(Commands.waitSeconds(2))
+        //         // .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
+        //         // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
+        //         .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
+
+        return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem);
+    }
+
+    public Command scoreCoralAuton() {
         return Commands.runOnce(() -> {
             System.out.println("Score Command Running");
             intakeSubsystem.intakeCoral();
-        }, intakeSubsystem)
-                .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
-                .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
-                .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake, intakeSubsystem));
+        }, intakeSubsystem).andThen(Commands.waitSeconds(2))
+                // .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
+                // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
+                .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
+
+        // return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem);
     }
 
+    // public Command scoreCoralAndAlgae(){
+    //     return Commands.run(null, intakeSubsystem)
+    // }
+
     public Command scoreAlgae() {
-        return Commands.runOnce(intakeSubsystem::reverseAlgaeIntake, intakeSubsystem);
+        return Commands.runOnce(intakeSubsystem::reverseAlgaeIntake);
     }
 
     public Command stopScoringAlgae() {

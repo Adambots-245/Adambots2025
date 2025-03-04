@@ -19,7 +19,7 @@ public final class Constants {
     public static final Boolean enableAutomaticShuffleboardRecording = false;
 
     public static final class LEDConstants {
-        public static final int LEDS_IN_STRIP = 300;
+        public static final int LEDS_IN_STRIP = 100;
         public static final LEDStripType LED_STRIP_TYPE = LEDStripType.GRB; // if this is not set properly, the colors will not work
 
         public static final Color off = new Color(0, 0, 0);
@@ -142,18 +142,14 @@ public final class Constants {
         // public static final double kITranslationController = 0; 
         // public static final double kDTranslationController = 0.11;
 
-        public static final double kPTranslationController = 1; 
+        public static final double kPTranslationController = 3; 
         public static final double kITranslationController = 0; 
-        public static final double kDTranslationController = 0;
+        public static final double kDTranslationController = 0.05;
 
         // PD values for auton rotational movement
-        // public static final double kPThetaController = 3; 
-        // public static final double kIThetaController = 0; 
-        // public static final double kDThetaController = 0.01;
-
-        public static final double kPThetaController = 0.5; 
+        public static final double kPThetaController = 1.5; 
         public static final double kIThetaController = 0; 
-        public static final double kDThetaController = 0;
+        public static final double kDThetaController = 0.06;
 
         public static final double kPWaypointTranslation = 5; 
         public static final double kDWaypointTranslation = 0.55;
@@ -168,12 +164,12 @@ public final class Constants {
 
     // Subystem Constants go here
     public final static class IntakeConstants {
-        public static final double kMaxSpeed = 1;
+        public static final double kMaxSpeed = -1;
         public static final double kLowSpeed = .5;
-        public static final double kReverseSpeed = -1;
-        public static final double kDistanceToDetect = 7.5;
-        public static final double kTimerThreshold = 0.25; // number of seconds to wait before stopping the intake after detecting a coral
-        public static final double kAlgaeIntakePulseSeconds = 0.5;
+        public static final double kReverseSpeed = 1;
+        public static final double kDistanceToDetect = 10;//cm
+        public static final double kTimerThreshold = 0.4; // number of seconds to wait before stopping the intake after detecting a coral
+        public static final double kAlgaeIntakePulseSeconds = 0.2;
 
     }
 
@@ -181,48 +177,61 @@ public final class Constants {
 
         // PID Constants
         public static final int kPIDSlot = 0;
-        public static double kElevatorSpeed = 0.5; // only for free movement and not for positional control
+        public static final double kElevatorSpeed = 0.2; // only for free movement and not for positional control
+        public static final double kElevatorPositionIncrement = 0.9;
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         
         public static final double kPElevatorController = 0.5;
-        public static final double kIElevatorController = 0;
-        public static final double kDElevatorController = 0;
+        public static final double kIElevatorController = 0.000;
+        public static final double kDElevatorController = 0.035;
         public static final double kFElevatorController = 0.0;
 
-        public static final double kPWristController = 0.5;
-        public static final double kIWristController = 0;
-        public static final double kDWristController = 0;
+        public static final double kWristPositionIncrement = 3.7;
+        public static final double kPWristController = 0.022;
+        public static final double kIWristController = 0.00;
+
+        public static final double kDWristController = 0.0001;
 
         // Elevator Positions
         public static final double kElevatorIntakePosition = 0.0;
-        public static final double kElevatorL1Position = 12.0;
-        public static final double kElevatorL2Position = 24.0;
-        public static final double kElevatorL3Position = 36.0;
-        public static final double kElevatorL4Position = 48.0;
+        public static final double kElevatorL1Position = 21.01;
+        public static final double kElevatorL2Position = 32.3;
+        public static final double kElevatorL3Position = 55;
+        public static final double kElevatorL4Position = 91;
+        public static final double kElevatorHighAlgaePosition = 61;
+        public static final double kElevatorLowAlgaePosition = 32;
+        public static final double kElevatorProcessorPosition = 0;
 
-        public static final double kElevatorMaxHeight = 48;
+        public static final double kElevatorMaxHeight = 90;
         public static final double kElevatorMinHeight = 0;
         public static final double kElevatorDangerZoneStart = 20;
         public static final double kElevatorDangerZoneEnd = 40;
 
         // Wrist Positions
-        public static final double kWristStowedPosition = 0.0;
-        public static final double kWristIntakePosition = 20.0;
-        public static final double kWristL1Position = 40.0;
-        public static final double kWristL2Position = 60.0;
-        public static final double kWristL3Position = 80.0;
-        public static final double kWristL4Position = 100.0;
+        public static final double kWristStowedPosition = 55;
+        public static final double kWristIntakePosition = 80.7;
+        public static final double kWristL1Position = 66;
+        public static final double kWristL2Position = 66;
+        public static final double kWristL3Position = 66;
+        public static final double kWristL4Position = 74;
+        public static final double kWristHighAlgaePosition = 12;
+        public static final double kWristLowAlgaePosition = 12;
+        public static final double kWristProcessorPosition = 12;
+        public static final double kWristGroundIntakePosition = 350;
+        public static final double kWristHangPosition = 70;
 
-        public static final double kWristMinAngle = 0;
-        public static final double kWristMaxAngle = 100;
-        public static final double kWristDangerZoneAngle = 40;
+
+        public static final double kWristMinAngle = 355;
+        public static final double kWristMaxAngle = 85;
+        public static final double kWristDangerZoneAngle = 58;
 
         // Gear Ratio and Other Elevator Constants
+        public static final double stateFirstChangeDelay = 0.15;
+        public static final double stateChangeDelay = 0.5;
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
-
-    }
+        }
     // Command Constants go here
 }

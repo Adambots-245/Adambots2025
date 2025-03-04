@@ -4,7 +4,10 @@
 
 package com.adambots.commands.elevatorCommands;
 
+import com.adambots.Constants.ElevatorConstants;
+import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.WristSubsystem;
 import com.adambots.subsystems.WristSubsystem.WristState;
@@ -17,40 +20,77 @@ public class ElevatorCommands extends Command {
     /** Creates a new ElevatorCommands. */
     ElevatorSubsystem elevatorSubsystem;
     WristSubsystem wristSubsystem;
+    IntakeCommands intakeCommands;
 
-    public ElevatorCommands(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem) {
+    public ElevatorCommands(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem,
+            IntakeCommands intakeCommands) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.elevatorSubsystem = elevatorSubsystem;
         this.wristSubsystem = wristSubsystem;
+        this.intakeCommands = intakeCommands;
     }
 
     public Command moveToIntakeCommand() {
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), elevatorSubsystem)
-                .alongWith(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE), wristSubsystem));
+        return Commands.either(
+            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE))
+                .andThen(intakeCommands.intakeCoral())
+            , 
+            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
+                .andThen(Commands.waitSeconds(0.75))
+                .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE)))
+                .andThen(intakeCommands.intakeCoral()), 
+            ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));
     }
 
     public Command moveToL1Command() {
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L1), elevatorSubsystem)
-                .alongWith(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L1),
-                        wristSubsystem));
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L1), wristSubsystem)
+                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L1))));
     }
 
     public Command moveToL2Command() {
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L2), elevatorSubsystem)
-                .alongWith(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L2),
-                        wristSubsystem));
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L2), wristSubsystem)
+                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L2))));
     }
 
     public Command moveToL3Command() {
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L3), elevatorSubsystem)
-                .alongWith(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L3),
-                        wristSubsystem));
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L3), wristSubsystem)
+                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L3))));
     }
 
     public Command moveToL4Command() {
-        return Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L4), elevatorSubsystem)
-                .alongWith(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L4),
-                        wristSubsystem));
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L4), wristSubsystem)
+                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L4))));
+    }
+
+    public Command moveToAlgaeStateCommand(ElevatorState elevatorState, WristState wristState) {
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(elevatorState), wristSubsystem)
+                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(wristState))))
+                .andThen(intakeCommands.intakeAlgae());
+    }
+
+    public Command moveToStateCommand(ElevatorState elevatorState, WristState wristState) {
+        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(elevatorState), wristSubsystem)
+                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(wristState))));
     }
 
     public Command moveWristToStateCommand(WristState state) {
@@ -66,7 +106,8 @@ public class ElevatorCommands extends Command {
     }
 
     public Command moveWristToIntakeCommand() {
-        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE), wristSubsystem);
+        return Commands.runEnd(() -> wristSubsystem.moveWristToState(WristState.INTAKE),
+                () -> wristSubsystem.holdWristPosition(), wristSubsystem);
     }
 
     public Command moveWristToL1Command() {
@@ -85,19 +126,27 @@ public class ElevatorCommands extends Command {
         return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L4), wristSubsystem);
     }
 
-    public Command moveElevatorUp(){
-        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+    public Command moveElevatorUp() {
+        // return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), ()->
+        // elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorUp(), () -> elevatorSubsystem.holdElevatorPosition(),
+                elevatorSubsystem);
     }
 
-    public Command moveElevatorDown(){
-        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(), ()-> elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+    public Command moveElevatorDown() {
+        // return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(), ()->
+        // elevatorSubsystem.stopElevatorSpeed(), elevatorSubsystem);
+        return Commands.runEnd(() -> elevatorSubsystem.moveElevatorDown(),
+                () -> elevatorSubsystem.holdElevatorPosition(), elevatorSubsystem);
     }
 
     public Command moveWristUp() {
-        return Commands.runEnd(() -> wristSubsystem.setWristSpeed(0.2), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
+        return Commands.runEnd(() -> wristSubsystem.moveWristUp(), () -> wristSubsystem.holdWristPosition(),
+                wristSubsystem);
     }
 
     public Command moveWristDown() {
-        return Commands.runEnd(()-> wristSubsystem.setWristSpeed(-0.2), ()-> wristSubsystem.setWristSpeed(0), wristSubsystem);
+        return Commands.runEnd(() -> wristSubsystem.moveWristDown(), () -> wristSubsystem.holdWristPosition(),
+                wristSubsystem);
     }
 }
