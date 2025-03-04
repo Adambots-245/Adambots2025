@@ -152,8 +152,8 @@ public class RobotContainer {
 
       Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
 
-      Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, false));
-      Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true));
+      Buttons.JoystickButton6.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, false, candleSubsytem));
+      Buttons.JoystickButton7.whileTrue(new DriveToPoseReefAdvanced(swerveSubsystem, true, candleSubsytem));
 
       // Buttons.JoystickButton3.onTrue(new InstantCommand(()->
       // hangSubsystem.setMotorSpeed(1)));
@@ -288,7 +288,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", scoringCommands.scoreCoralAuton());
     NamedCommands.registerCommand("L4Position", elevatorCommands.moveToL4Command());
     NamedCommands.registerCommand("IntakePosition", elevatorCommands.moveToIntakeCommand());
-    NamedCommands.registerCommand("DriveToRight", new DriveToPoseReefAdvanced(swerveSubsystem, true));
+    NamedCommands.registerCommand("DriveToRight", new DriveToPoseReefAdvanced(swerveSubsystem, true, candleSubsytem));
   }
 
   /**

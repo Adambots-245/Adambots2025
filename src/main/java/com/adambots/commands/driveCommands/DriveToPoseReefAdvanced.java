@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import com.adambots.Robot;
+import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
+import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
 
 public class DriveToPoseReefAdvanced extends Command {
     private final SwerveSubsystem swerveSubsystem;
@@ -40,11 +42,14 @@ public class DriveToPoseReefAdvanced extends Command {
 
     private final HolonomicDriveController holonomicController;
 
-    public DriveToPoseReefAdvanced(SwerveSubsystem swerveSubsystem, boolean isRight) {
+    private CANdleSubsystem caNdleSubsystem;
+
+    public DriveToPoseReefAdvanced(SwerveSubsystem swerveSubsystem, boolean isRight, CANdleSubsystem caNdleSubsystem) {
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
         // this.aprilTagId = aprilTagId;
         this.isOffsetRight = isRight;
+        this.caNdleSubsystem = caNdleSubsystem;
 
         // PID Controllers for X, Y movement & theta (rotation)
         PIDController xController = new PIDController(1, 0, 0);
@@ -218,6 +223,12 @@ public class DriveToPoseReefAdvanced extends Command {
             );
 
             swerveSubsystem.drive(targetSpeeds); // Implement this in DriveSubsystem
+
+            if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.05){
+                caNdleSubsystem.setColor(0, 255, 0);
+            } else {
+                caNdleSubsystem.setColor(255,0,0);
+            }
         }
     }
 
@@ -229,5 +240,6 @@ public class DriveToPoseReefAdvanced extends Command {
     @Override
     public void end(boolean interrupted) {
         swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0, 0, 0));
+        caNdleSubsystem.setAnimation(AnimationTypes.Larson);
     }
 }
