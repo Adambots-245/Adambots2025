@@ -393,42 +393,15 @@ public class PhotonVision {
    */
   public enum Cameras {
     /**
-     * Left Camera
-     */
-    // LEFT_CAM("Left",
-    // new Rotation3d(0, Math.toRadians(-5), Math.toRadians(-20)),
-    // new Translation3d(Units.inchesToMeters(-11.5),
-    // Units.inchesToMeters(11.0),
-    // Units.inchesToMeters(-7.5)),
-    // VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-    /**
-     * Right Camera
-     */
-    // LEFT_CAM("Left",
-    //     new Rotation3d(0, Units.degreesToRadians(55), Units.degreesToRadians(0)),
-    //     new Translation3d(Units.inchesToMeters(12.5),
-    //         Units.inchesToMeters(11),
-    //         Units.inchesToMeters(41)),
-    //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-
-    // RIGHT_CAM("Left",new Rotation3d(0,Units.degreesToRadians(-35),Units.degreesToRadians(60)),new Translation3d(Units.inchesToMeters(-8),Units.inchesToMeters(-13.5),Units.inchesToMeters(41)),VecBuilder.fill(4,4,8),VecBuilder.fill(0.5,0.5,1));
-    /**
      * Center Camera
      * //
      */
-    LEFT_CAM("Middle",
+    CENTER_CAM("Middle",
     new Rotation3d(0, Units.degreesToRadians(40), 0),
     new Translation3d(Units.inchesToMeters(8),
     Units.inchesToMeters(0),
     Units.inchesToMeters(41)),
     VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1));
-
-    // RIGHT_CAM("Right",
-    // new Rotation3d(0, Units.degreesToRadians(55), 0),
-    // new Translation3d(Units.inchesToMeters(12.5),
-    // Units.inchesToMeters(-11),
-    // Units.inchesToMeters(41)),
-    // VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     /**
      * Latency alert to use when high latency is detected.
