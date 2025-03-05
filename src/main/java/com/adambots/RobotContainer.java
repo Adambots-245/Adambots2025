@@ -104,9 +104,13 @@ public class RobotContainer {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
 
     if (Robot.isSimulation()) {
-      // ALLIGN TO BARGE ID
-      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 14));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
+      // REEF ID
+      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
+      // Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
+
+      // BARGE ID
+      // Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 14));
+      // Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
 
       // ALIGN TO HUMAN PLAYER TEST
       // Buttons.JoystickButton3
@@ -115,12 +119,12 @@ public class RobotContainer {
       //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
 
       // ALIGN TO REEF TEST
-      // Buttons.JoystickButton2
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
-      // candleSubsytem));
-      // Buttons.JoystickButton3
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
-      // candleSubsytem));
+      Buttons.JoystickButton2
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
+      candleSubsytem));
+      Buttons.JoystickButton3
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
+      candleSubsytem));
       // Buttons.JoystickButton4
       // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
       // candleSubsytem));
@@ -134,12 +138,15 @@ public class RobotContainer {
       // Buttons.JoystickButton2
       // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
       // candleSubsytem));
-      Buttons.JoystickButton3
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
-      candleSubsytem));
+      // Buttons.JoystickButton3
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
+      // candleSubsytem));
+      // Buttons.JoystickButton4
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
+      // candleSubsytem));
+
       Buttons.JoystickButton4
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
-      candleSubsytem));
+      .whileTrue(driveCommands.getDistanceFromAprilTag(17));
 
     } else {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());

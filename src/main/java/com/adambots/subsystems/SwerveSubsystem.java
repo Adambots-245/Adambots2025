@@ -46,8 +46,6 @@ public class SwerveSubsystem extends SubsystemBase {
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
   private final boolean visionDriveTest = true;
   private PhotonVision vision;
-  private AtomicReference<Pose2d> goalPose = new AtomicReference<Pose2d>(new Pose2d(new Translation2d(0,0), new Rotation2d(0)));
-  //  = new Pose2d(new Translation2d(0,0), new Rotation2d(0));
 
   /**
    * Creates a new SwerveSubsystem. Adapted from YAGSL-Example
@@ -313,26 +311,10 @@ public class SwerveSubsystem extends SubsystemBase {
       vision.updatePoseEstimation(swerveDrive);
     }
 
-    getUpdatedGoalPose();
-    // updateGoalPose();
   }
 
   @Override
   public void simulationPeriodic() {
-    // updateGoalPose();
-    goalPose.set(getUpdatedGoalPose());
-  }
-
-  public Pose2d getUpdatedGoalPose(){
-    return goalPose.get();
-  }
-
-  public void setGoalPose(Pose2d newPose) {
-    goalPose.set(newPose);
-  }
-
-  public AtomicReference<Pose2d> getGoalPose() {
-    return goalPose;
   }
 
   /**

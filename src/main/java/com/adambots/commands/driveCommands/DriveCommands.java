@@ -78,6 +78,11 @@ public class DriveCommands {
                         subsystem.getAprilTagYaw(tagId).minus(subsystem.getHeading()).getDegrees()) < tolerance);
     }
 
+    public Command getDistanceFromAprilTag(int tagID) {
+        // return Commands.runOnce(()-> System.out.println(subsystem.getVision().getDistanceFromAprilTag(tagID)));
+        return Commands.run(()-> System.out.println("X: " + subsystem.getVision().getDistanceFromAprilTagX(tagID).getX() + " Y: " + subsystem.getVision().getDistanceFromAprilTagX(tagID).getY()));
+    }
+
     /**
      * Aligns with AprilTag and then strafes sideways relative to the tag
      * 
