@@ -7,6 +7,7 @@ import com.adambots.commands.HangCommands;
 import com.adambots.commands.driveCommands.DriveCommands;
 import com.adambots.commands.driveCommands.DriveToLocationAdvanced;
 import com.adambots.commands.driveCommands.RotateToAngleCommand;
+import com.adambots.commands.driveCommands.DriveToLocationAdvanced.AlignLocation;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
@@ -103,27 +104,41 @@ public class RobotContainer {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
 
     if (Robot.isSimulation()) {
+      // ALLIGN TO BARGE ID
+      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 14));
+      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
 
-      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 22));
-
+      // ALIGN TO HUMAN PLAYER TEST
       // Buttons.JoystickButton3
-      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 3, candleSubsytem));
+      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
       // Buttons.JoystickButton4
-      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 4, candleSubsytem));
+      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
 
+      // ALIGN TO REEF TEST
       // Buttons.JoystickButton2
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 2,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
       // candleSubsytem));
       // Buttons.JoystickButton3
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 1,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
       // candleSubsytem));
       // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 0,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
       // candleSubsytem));
 
+      // ANGLE TO REEF TEST
+      // Buttons.JoystickButton4
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
+      // candleSubsytem));
+
+      // ALIGN TO BARGE TEST
+      // Buttons.JoystickButton2
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
+      // candleSubsytem));
+      Buttons.JoystickButton3
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
+      candleSubsytem));
       Buttons.JoystickButton4
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 5,
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
       candleSubsytem));
 
     } else {
@@ -139,11 +154,11 @@ public class RobotContainer {
       Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringAlgae());
 
       Buttons.JoystickButton5
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 2, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem));
       Buttons.JoystickButton6
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 1, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem));
       Buttons.JoystickButton7
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 0, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem));
 
       Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
       Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
@@ -240,13 +255,13 @@ public class RobotContainer {
     NamedCommands.registerCommand("L4Position", elevatorCommands.moveToL4Command());
     NamedCommands.registerCommand("IntakePosition", elevatorCommands.moveToIntakeCommand());
     NamedCommands.registerCommand("DriveToReefRight",
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 0, candleSubsytem));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem));
     NamedCommands.registerCommand("DriveToReefLeft",
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 1, candleSubsytem));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem));
     NamedCommands.registerCommand("DriveToHumanPlayerRight",
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 3, candleSubsytem));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
     NamedCommands.registerCommand("DriveToHumanPlayerLeft",
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 4, candleSubsytem));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
   }
 
   /**
