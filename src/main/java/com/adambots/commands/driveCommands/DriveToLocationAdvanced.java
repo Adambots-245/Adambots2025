@@ -3,6 +3,7 @@ package com.adambots.commands.driveCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -11,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.function.Supplier;
 
 import com.adambots.Robot;
+import com.adambots.RobotContainer;
 import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
@@ -25,52 +27,61 @@ public class DriveToLocationAdvanced extends Command {
     private CANdleSubsystem caNdleSubsystem;
 
     // Offsets used for different alignment strategies.
-    private double reefOffset = 0.18;           // Offset for aligning to the reef/april tag pole.
-    private double humanPlayerOffset = 0.6;       // Offset for aligning to the human player station.
-    private double robotOffset = 0.455;           // Offset for positioning the robot relative to the tag.
+    private double reefOffset = 0.18;         // Offset for aligning to the reef/april tag pole.
+    private double humanPlayerOffset = 0.6;     // Offset for aligning to the human player station.
+    private double robotOffset = 0.455;         // Offset for positioning the robot relative to the tag.
 
     // Arrays holding the AprilTag IDs for different field elements.
-    private int[] reefTagIds;                   // AprilTag IDs for the reef (pole) targets.
-    private int[] humanPlayerTagIds;            // AprilTag IDs for the human player targets.
+    private int[] reefTagIds;                 // AprilTag IDs for the reef (pole) targets.
+    private int[] humanPlayerTagIds;          // AprilTag IDs for the human player targets.
     // Supplier to simulate tag IDs during simulation.
     private Supplier<Integer> aprilTagSupplierSim;
     // Determines which alignment mode to use.
+    // alignLocation values:
+    //   0 - align to right pole,
+    //   1 - align to left pole,
+    //   2 - align to middle/algae pole,
+    //   3 - align to human player right,
+    //   4 - align to human player left,
+    //   5 - use reef angle to rotate towards the reef.
     private int alignLocation;
 
     // Variables to track vision status and computed target pose.
-    private boolean isSeen;                     // Flag if a tag is detected.
-    private int idSeen = -1;                    // Detected tag ID.
-    private boolean isCalculated;               // Flag if the target pose has been calculated.
-    private Pose2d targetPose;                  // Target pose calculated from the detected tag.
+    private boolean isSeen;                 // Flag indicating if an AprilTag was detected.
+    private int idSeen = -1;                // Detected AprilTag ID.
+    private boolean isCalculated;           // Flag indicating if the target pose has been calculated.
+    private Pose2d targetPose;              // Calculated target pose based on the detected tag.
 
-    // PathPlanner's holonomic drive controller for computing chassis speeds.
-    private final PPHolonomicDriveController driveController;
+    // PathPlanner holonomic drive controller for computing chassis speeds toward a trajectory state.
+    private PPHolonomicDriveController driveController;
+    // PID controller used for angle turning when using alignLocation 5.
+    private PIDController angleTurningPIDController = new PIDController(3, 0, 0.0);
 
     /**
      * Constructor for DriveToLocationAdvanced.
-     * 
-     * @param swerveSubsystem       The swerve drive subsystem.
-     * @param aprilTagSupplier      Supplier for simulating AprilTag IDs in simulation.
-     * @param alignLocation         Determines alignment strategy:
-     *                              0 - right pole, 1 - left pole, 2 - algae pole,
-     *                              3 - human player right, 4 - human player left.
-     * @param caNdleSubsystem       The CANdle subsystem for LED feedback.
+     *
+     * @param swerveSubsystem  The swerve drive subsystem.
+     * @param aprilTagSupplier Supplier for simulating AprilTag IDs in simulation.
+     * @param alignLocation    Determines alignment strategy:
+     *                         0 - right pole, 1 - left pole, 2 - algae pole,
+     *                         3 - human player right, 4 - human player left, 5 - reef angle turning.
+     * @param caNdleSubsystem  The CANdle subsystem for LED feedback.
      */
     public DriveToLocationAdvanced(SwerveSubsystem swerveSubsystem, Supplier<Integer> aprilTagSupplier,
             int alignLocation, CANdleSubsystem caNdleSubsystem) {
+        // Require the swerve subsystem for this command.
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
         this.caNdleSubsystem = caNdleSubsystem;
         this.alignLocation = alignLocation;
         this.aprilTagSupplierSim = aprilTagSupplier;
 
-        // Create PID constants for the drive controller.
-        // These constants tune translation (X, Y) and rotation control.
+        // Create PID constants for the drive controller tuning.
         PIDConstants translationConstants = new PIDConstants(2.0, 0.0, 0.0);
         PIDConstants rotationConstants = new PIDConstants(3.0, 0.0, 0.0);
-        // Set the update period (20ms typical loop time).
+        // Set the update period to 20ms (typical loop time).
         double period = 0.02;
-        // Instantiate the PPHolonomicDriveController with the PID constants and period.
+        // Instantiate the PPHolonomicDriveController with the defined PID constants.
         this.driveController = new PPHolonomicDriveController(translationConstants, rotationConstants, period);
     }
 
@@ -81,7 +92,7 @@ public class DriveToLocationAdvanced extends Command {
     public void initialize() {
         isSeen = false;
         isCalculated = false;
-        // Default target pose. This will be replaced when a tag is detected.
+        // Initialize the target pose to a default value; will be updated when a tag is detected.
         targetPose = new Pose2d(new Translation2d(0, 0), new Rotation2d(0));
 
         // Set the appropriate AprilTag IDs based on the alliance color.
@@ -95,19 +106,20 @@ public class DriveToLocationAdvanced extends Command {
     }
 
     /**
-     * The main execution loop for the command.
+     * Main execution loop for the command.
+     * Processes vision data, calculates the target pose, and commands the drivetrain.
      */
     @Override
     public void execute() {
-        // Get the current pose of the robot from the swerve subsystem.
+        // Retrieve the robot's current pose from the swerve subsystem.
         Pose2d currentPose = swerveSubsystem.getPose();
 
-        // Obtain the detected AprilTag ID using vision.
-        // Use the simulated supplier in simulation; otherwise, check real vision.
+        // Determine the detected AprilTag ID.
+        // Use the simulated supplier if running in simulation; otherwise, use vision.
         if (Robot.isSimulation()) {
             idSeen = aprilTagSupplierSim.get();
         } else {
-            // For human player alignment (locations 3 & 4), use humanPlayerTagIds.
+            // For human player alignment (alignLocation 3 or 4), use humanPlayerTagIds.
             // Otherwise, use reefTagIds.
             if (alignLocation == 3 || alignLocation == 4) {
                 idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
@@ -116,65 +128,100 @@ public class DriveToLocationAdvanced extends Command {
             }
         }
 
-        // If a valid tag is detected (idSeen > -1), update flag.
+        // If a valid tag is detected (idSeen greater than -1), set the isSeen flag.
         if (idSeen > -1) {
             isSeen = true;
         }
 
-        // If a tag has been seen and we haven't calculated the target pose yet:
+        // If a tag has been detected and we haven't yet calculated a target pose:
         if (isSeen && !isCalculated) {
-            // Calculate the target pose based on the alignment mode.
-            // PhotonVision.getAprilTagPose() returns a pose adjusted by the specified transform.
-            if (alignLocation == 0) {
-                // Align to the right pole: offset to the right (reefOffset) from the tag.
-                targetPose = PhotonVision.getAprilTagPose(idSeen, new Transform2d(robotOffset, reefOffset, new Rotation2d()));
+            // Calculate the target pose using PhotonVision, adjusted by the desired transform.
+            if (alignLocation == 0 || alignLocation == 5) {
+                // Align to the right pole: apply a positive reef offset.
+                targetPose = PhotonVision.getAprilTagPose(idSeen,
+                        new Transform2d(robotOffset, reefOffset, new Rotation2d()));
             } else if (alignLocation == 1) {
-                // Align to the left pole: offset to the left (-reefOffset).
-                targetPose = PhotonVision.getAprilTagPose(idSeen, new Transform2d(robotOffset, -reefOffset, new Rotation2d()));
+                // Align to the left pole: apply a negative reef offset.
+                targetPose = PhotonVision.getAprilTagPose(idSeen,
+                        new Transform2d(robotOffset, -reefOffset, new Rotation2d()));
             } else if (alignLocation == 2) {
                 // Align to the middle (algae pole): no lateral offset.
-                targetPose = PhotonVision.getAprilTagPose(idSeen, new Transform2d(robotOffset, 0, new Rotation2d()));
+                targetPose = PhotonVision.getAprilTagPose(idSeen,
+                        new Transform2d(robotOffset, 0, new Rotation2d()));
             } else if (alignLocation == 3) {
-                // Align to the human player: offset to the right (-humanPlayerOffset) with a 180° rotation.
-                targetPose = PhotonVision.getAprilTagPose(idSeen, new Transform2d(robotOffset, -humanPlayerOffset, new Rotation2d(Math.toRadians(180))));
+                // Align to the human player on the right:
+                // Apply a negative human player offset and rotate 180°.
+                targetPose = PhotonVision.getAprilTagPose(idSeen,
+                        new Transform2d(robotOffset, -humanPlayerOffset, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == 4) {
-                // Align to the human player: offset to the left (humanPlayerOffset) with a 180° rotation.
-                targetPose = PhotonVision.getAprilTagPose(idSeen, new Transform2d(robotOffset, humanPlayerOffset, new Rotation2d(Math.toRadians(180))));
+                // Align to the human player on the left:
+                // Apply a positive human player offset and rotate 180°.
+                targetPose = PhotonVision.getAprilTagPose(idSeen,
+                        new Transform2d(robotOffset, humanPlayerOffset, new Rotation2d(Math.toRadians(180))));
             }
             // Mark that the target pose has been calculated.
             isCalculated = true;
         }
 
-        // If a target pose is calculated, drive toward it.
+        // If the target pose has been calculated, command the drivetrain.
         if (isCalculated) {
-            // Create a dummy trajectory state using the target pose.
-            // Here, time, velocity, and acceleration are set to defaults (0) since this is a static target.
-            PathPlannerTrajectoryState targetState = new PathPlannerTrajectoryState();
-            targetState.pose = targetPose;
-            targetState.heading = targetPose.getRotation();
-
-            // Calculate the desired chassis speeds to move from the current pose to the target state.
-            ChassisSpeeds targetSpeeds = driveController.calculateRobotRelativeSpeeds(
-                    currentPose,
-                    targetState);
-
-            // Command the swerve subsystem to drive with the calculated speeds.
-            swerveSubsystem.drive(targetSpeeds);
-
-            // Provide visual feedback via CANdle LEDs:
-            // If the robot is within 2 centimeters of the target translation, set the LED to green.
-            // Otherwise, set the LED to red.
-            if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.02) {
-                caNdleSubsystem.setColor(Color.kGreen);
+            // Special handling for alignLocation 5: use a PID controller to rotate to the target angle
+            // while allowing the driver to control translation.
+            if (alignLocation == 5) {
+                // Set LED color to orange to indicate angle alignment mode.
+                caNdleSubsystem.setColor(Color.kOrange);
+                // Compute the output from the angle turning PID controller using the current heading and target rotation.
+                double drive_output = angleTurningPIDController.calculate(
+                        swerveSubsystem.getHeading().getRadians(),
+                        targetPose.getRotation().getRadians());
+                // Set LED color to blue after computing output.
+                caNdleSubsystem.setColor(Color.kBlue);
+                // Drive using the driver's translational inputs while applying the PID-controlled rotation.
+                swerveSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+                        new ChassisSpeeds(
+                                RobotContainer.getDriveAngularVelocity().get().vxMetersPerSecond,
+                                RobotContainer.getDriveAngularVelocity().get().vyMetersPerSecond,
+                                drive_output),
+                        swerveSubsystem.getHeading()));
             } else {
-                caNdleSubsystem.setColor(Color.kRed);
+                // For alignment modes other than 5, use the PathPlanner controller.
+                // Create a dummy trajectory state with the target pose.
+                PathPlannerTrajectoryState targetState = new PathPlannerTrajectoryState();
+                targetState.pose = targetPose;
+                targetState.heading = targetPose.getRotation();
+
+                // Calculate the desired chassis speeds to drive from the current pose to the target state.
+                ChassisSpeeds targetSpeeds = driveController.calculateRobotRelativeSpeeds(
+                        currentPose,
+                        targetState);
+
+                // Command the swerve subsystem to drive at the calculated speeds.
+                swerveSubsystem.drive(targetSpeeds);
+
+                // Provide visual feedback via LEDs:
+                // If the robot is within 2 centimeters of the target position, set LED to green.
+                // Otherwise, set LED to red.
+                if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.02) {
+                    caNdleSubsystem.setColor(Color.kGreen);
+                } else {
+                    caNdleSubsystem.setColor(Color.kRed);
+                }
             }
+        } else {
+            // If no AprilTag is seen, default to normal manual driving.
+            caNdleSubsystem.setColor(Color.kBlue);
+            swerveSubsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    new ChassisSpeeds(
+                            RobotContainer.getDriveAngularVelocity().get().vxMetersPerSecond,
+                            RobotContainer.getDriveAngularVelocity().get().vyMetersPerSecond,
+                            RobotContainer.getDriveAngularVelocity().get().omegaRadiansPerSecond),
+                    swerveSubsystem.getHeading()));
         }
     }
 
     /**
      * This command does not finish on its own.
-     * 
+     *
      * @return false Always returns false.
      */
     @Override
@@ -185,14 +232,14 @@ public class DriveToLocationAdvanced extends Command {
     /**
      * Called when the command ends or is interrupted.
      * Stops the robot and sets the LED animation.
-     * 
+     *
      * @param interrupted Whether the command was interrupted.
      */
     @Override
     public void end(boolean interrupted) {
         // Stop robot movement by setting chassis speeds to zero.
         swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0, 0, 0));
-        // Set the LED animation to a predefined pattern.
+        // Set the LED animation to a predefined pattern (Larson animation).
         caNdleSubsystem.setAnimation(AnimationTypes.Larson);
     }
 }

@@ -104,13 +104,13 @@ public class RobotContainer {
 
     if (Robot.isSimulation()) {
 
-      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 1));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 2));
+      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
+      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 22));
 
-      Buttons.JoystickButton3
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 3, candleSubsytem));
-      Buttons.JoystickButton4
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 4, candleSubsytem));
+      // Buttons.JoystickButton3
+      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 3, candleSubsytem));
+      // Buttons.JoystickButton4
+      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 4, candleSubsytem));
 
       // Buttons.JoystickButton2
       // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 2,
@@ -121,6 +121,10 @@ public class RobotContainer {
       // Buttons.JoystickButton4
       // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 0,
       // candleSubsytem));
+
+      Buttons.JoystickButton4
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, 5,
+      candleSubsytem));
 
     } else {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
