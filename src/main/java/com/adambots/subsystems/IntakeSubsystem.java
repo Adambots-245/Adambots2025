@@ -6,6 +6,7 @@ package com.adambots.subsystems;
 
 import com.adambots.Constants.IntakeConstants;
 import com.adambots.actuators.BaseActuator;
+import com.adambots.actuators.BaseMotor;
 import com.adambots.sensors.BaseDistanceSensor;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +18,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private BaseActuator bottomCoralActuator;
   private double coralIntakeSpeed = 0.0;
   private double algaeIntakeSpeed = 0.0;
+  private BaseMotor minionMotor;
 
   private int counter = 0;
   private BaseDistanceSensor CANrange;
@@ -32,7 +34,7 @@ public class IntakeSubsystem extends SubsystemBase {
    * @param CANrange - distance sensor for detecting coral
    */
   public IntakeSubsystem(BaseActuator topCoralActuator, BaseActuator bottomCoralActuator,
-      BaseActuator algaeGripper, BaseActuator algaeRunner, BaseDistanceSensor CANrange) {
+      BaseActuator algaeGripper, BaseActuator algaeRunner, BaseDistanceSensor CANrange, BaseMotor minionMotor) {
 
     this.CANrange = CANrange;
     this.topCoralActuator = topCoralActuator;
@@ -40,6 +42,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     this.algaeGripper = algaeGripper;
     this.algaeRunner = algaeRunner;
+    this.minionMotor = minionMotor;
+    this.
   }
 
   public void intakeCoral() {
@@ -75,6 +79,18 @@ public class IntakeSubsystem extends SubsystemBase {
   public void reverseAlgaeIntake() {
     algaeIntakeSpeed = -IntakeConstants.kReverseSpeed;
   } 
+
+  public void setMinion() {
+    minionMotor.set(0.2);
+  }
+
+  public void stopMinion() {
+    minionMotor.set(0);
+  }
+
+  public void reverseMinion() {
+    minionMotor.set(-0.2);
+  }
 
   @Override
   public void periodic() {

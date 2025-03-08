@@ -58,8 +58,8 @@ public class RobotContainer {
   private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(
       new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
   private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator,
-      RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
+
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange, RobotMap.minion);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
   HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo);
@@ -256,6 +256,11 @@ public class RobotContainer {
       SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
       SmartDashboard.putData("Wrist Down", elevatorCommands.moveWristDown());
       SmartDashboard.putData("Wrist Up", elevatorCommands.moveWristUp());
+
+      
+
+
+
 
       SmartDashboard.putData("Elevator L1",
           elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));

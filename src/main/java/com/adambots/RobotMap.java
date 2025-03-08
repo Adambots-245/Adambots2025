@@ -32,6 +32,7 @@ import com.adambots.actuators.BaseSolenoid;
 import com.adambots.actuators.CRHubServo;
 import com.adambots.actuators.DirectServo;
 import com.adambots.actuators.ElectricalSolenoid;
+import com.adambots.actuators.MinionMotor;
 import com.adambots.actuators.NEOMotor;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -105,6 +106,8 @@ public class RobotMap {
     public static final BaseMotor climbMotor = new TalonFXMotor(19, true, kBottomCoralServoChannel, false);
     public static final BaseServo climbServo = new DirectServo(0, ServoMode.ANGULAR);
     public static final BaseSolenoid climbSolenoid = new ElectricalSolenoid(0);
+
+    public static final BaseMotor minion = new MinionMotor(40);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

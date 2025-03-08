@@ -32,7 +32,7 @@ public class TestContainer {
 
   // The robot's subsystems are defined here...
   // private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
-  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
+  IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange, RobotMap.minion);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
 
@@ -112,6 +112,10 @@ public class TestContainer {
     SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
 
     SmartDashboard.putData("Score", scoringCommands.scoreCoral());
+
+    SmartDashboard.putData("forward minion", Commands.runOnce(() -> intakesubsystem.setMinion()));
+      SmartDashboard.putData("stop minion", Commands.runOnce(() -> intakesubsystem.stopMinion()));
+      SmartDashboard.putData("reverse minion", Commands.runOnce(() -> intakesubsystem.reverseMinion()));
 
     SmartDashboard.putData("Servo test", Commands.runOnce(()-> RobotMap.bottomCoralActuator.set(1)));
     Dash.add("isDetecting", () -> intakesubsystem.isDetectingCoral());
