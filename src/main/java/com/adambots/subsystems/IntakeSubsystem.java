@@ -42,9 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     this.algaeGripper = algaeGripper;
     this.algaeRunner = algaeRunner;
-    this.minionMotor = minionMotor;
-    this.
-  }
+    this.minionMotor = minionMotor;  }
 
   public void intakeCoral() {
     System.out.println("Calling Intake");
