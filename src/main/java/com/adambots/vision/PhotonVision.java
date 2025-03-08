@@ -309,7 +309,7 @@ public class PhotonVision {
    * photon vision on localhost.
    */
   private void openSimCameraViews() {
-    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+    // if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       // try
       // {
       // Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
@@ -319,7 +319,7 @@ public class PhotonVision {
       // {
       // e.printStackTrace();
       // }
-    }
+    // }
   }
 
   public boolean hasTarget() {
