@@ -7,6 +7,7 @@ package com.adambots.subsystems;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseSolenoid;
+import com.adambots.sensors.BaseGyro;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,11 +18,13 @@ public class HangSubsystem extends SubsystemBase {
   BaseSolenoid hangSolenoid;
   BaseServo hangServo;
   double hangMotorSpeed = 0;
+  BaseGyro gyro;
 
-  public HangSubsystem(BaseMotor hangMotor, BaseSolenoid hangSolenoid, BaseServo hangServo) {
+  public HangSubsystem(BaseMotor hangMotor, BaseSolenoid hangSolenoid, BaseServo hangServo, BaseGyro gyro) {
     this.hangMotor = hangMotor;
     this.hangSolenoid = hangSolenoid;
     this.hangServo = hangServo;
+    this.gyro = gyro;
   }
 
   public void setMotorSpeed(double newMotorSpeed) {
@@ -42,6 +45,18 @@ public class HangSubsystem extends SubsystemBase {
 
   public void releaseServo() {
     hangServo.setAngle(50);
+  }
+
+  public double getPitch(){
+    return gyro.getPitch();
+  }
+
+  public double getYaw(){
+    return gyro.getContinuousYawDeg();
+  }
+  
+  public double getRoll(){
+    return gyro.getRoll();
   }
 
   @Override

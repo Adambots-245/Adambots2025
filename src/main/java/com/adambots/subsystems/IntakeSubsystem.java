@@ -79,10 +79,10 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    topCoralActuator.set(coralIntakeSpeed); // run CW to intake coral
+    topCoralActuator.set(-coralIntakeSpeed); // run CW to intake coral
 
     if (bottomCoralActuator != null) {
-      bottomCoralActuator.set(-coralIntakeSpeed); // run CCW to intake coral
+      bottomCoralActuator.set(coralIntakeSpeed); // run CCW to intake coral
     }
 
     SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());

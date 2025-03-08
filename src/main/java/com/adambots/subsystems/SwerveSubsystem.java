@@ -33,6 +33,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import swervelib.SwerveDrive;
+import swervelib.imu.SwerveIMU;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -290,6 +291,10 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public ChassisSpeeds getFieldVelocity() {
     return swerveDrive.getFieldVelocity();
+  }
+
+  public SwerveIMU getGyro() {
+    return swerveDrive.getGyro();
   }
 
   /**

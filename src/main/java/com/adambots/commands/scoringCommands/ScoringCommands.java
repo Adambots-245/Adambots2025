@@ -4,7 +4,9 @@
 
 package com.adambots.commands.scoringCommands;
 
+import com.adambots.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
+import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -15,9 +17,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class ScoringCommands {
 
     private final IntakeSubsystem intakeSubsystem;
+    private CANdleSubsystem caNdleSubsystem;
 
-    public ScoringCommands(IntakeSubsystem intakeSubsystem) {
+    public ScoringCommands(IntakeSubsystem intakeSubsystem, CANdleSubsystem caNdleSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
+        this.caNdleSubsystem = caNdleSubsystem;
     }
 
     public Command scoreCoral() {
@@ -37,7 +41,7 @@ public class ScoringCommands {
         //         // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
         //         .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
 
-        return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem);
+        return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem).andThen(()-> caNdleSubsystem.setAnimation(AnimationTypes.Larson));
     }
 
     public Command scoreCoralAuton() {

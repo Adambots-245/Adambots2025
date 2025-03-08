@@ -53,15 +53,15 @@ public class RobotContainer {
       RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
-  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo);
+  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo, RobotMap.gyro);
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem, candleSubsytem);
   private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem,
       intakeCommands);
-  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
-  private final HangCommands hangCommands = new HangCommands(hangSubsystem);
+  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem, candleSubsytem);
+  private final HangCommands hangCommands = new HangCommands(hangSubsystem, candleSubsytem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -163,10 +163,14 @@ public class RobotContainer {
 
       Buttons.JoystickButton5
           .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem));
+
       Buttons.JoystickButton6
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem).andThen(scoringCommands.scoreCoral()));
+      Buttons.JoystickButton6.onFalse(scoringCommands.stopScoringCoral());
+
       Buttons.JoystickButton7
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem).andThen(scoringCommands.scoreCoral()));
+      Buttons.JoystickButton7.onFalse(scoringCommands.stopScoringCoral());
 
       Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
       Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
@@ -245,6 +249,8 @@ public class RobotContainer {
       SmartDashboard.putData("Wrist L4", elevatorCommands.moveWristToStateCommand(WristSubsystem.WristState.L4));
       SmartDashboard.putData("Wrist Down", elevatorCommands.moveWristDown());
       SmartDashboard.putData("Wrist Up", elevatorCommands.moveWristUp());
+
+      SmartDashboard.putNumber("IMU", swerveSubsystem.getGyro().getRawRotation3d().getZ());
 
       SmartDashboard.putData("Elevator L1",
           elevatorCommands.moveElevatorToStateCommand(ElevatorSubsystem.ElevatorState.L1));

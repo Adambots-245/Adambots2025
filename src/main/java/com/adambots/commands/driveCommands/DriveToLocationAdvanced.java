@@ -60,6 +60,8 @@ public class DriveToLocationAdvanced extends Command {
     // PID controller used for angle turning when using alignLocation 5.
     private PIDController angleTurningPIDController = new PIDController(3, 0, 0.0);
 
+    private Pose2d currentPose;
+
     /**
      * Constructor for DriveToLocationAdvanced.
      *
@@ -121,7 +123,7 @@ public class DriveToLocationAdvanced extends Command {
     @Override
     public void execute() {
         // Retrieve the robot's current pose from the swerve subsystem.
-        Pose2d currentPose = swerveSubsystem.getPose();
+        currentPose = swerveSubsystem.getPose();
 
         // Determine the detected AprilTag ID.
         // Use the simulated supplier if running in simulation; otherwise, use vision.
@@ -229,6 +231,10 @@ public class DriveToLocationAdvanced extends Command {
                 // If the robot is within 2 centimeters of the target position, set LED to
                 // green.
                 // Otherwise, set LED to red.
+                // if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.10) {
+                //     scoringCommands.scoreCoral();
+                // }
+
                 if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.07) {
                     caNdleSubsystem.setColor(Color.kGreen);
                 } else {
@@ -254,7 +260,10 @@ public class DriveToLocationAdvanced extends Command {
      */
     @Override
     public boolean isFinished() {
-        return false;
+        // if (DriverStation.isAutonomous()){
+        return currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.07;
+        // }
+        // return false;
     }
 
     /**
