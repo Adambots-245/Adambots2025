@@ -33,7 +33,7 @@ public class DriveToLocationAdvanced extends Command {
 
     // Offsets used for different alignment strategies.
     private double reefOffset = 0.18; // Offset for aligning to the reef/april tag pole.
-    private double humanPlayerOffset = 0.6; // Offset for aligning to the human player station.
+    private double humanPlayerOffset = 0; // Offset for aligning to the human player station.  0.6
     private double robotReefOffset = 0.455; // Offset for positioning the robot relative to the tag.
     private double bargeXOffset = 0.07; 
     private double bargeYOffset = 1.15; 
@@ -152,25 +152,25 @@ public class DriveToLocationAdvanced extends Command {
             if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.REEF_ANGLE) {
                 // Align to the right pole: apply a positive reef offset.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(robotReefOffset, reefOffset, new Rotation2d()));
+                        new Transform2d(robotReefOffset, reefOffset, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == AlignLocation.LEFT_POLE) {
                 // Align to the left pole: apply a negative reef offset.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(robotReefOffset, -reefOffset, new Rotation2d()));
+                        new Transform2d(robotReefOffset, -reefOffset, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == AlignLocation.MIDDLE_ALGAE) {
                 // Align to the middle (algae pole): no lateral offset.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(0.6, 0, new Rotation2d()));
+                        new Transform2d(0.6, 0, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
                 // Align to the human player on the right:
                 // Apply a negative human player offset and rotate 180°.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(robotReefOffset, -humanPlayerOffset, new Rotation2d(Math.toRadians(180))));
+                        new Transform2d(robotReefOffset, -humanPlayerOffset, new Rotation2d(Math.toRadians(0))));
             } else if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT) {
                 // Align to the human player on the left:
                 // Apply a positive human player offset and rotate 180°.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(robotReefOffset, humanPlayerOffset, new Rotation2d(Math.toRadians(180))));
+                        new Transform2d(robotReefOffset, humanPlayerOffset, new Rotation2d(Math.toRadians(0))));
             } else if (alignLocation == AlignLocation.BARGE_MIDDLE) {
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
                         new Transform2d(-bargeXOffset, 0, new Rotation2d(Math.toRadians(90))));
@@ -229,7 +229,7 @@ public class DriveToLocationAdvanced extends Command {
                 // If the robot is within 2 centimeters of the target position, set LED to
                 // green.
                 // Otherwise, set LED to red.
-                if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.02) {
+                if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.07) {
                     caNdleSubsystem.setColor(Color.kGreen);
                 } else {
                     caNdleSubsystem.setColor(Color.kRed);

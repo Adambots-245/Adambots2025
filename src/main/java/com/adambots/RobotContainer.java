@@ -57,7 +57,7 @@ public class RobotContainer {
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
-  private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem);
+  private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem, candleSubsytem);
   private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem,
       intakeCommands);
   private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem);
@@ -106,7 +106,7 @@ public class RobotContainer {
     if (Robot.isSimulation()) {
       // REEF ID
       Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
-      // Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
+      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
 
       // BARGE ID
       // Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 14));
@@ -119,15 +119,15 @@ public class RobotContainer {
       //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
 
       // ALIGN TO REEF TEST
-      Buttons.JoystickButton2
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
-      candleSubsytem));
+      // Buttons.JoystickButton2
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
+      // candleSubsytem));
       Buttons.JoystickButton3
       .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
       candleSubsytem));
-      // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
-      // candleSubsytem));
+      Buttons.JoystickButton4
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
+      candleSubsytem));
 
       // ANGLE TO REEF TEST
       // Buttons.JoystickButton4
@@ -145,20 +145,21 @@ public class RobotContainer {
       // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
       // candleSubsytem));
 
-      Buttons.JoystickButton4
-      .whileTrue(driveCommands.getDistanceFromAprilTag(17));
+      // Buttons.JoystickButton4
+      // .whileTrue(driveCommands.getDistanceFromAprilTag(17));
 
     } else {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
 
+      Buttons.JoystickButton3
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
+      Buttons.JoystickButton4
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
+
       Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
-
-      Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem, 125));
-      Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem, -125));
-
-      Buttons.JoystickButton5.onTrue(scoringCommands.scoreAlgae());
-      Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringAlgae());
+      // Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem, 125));
+      // Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem, -125));
 
       Buttons.JoystickButton5
           .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem));
@@ -170,6 +171,14 @@ public class RobotContainer {
       Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
       Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
       Buttons.JoystickButton8.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
+
+      Buttons.JoystickButton9.onTrue(scoringCommands.scoreAlgae());
+      Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
+
+      Buttons.JoystickButton10
+      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
+      candleSubsytem));
+
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
       Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
