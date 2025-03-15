@@ -235,6 +235,10 @@ public final class Constants {
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
+        public static double kVelocityFeedforward = 0.1;
+        public static double kElevatorCruiseVelocity = 80.0;
+        public static double kElevatorAcceleration = 200.0;
+        public static double kElevatorJerk = 1000.0;
         }
     // Command Constants go here
 }
