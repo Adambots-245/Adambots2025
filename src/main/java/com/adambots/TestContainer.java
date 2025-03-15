@@ -4,6 +4,7 @@ import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.ExampleTalonFXSubsystem;
 import com.adambots.subsystems.WristSubsystem;
 
 import com.adambots.subsystems.IntakeSubsystem;
@@ -35,6 +36,7 @@ public class TestContainer {
   IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.topCoralActuator, RobotMap.bottomCoralActuator, RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
+  ExampleTalonFXSubsystem exampleSubsystem = new ExampleTalonFXSubsystem();
 
   // Add commands here
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -87,6 +89,9 @@ public class TestContainer {
     if (DriverStation.isTest()) {
       
     } else {
+    SmartDashboard.putData("Test Sim", Commands.runOnce(() -> {
+      exampleSubsystem.setPercentOutput(0.5);
+    }));
     SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
     SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());
     SmartDashboard.putData("Slow Intake Coral", intakeCommands.slowIntakeCoral());
