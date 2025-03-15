@@ -162,7 +162,7 @@ public class DriveToLocationAdvanced extends Command {
             } else if (alignLocation == AlignLocation.MIDDLE_ALGAE) {
                 // Align to the middle (algae pole): no lateral offset.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(0.6, 0, new Rotation2d(Math.toRadians(180))));
+                        new Transform2d(0.55, 0, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
                 // Align to the human player on the right:
                 // Apply a negative human player offset and rotate 180°.

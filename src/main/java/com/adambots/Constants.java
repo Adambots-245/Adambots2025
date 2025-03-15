@@ -218,8 +218,8 @@ public final class Constants {
         public static final double kWristL2Position = 66;
         public static final double kWristL3Position = 66;
         public static final double kWristL4Position = 74;
-        public static final double kWristHighAlgaePosition = 12;
-        public static final double kWristLowAlgaePosition = 12;
+        public static final double kWristHighAlgaePosition = 5;
+        public static final double kWristLowAlgaePosition = 5;
         public static final double kWristProcessorPosition = 12;
         public static final double kWristGroundIntakePosition = 350;
         public static final double kWristHangPosition = 71;
