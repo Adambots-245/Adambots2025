@@ -127,9 +127,9 @@ public class DriveToLocationAdvanced extends Command {
 
         // Determine the detected AprilTag ID.
         // Use the simulated supplier if running in simulation; otherwise, use vision.
-        if (Robot.isSimulation()) {
-            idSeen = aprilTagSupplierSim.get();
-        } else {
+        // if (Robot.isSimulation()) {
+        //     idSeen = aprilTagSupplierSim.get();
+        // } else {
             // For human player alignment (alignLocation 3 or 4), use humanPlayerTagIds.
             // Otherwise, use reefTagIds.
             if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
@@ -140,7 +140,7 @@ public class DriveToLocationAdvanced extends Command {
             } else {
                 idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
             }
-        }
+        // }
 
         // If a valid tag is detected (idSeen greater than -1), set the isSeen flag.
         if (idSeen > -1) {

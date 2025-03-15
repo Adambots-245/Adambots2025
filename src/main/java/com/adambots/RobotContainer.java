@@ -53,7 +53,7 @@ public class RobotContainer {
       RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
-  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo);
+  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo, RobotMap.hangLimitSwitch);
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -103,59 +103,59 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // JOYSTICK BINDINGS SHOULD BE IN NUMERICAL ORDER TO PREVENT DOUBLE BINDINGS
 
-    if (Robot.isSimulation()) {
-      // REEF ID
-      Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
-      Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
+    // if (Robot.isSimulation()) {
+    //   // REEF ID
+    //   Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 17));
+    //   Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
 
-      // BARGE ID
-      // Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 14));
-      // Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
+    //   // BARGE ID
+    //   // Buttons.JoystickButton1.onTrue(new InstantCommand(() -> aprilTagId = 14));
+    //   // Buttons.JoystickButton2.onTrue(new InstantCommand(() -> aprilTagId = 5));
 
-      // ALIGN TO HUMAN PLAYER TEST
-      // Buttons.JoystickButton3
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
-      // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
+    //   // ALIGN TO HUMAN PLAYER TEST
+    //   // Buttons.JoystickButton3
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
+    //   // Buttons.JoystickButton4
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
 
-      // ALIGN TO REEF TEST
-      // Buttons.JoystickButton2
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.MIDDLE_ALGAE,
-      // candleSubsytem));
-      Buttons.JoystickButton3
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
-              candleSubsytem));
-      Buttons.JoystickButton4
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
-              candleSubsytem));
+    //   // ALIGN TO REEF TEST
+    //   // Buttons.JoystickButton2
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.MIDDLE_ALGAE,
+    //   // candleSubsytem));
+    //   Buttons.JoystickButton3
+    //       .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
+    //           candleSubsytem));
+    //   Buttons.JoystickButton4
+    //       .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
+    //           candleSubsytem));
 
-      // ANGLE TO REEF TEST
-      // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.REEF_ANGLE,
-      // candleSubsytem));
+    //   // ANGLE TO REEF TEST
+    //   // Buttons.JoystickButton4
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.REEF_ANGLE,
+    //   // candleSubsytem));
 
-      // ALIGN TO BARGE TEST
-      // Buttons.JoystickButton2
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.BARGE_LEFT,
-      // candleSubsytem));
-      // Buttons.JoystickButton3
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.BARGE_MIDDLE,
-      // candleSubsytem));
-      // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
-      // AlignLocation.BARGE_RIGHT,
-      // candleSubsytem));
+    //   // ALIGN TO BARGE TEST
+    //   // Buttons.JoystickButton2
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.BARGE_LEFT,
+    //   // candleSubsytem));
+    //   // Buttons.JoystickButton3
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.BARGE_MIDDLE,
+    //   // candleSubsytem));
+    //   // Buttons.JoystickButton4
+    //   // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+    //   // AlignLocation.BARGE_RIGHT,
+    //   // candleSubsytem));
 
-      // Buttons.JoystickButton4
-      // .whileTrue(driveCommands.getDistanceFromAprilTag(17));
+    //   // Buttons.JoystickButton4
+    //   // .whileTrue(driveCommands.getDistanceFromAprilTag(17));
 
-    } else {
+    // } else {
       Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
 
@@ -241,7 +241,7 @@ public class RobotContainer {
       // Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeAlgae());
 
       Buttons.XboxStartButton.onTrue(elevatorCommands.moveToIntakeCommand());
-      Buttons.XboxBackButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.INTAKE, WristState.HANG));
+      Buttons.XboxBackButton.onTrue(elevatorCommands.moveToHangCommand());
 
       Buttons.XboxRightBumper
           .onTrue(elevatorCommands.moveToStateCommand(ElevatorState.PROCESSOR, WristState.PROCESSOR));
@@ -297,7 +297,7 @@ public class RobotContainer {
       SmartDashboard.putData("Stop Algae", intakeCommands.stopIntakeAlgae());
       SmartDashboard.putData("Reverse Algae", intakeCommands.reverseIntakeAlgae());
     }
-  }
+//   }
 
   /**
    * Register named commands for use in PathPlanner

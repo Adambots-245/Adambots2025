@@ -7,6 +7,7 @@ import com.adambots.subsystems.SwerveSubsystem;
 import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class HangCommands {
@@ -20,36 +21,51 @@ public class HangCommands {
     }
 
     public Command pushOutHang() {
-        return new InstantCommand(
-            ()-> {
-                hangSubsystem.toggleSolenoids();
-                hangSubsystem.setMotorSpeed(-1);
-            },
-            hangSubsystem
-        );
+        return Commands.either(
+                new InstantCommand(
+                        () -> {
+                            hangSubsystem.setMotorSpeed(-1);
+                        },
+                        hangSubsystem),
+                new InstantCommand(
+                        () -> {
+                            hangSubsystem.toggleSolenoids();
+                            hangSubsystem.setMotorSpeed(-1);
+                        },
+                        hangSubsystem),
+                () -> hangSubsystem.getSolenoid());
+
     }
 
     public Command pullInHang() {
-        return new InstantCommand(
-            ()-> {
-                hangSubsystem.toggleSolenoids();
-                hangSubsystem.setMotorSpeed(1);
-            },
-            hangSubsystem
-        );
+        return Commands.either(
+                new InstantCommand(
+                        () -> {
+                            hangSubsystem.toggleSolenoids();
+                            hangSubsystem.setMotorSpeed(1);
+                        },
+                        hangSubsystem),
+                new InstantCommand(
+                        () -> {
+                            hangSubsystem.setMotorSpeed(1);
+                        },
+                        hangSubsystem),
+                () -> hangSubsystem.getSolenoid());
     }
 
     public Command autoHang() {
-        return new InstantCommand(
-            ()-> {
-                hangSubsystem.setSolenoids(false);
-                hangSubsystem.setMotorSpeed(1);
-                caNdleSubsystem.setAnimation((AnimationTypes.Fire));
-                // if(hangSubsystem.getPitch() > HangConstants.kRobotAngleStopHang){
-                //     //hangSubsystem.setMotorSpeed(0);
-                //     caNdleSubsystem.setAnimation(AnimationTypes.Rainbow);
-                // }
-            }
-        );
+        return Commands.either(
+                new InstantCommand(
+                        () -> {
+                            hangSubsystem.toggleSolenoids();
+                            hangSubsystem.setMotorSpeed(1);
+                        },
+                        hangSubsystem).until(()->hangSubsystem.isLimitPressed()),
+                new InstantCommand(
+                        () -> {
+                            hangSubsystem.setMotorSpeed(1);
+                        },
+                        hangSubsystem).until(()->hangSubsystem.isLimitPressed()),
+                () -> hangSubsystem.getSolenoid());
     }
 }

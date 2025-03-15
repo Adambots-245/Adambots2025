@@ -187,7 +187,7 @@ public final class Constants {
         
         public static final double kPElevatorController = 0.5;
         public static final double kIElevatorController = 0.000;
-        public static final double kDElevatorController = 0.035;
+        public static final double kDElevatorController = 0.005;
         public static final double kFElevatorController = 0.0;
 
         public static final double kWristPositionIncrement = 3.7;
@@ -222,7 +222,7 @@ public final class Constants {
         public static final double kWristLowAlgaePosition = 12;
         public static final double kWristProcessorPosition = 12;
         public static final double kWristGroundIntakePosition = 350;
-        public static final double kWristHangPosition = 70;
+        public static final double kWristHangPosition = 71;
 
 
         public static final double kWristMinAngle = 355;
