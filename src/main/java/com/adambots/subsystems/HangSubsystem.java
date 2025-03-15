@@ -7,7 +7,6 @@ package com.adambots.subsystems;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseSolenoid;
-import com.adambots.sensors.BaseGyro;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,13 +17,15 @@ public class HangSubsystem extends SubsystemBase {
   BaseSolenoid hangSolenoid;
   BaseServo hangServo;
   double hangMotorSpeed = 0;
-  BaseGyro gyro;
 
-  public HangSubsystem(BaseMotor hangMotor, BaseSolenoid hangSolenoid, BaseServo hangServo, BaseGyro gyro) {
+  public HangSubsystem(BaseMotor hangMotor, BaseSolenoid hangSolenoid, BaseServo hangServo) {
+   
     this.hangMotor = hangMotor;
     this.hangSolenoid = hangSolenoid;
     this.hangServo = hangServo;
-    this.gyro = gyro;
+
+    hangMotor.setInverted(false);
+    
   }
 
   public void setMotorSpeed(double newMotorSpeed) {
@@ -39,7 +40,7 @@ public class HangSubsystem extends SubsystemBase {
     hangMotor.setPosition(0);
   }
 
-  public void setSolenoids(Boolean active) {
+  public void toggleSolenoids() {
     hangSolenoid.toggle();
   }
 
@@ -47,17 +48,17 @@ public class HangSubsystem extends SubsystemBase {
     hangServo.setAngle(50);
   }
 
-  public double getPitch(){
-    return gyro.getPitch();
-  }
+  // public double getPitch(){
+  //   return gyro.getPitch();
+  // }
 
-  public double getYaw(){
-    return gyro.getContinuousYawDeg();
-  }
+  // public double getYaw(){
+  //   return gyro.getContinuousYawDeg();
+  // }
   
-  public double getRoll(){
-    return gyro.getRoll();
-  }
+  // public double getRoll(){
+  //   return gyro.getRoll();
+  // }
 
   @Override
   public void periodic() {
@@ -65,8 +66,11 @@ public class HangSubsystem extends SubsystemBase {
     // failSafes();
     hangMotor.set(hangMotorSpeed);
 
-    SmartDashboard.putBoolean("Hang/Solinoid", hangSolenoid.get());
-
+    SmartDashboard.putBoolean("Hang/Solenoid", hangSolenoid.get());
+   
+    // SmartDashboard.putNumber("Pitch", getPitch());
+    // SmartDashboard.putNumber("Roll", getRoll());
+    // SmartDashboard.putNumber("Yaw", getYaw());
   }
 
   // public void failSafes() {

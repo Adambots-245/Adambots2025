@@ -167,7 +167,7 @@ public final class Constants {
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 1;
         public static final double kDistanceToDetect = 10;//cm
-        public static final double kTimerThreshold = 0.2; // number of seconds to wait before stopping the intake after detecting a coral
+        public static final double kTimerThreshold = 0.5; // number of seconds to wait before stopping the intake after detecting a coral
         public static final double kAlgaeIntakePulseSeconds = 0.2;
 
     }

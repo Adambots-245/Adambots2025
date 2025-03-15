@@ -53,7 +53,7 @@ public class RobotContainer {
       RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
   ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
   WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
-  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo, RobotMap.gyro);
+  HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo);
 
   // Add commands here
   private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
@@ -114,35 +114,42 @@ public class RobotContainer {
 
       // ALIGN TO HUMAN PLAYER TEST
       // Buttons.JoystickButton3
-      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
       // Buttons.JoystickButton4
-      //     .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
 
       // ALIGN TO REEF TEST
       // Buttons.JoystickButton2
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.MIDDLE_ALGAE,
       // candleSubsytem));
       Buttons.JoystickButton3
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
-      candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
+              candleSubsytem));
       Buttons.JoystickButton4
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
-      candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
+              candleSubsytem));
 
       // ANGLE TO REEF TEST
       // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.REEF_ANGLE,
       // candleSubsytem));
 
       // ALIGN TO BARGE TEST
       // Buttons.JoystickButton2
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.BARGE_LEFT,
       // candleSubsytem));
       // Buttons.JoystickButton3
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.BARGE_MIDDLE,
       // candleSubsytem));
       // Buttons.JoystickButton4
-      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
+      // .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId,
+      // AlignLocation.BARGE_RIGHT,
       // candleSubsytem));
 
       // Buttons.JoystickButton4
@@ -153,26 +160,36 @@ public class RobotContainer {
       Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
 
       Buttons.JoystickButton3
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT,
+              candleSubsytem));
       Buttons.JoystickButton4
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT,
+              candleSubsytem));
 
       Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
-      // Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem, 125));
-      // Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem, -125));
+      // Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem,
+      // 125));
+      // Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem,
+      // -125));
 
       Buttons.JoystickButton5
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
+              candleSubsytem));
 
       Buttons.JoystickButton6
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem).andThen(scoringCommands.scoreCoral()));
+          .whileTrue(
+              new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem)
+                  .andThen(scoringCommands.scoreCoral()));
       Buttons.JoystickButton6.onFalse(scoringCommands.stopScoringCoral());
 
       Buttons.JoystickButton7
-          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem).andThen(scoringCommands.scoreCoral()));
+          .whileTrue(
+              new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem)
+                  .andThen(scoringCommands.scoreCoral()));
       Buttons.JoystickButton7.onFalse(scoringCommands.stopScoringCoral());
 
       Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
+
       Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
       Buttons.JoystickButton8.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
 
@@ -180,10 +197,23 @@ public class RobotContainer {
       Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
 
       Buttons.JoystickButton10
-      .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
-      candleSubsytem));
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
+              candleSubsytem));
 
       Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
+
+      Buttons.JoystickButton14
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
+              candleSubsytem));
+
+              
+      Buttons.JoystickButton15
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
+              candleSubsytem));
+
+      Buttons.JoystickButton16
+          .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
+              candleSubsytem));
 
       Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
       Buttons.XboxAButton.onTrue(elevatorCommands.moveToL2Command());
@@ -281,9 +311,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("DriveToReefLeft",
         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem));
     NamedCommands.registerCommand("DriveToHumanPlayerRight",
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT, candleSubsytem));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT,
+            candleSubsytem));
     NamedCommands.registerCommand("DriveToHumanPlayerLeft",
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT, candleSubsytem));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT,
+            candleSubsytem));
   }
 
   /**
@@ -311,15 +343,16 @@ public class RobotContainer {
         .allianceRelativeControl(true);
 
     // SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
-    //     .withControllerHeadingAxis(Buttons.sidewaysSupplier, Buttons.forwardSupplier)
-    //     .headingWhile(true);
+    // .withControllerHeadingAxis(Buttons.sidewaysSupplier, Buttons.forwardSupplier)
+    // .headingWhile(true);
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
     // controls are front-left positive
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
-    // Command driveFieldOrientedDirectAngle = driveCommands.driveFieldOriented(driveDirectAngle);
+    // Command driveFieldOrientedDirectAngle =
+    // driveCommands.driveFieldOriented(driveDirectAngle);
 
     // Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
@@ -352,16 +385,17 @@ public class RobotContainer {
     // @return A new SwerveInputStream with the specified controller heading axis
     // and heading behavior.
     // SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
-    //     .withControllerHeadingAxis(() -> Math.sin(
-    //         Buttons.rotateSupplier.getAsDouble() * Math.PI)
-    //         * (Math.PI * 2),
-    //         () -> Math.cos(
-    //             Buttons.rotateSupplier.getAsDouble() * Math.PI)
-    //             *
-    //             (Math.PI * 2))
-    //     .headingWhile(true);
+    // .withControllerHeadingAxis(() -> Math.sin(
+    // Buttons.rotateSupplier.getAsDouble() * Math.PI)
+    // * (Math.PI * 2),
+    // () -> Math.cos(
+    // Buttons.rotateSupplier.getAsDouble() * Math.PI)
+    // *
+    // (Math.PI * 2))
+    // .headingWhile(true);
 
-    // Command driveFieldOrientedDirectAngleSim = driveCommands.driveFieldOriented(driveDirectAngleSim);
+    // Command driveFieldOrientedDirectAngleSim =
+    // driveCommands.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAngularVelocitySim = driveCommands.driveFieldOriented(driveAngularVelocitySim);
 
     swerveSubsystem.setDefaultCommand(

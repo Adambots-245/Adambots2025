@@ -22,8 +22,8 @@ public class HangCommands {
     public Command pushOutHang() {
         return new InstantCommand(
             ()-> {
-                hangSubsystem.setSolenoids(true);
-                hangSubsystem.setMotorSpeed(-0.5);
+                hangSubsystem.toggleSolenoids();
+                hangSubsystem.setMotorSpeed(-1);
             },
             hangSubsystem
         );
@@ -32,7 +32,7 @@ public class HangCommands {
     public Command pullInHang() {
         return new InstantCommand(
             ()-> {
-                hangSubsystem.setSolenoids(false);
+                hangSubsystem.toggleSolenoids();
                 hangSubsystem.setMotorSpeed(1);
             },
             hangSubsystem
@@ -42,12 +42,13 @@ public class HangCommands {
     public Command autoHang() {
         return new InstantCommand(
             ()-> {
+                hangSubsystem.setSolenoids(false);
                 hangSubsystem.setMotorSpeed(1);
                 caNdleSubsystem.setAnimation((AnimationTypes.Fire));
-                if(hangSubsystem.getPitch() > HangConstants.kRobotAngleStopHang){
-                    //hangSubsystem.setMotorSpeed(0);
-                    caNdleSubsystem.setAnimation(AnimationTypes.Rainbow);
-                }
+                // if(hangSubsystem.getPitch() > HangConstants.kRobotAngleStopHang){
+                //     //hangSubsystem.setMotorSpeed(0);
+                //     caNdleSubsystem.setAnimation(AnimationTypes.Rainbow);
+                // }
             }
         );
     }
