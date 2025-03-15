@@ -188,7 +188,7 @@ public final class Constants {
         public static final double kPElevatorController = 0.5;
         public static final double kIElevatorController = 0.000;
         public static final double kDElevatorController = 0.035;
-        public static final double kFElevatorController = 0.0;
+        public static final double kFElevatorController = 0.2;
 
         public static final double kWristPositionIncrement = 3.7;
         public static final double kPWristController = 0.022;
@@ -235,6 +235,10 @@ public final class Constants {
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
+        public static double kVelocityFeedforward = 0.1;
+        public static double kElevatorCruiseVelocity = 80.0;
+        public static double kElevatorAcceleration = 200.0;
+        public static double kElevatorJerk = 1000.0;
         }
     // Command Constants go here
 }

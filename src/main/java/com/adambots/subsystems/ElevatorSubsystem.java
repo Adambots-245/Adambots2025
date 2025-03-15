@@ -3,6 +3,8 @@ package com.adambots.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.BaseMotor.ControlMode;
+import com.adambots.actuators.TalonFXMotor;
 import com.adambots.utils.StateMachine;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.RobotMap;
@@ -60,17 +62,52 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setPID(ElevatorConstants.kPIDSlot, ElevatorConstants.kPElevatorController,
                 ElevatorConstants.kIElevatorController, ElevatorConstants.kDElevatorController,
                 ElevatorConstants.kFElevatorController);
+
+        // Add Motion Magic configuration
+        elevatorMotor.configureMotionMagic(
+            ElevatorConstants.kElevatorCruiseVelocity,
+            ElevatorConstants.kElevatorAcceleration,
+            ElevatorConstants.kElevatorJerk);
+
         elevatorMotor.setBrakeMode(false);
         elevatorMotor.setInverted(true);
 
-        elevatorMotor.configureHardLimits(true,true, ElevatorConstants.kElevatorL4Position, 0);
+        elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
+        elevatorMotor.configureCurrentLimits(40.0, 30.0, 1000.0);
+        elevatorMotor.enableVoltageCompensation(12.0);
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
-        // double rotations = properties.position() / ElevatorConstants.kInchesPerRotation;
+        // double rotations = properties.position() /
+        // ElevatorConstants.kInchesPerRotation;
         double rotations = properties.position();
 
         setPosition(rotations);
+        // double gravityFeedForward = 0.05;
+        // ((TalonFXMotor)elevatorMotor).setPositionWithArbFeedForward(rotations,
+        // gravityFeedForward);
+    }
+
+    /**
+     * Set the elevator position with MagicMotion for smoother control
+     * @param properties
+     */
+    private void setElevatorPositionWithMagic(ElevatorProperties properties) {
+        double rotations = properties.position();
+
+        // Calculate velocity feedforward if moving a significant distance
+        double currentPos = elevatorMotor.getPosition();
+        double distance = Math.abs(rotations - currentPos);
+        double velocityFeedforward = 0;
+
+        if (distance > 0.5) {
+            // Apply velocity feedforward in the direction of movement
+            velocityFeedforward = Math.signum(rotations - currentPos) *
+                    ElevatorConstants.kVelocityFeedforward;
+        }
+
+        // Apply both position control and velocity feedforward
+        elevatorMotor.set(ControlMode.MOTION_MAGIC, rotations);
     }
 
     private void setPosition(double rotations) {
@@ -89,9 +126,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void periodic() {
 
         // Get current positions
-        // currentPosition = elevatorMotor.getPosition() * ElevatorConstants.kInchesPerRotation;
+        // currentPosition = elevatorMotor.getPosition() *
+        // ElevatorConstants.kInchesPerRotation;
         currentPosition = elevatorMotor.getPosition();
-
 
         // Update elevator state machine
         elevatorStateMachine.periodic();
@@ -111,16 +148,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void moveElevatorToState(ElevatorState state) {
         if (isElevatorSafe()) {
             elevatorStateMachine.requestTransition(
-                state,
-                state.properties,
-                () -> true, // No check needed for position control
-                this::setElevatorPosition);
+                    state,
+                    state.properties,
+                    () -> true, // No check needed for position control
+                    this::setElevatorPosition);
         } else {
             holdElevatorPosition();
         }
     }
 
-    // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
+    // assumes that the limit switches will trigger and stop it once it reaches the
+    // top or bottom
     public void moveElevatorUp() {
         if (isElevatorSafe()) {
             setPosition(getCurrentPosition() + ElevatorConstants.kElevatorPositionIncrement);
@@ -130,10 +168,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         // elevatorMotor.set(ElevatorConstants.kElevatorSpeed);
     }
 
-    // assumes that the limit switches will trigger and stop it once it reaches the top or bottom
+    // assumes that the limit switches will trigger and stop it once it reaches the
+    // top or bottom
     public void moveElevatorDown() {
         if (isElevatorSafe()) {
-           setPosition(getCurrentPosition() - ElevatorConstants.kElevatorPositionIncrement);
+            setPosition(getCurrentPosition() - ElevatorConstants.kElevatorPositionIncrement);
         } else {
             holdElevatorPosition();
         }
@@ -152,12 +191,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean isElevatorSafe() {
 
-        if (currentPosition <= ElevatorConstants.kElevatorMinHeight || currentPosition >= ElevatorConstants.kElevatorMaxHeight) {
+        if (currentPosition <= ElevatorConstants.kElevatorMinHeight
+                || currentPosition >= ElevatorConstants.kElevatorMaxHeight) {
             // holdElevatorPosition();
         }
 
         if (RobotMap.wristEncoder.getAbsolutePositionDegrees() >= ElevatorConstants.kWristDangerZoneAngle &&
-            (currentPosition > ElevatorConstants.kElevatorDangerZoneStart && currentPosition < ElevatorConstants.kElevatorDangerZoneEnd)) {
+                (currentPosition > ElevatorConstants.kElevatorDangerZoneStart
+                        && currentPosition < ElevatorConstants.kElevatorDangerZoneEnd)) {
             // holdElevatorPosition();
             // return false;
         }
