@@ -6,6 +6,7 @@ package com.adambots.subsystems;
 
 import com.adambots.Constants.IntakeConstants;
 import com.adambots.actuators.BaseActuator;
+import com.adambots.actuators.BaseMotor;
 import com.adambots.sensors.BaseDistanceSensor;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,8 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
   // private BaseMotor intakeMotor;
-  private BaseActuator topCoralActuator;
-  private BaseActuator bottomCoralActuator;
+  private BaseMotor minionMotor;
   private double coralIntakeSpeed = 0.0;
   private double algaeIntakeSpeed = 0.0;
 
@@ -31,12 +31,11 @@ public class IntakeSubsystem extends SubsystemBase {
    * @param algaeRunner - actuator for algae runner - a motor set to CR mode
    * @param CANrange - distance sensor for detecting coral
    */
-  public IntakeSubsystem(BaseActuator topCoralActuator, BaseActuator bottomCoralActuator,
+  public IntakeSubsystem(BaseMotor minionMotor,
       BaseActuator algaeGripper, BaseActuator algaeRunner, BaseDistanceSensor CANrange) {
 
     this.CANrange = CANrange;
-    this.topCoralActuator = topCoralActuator;
-    this.bottomCoralActuator = bottomCoralActuator;
+    this.minionMotor = minionMotor;
 
     this.algaeGripper = algaeGripper;
     this.algaeRunner = algaeRunner;
@@ -79,11 +78,11 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    topCoralActuator.set(-coralIntakeSpeed); // run CW to intake coral
+    minionMotor.set(-coralIntakeSpeed); // run CW to intake coral
 
-    if (bottomCoralActuator != null) {
-      bottomCoralActuator.set(coralIntakeSpeed); // run CCW to intake coral
-    }
+    // if (bottomCoralActuator != null) {
+    //   bottomCoralActuator.set(coralIntakeSpeed); // run CCW to intake coral
+    // }
 
     SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());
 
@@ -97,11 +96,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
       // This loop will run every 20 ms. So, convert the seconds to milliseconds and divide by 20 to get the number of loops to run.
       if (counter >= (IntakeConstants.kAlgaeIntakePulseSeconds * 1000/20)) {
+        algaeGripper.set(algaeIntakeSpeed);
         algaeRunner.set(0);
         counter = 0;
       } else {
-        algaeRunner.set(algaeIntakeSpeed);
-        algaeGripper.set(-algaeIntakeSpeed);
+        algaeRunner.set(-algaeIntakeSpeed);
+        algaeGripper.set(0);
         counter++;
       }
 

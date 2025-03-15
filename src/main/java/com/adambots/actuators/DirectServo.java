@@ -90,6 +90,17 @@ public class DirectServo implements BaseServo {
     }
 
     @Override
+    public void set(double speed) {
+        if (mode == ServoMode.CONTINUOUS_ROTATION) {
+            // Map -1.0 to 1.0 to 0.0 to 1.0 range for WPILib Servo
+            double mappedSpeed = (speed + 1.0) / 2.0;
+            servo.set(mappedSpeed);
+        } else {
+            throw new UnsupportedOperationException("Speed control not supported in ANGULAR mode");
+        }
+    }
+
+    @Override
     public void setPulseWidth(int pulseWidth) {
         // Convert microseconds to position (0-1 range)
         // WPILib expects 0.6ms-2.4ms range mapped to 0-1

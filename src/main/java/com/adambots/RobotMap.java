@@ -24,6 +24,7 @@ import com.adambots.actuators.BaseSolenoid;
 import com.adambots.actuators.CRHubServo;
 import com.adambots.actuators.DirectServo;
 import com.adambots.actuators.ElectricalSolenoid;
+import com.adambots.actuators.MinionMotor;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -64,6 +65,7 @@ public class RobotMap {
     public static final int kRunnerAlgaeServoChannel = 4;
     public static final int kCANrangePort = 35;
     public static final int kServoHubPort = 45;
+    public static final int kMinionPort = 48;
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
@@ -81,10 +83,11 @@ public class RobotMap {
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
     public static final ServoHub hub = new ServoHub(kServoHubPort);
-    public static final BaseActuator topCoralActuator = new CRHubServo(hub, kTopCoralServoChannel);
-    public static final BaseActuator bottomCoralActuator = new CRHubServo(hub, kBottomCoralServoChannel);
-    public static final BaseActuator algaeGripper = new CRHubServo(hub, kGripperAlgaeServoChannel);
-    public static final BaseActuator algaeRunner = new CRHubServo(hub, kRunnerAlgaeServoChannel);
+    // public static final BaseActuator topCoralActuator = new CRHubServo(hub, kTopCoralServoChannel);
+    // public static final BaseActuator bottomCoralActuator = new CRHubServo(hub, kBottomCoralServoChannel);
+    public static final BaseMotor minionMotor = new MinionMotor(kMinionPort);
+    public static final BaseActuator algaeGripper = new DirectServo(kGripperAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
+    public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
     public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, true);
 

@@ -185,7 +185,8 @@ public final class Constants {
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         
-        public static final double kPElevatorController = 0.5;
+        public static final double
+         kPElevatorController = 0.5;
         public static final double kIElevatorController = 0.000;
         public static final double kDElevatorController = 0.035;
         public static final double kFElevatorController = 0.0;
