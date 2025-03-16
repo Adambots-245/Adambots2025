@@ -89,7 +89,7 @@ public class RobotMap {
     public static final BaseActuator algaeGripper = new DirectServo(kGripperAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
-    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, true);
+    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, false);
 
 
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);
