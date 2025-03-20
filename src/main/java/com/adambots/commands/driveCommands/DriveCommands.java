@@ -79,8 +79,11 @@ public class DriveCommands {
     }
 
     public Command getDistanceFromAprilTag(int tagID) {
-        // return Commands.runOnce(()-> System.out.println(subsystem.getVision().getDistanceFromAprilTag(tagID)));
-        return Commands.run(()-> System.out.println("X: " + subsystem.getVision().getDistanceFromAprilTagX(tagID).getX() + " Y: " + subsystem.getVision().getDistanceFromAprilTagX(tagID).getY()));
+        // return Commands.runOnce(()->
+        // System.out.println(subsystem.getVision().getDistanceFromAprilTag(tagID)));
+        return Commands
+                .run(() -> System.out.println("X: " + subsystem.getVision().getDistanceFromAprilTagX(tagID).getX()
+                        + " Y: " + subsystem.getVision().getDistanceFromAprilTagX(tagID).getY()));
     }
 
     /**
@@ -351,6 +354,47 @@ public class DriveCommands {
         return Commands.run(() -> subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0)))
                 .until(() -> swerveDrive.getPose().getTranslation()
                         .getDistance(new Translation2d(0, 0)) > distanceInMeters);
+    }
+
+    /**
+     * Drives the robot a specified distance using field relative heading
+     * 
+     * @param distanceInMeters       Positive distance to drive in meters
+     * @param speedInMetersPerSecond Speed to drive in meters per second (positive
+     *                               for forward, negative for reverse)
+     * @return Command to drive the specified distance
+     */
+    public Command driveToDistanceFieldOriented(double distanceInMeters, double speedInMetersPerSecond) {
+        return Commands.sequence(
+                // Capture starting pose
+                Commands.runOnce(() -> startPose = swerveDrive.getPose()),
+
+                // Drive relative to current heading
+                Commands.run(() -> {
+                    // Get current heading
+                    Rotation2d heading = subsystem.getHeading();
+
+                    // Calculate velocity vector in field coordinates
+                    // Direction is based on sign of speedInMetersPerSecond
+                    double speed = Math.abs(speedInMetersPerSecond);
+                    int direction = (speedInMetersPerSecond >= 0) ? 1 : -1;
+
+                    // Use direction to determine whether to move in heading direction or opposite
+                    double xVel = direction * speed * Math.cos(heading.getRadians());
+                    double yVel = direction * speed * Math.sin(heading.getRadians());
+
+                    // Drive using field-oriented control
+                    subsystem.driveFieldOriented(new ChassisSpeeds(xVel, yVel, 0));
+                })
+                .until(() -> {
+                    // Calculate distance traveled from start
+                    double distanceTraveled = swerveDrive.getPose().getTranslation()
+                            .getDistance(startPose.getTranslation());
+                    System.out.println("Distance: " + distanceTraveled);
+                    return distanceTraveled >= distanceInMeters;
+                }),
+                // Stop when done
+                Commands.runOnce(() -> subsystem.drive(new Translation2d(), 0, true)));
     }
 
     // fixed
