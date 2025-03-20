@@ -98,10 +98,12 @@ public class IntakeSubsystem extends SubsystemBase {
       // This loop will run every 20 ms. So, convert the seconds to milliseconds and divide by 20 to get the number of loops to run.
       if (counter >= (IntakeConstants.kAlgaeIntakePulseSeconds * 1000/20)) {
         algaeRunner.set(0);
+        algaeGripper.set(0);
         counter = 0;
       } else {
         algaeRunner.set(algaeIntakeSpeed);
         algaeGripper.set(-algaeIntakeSpeed);
+
         counter++;
       }
 

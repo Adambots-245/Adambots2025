@@ -24,7 +24,7 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 public class DriveToLocationAdvanced extends Command {
     public enum AlignLocation {
         RIGHT_POLE, LEFT_POLE, MIDDLE_ALGAE, HUMAN_PLAYER_RIGHT, HUMAN_PLAYER_LEFT, REEF_ANGLE, BARGE_LEFT,
-        BARGE_MIDDLE, BARGE_RIGHT
+        BARGE_MIDDLE, BARGE_RIGHT, H1
     }
 
     // Subsystem references.
@@ -74,7 +74,7 @@ public class DriveToLocationAdvanced extends Command {
      * @param caNdleSubsystem  The CANdle subsystem for LED feedback.
      */
     public DriveToLocationAdvanced(SwerveSubsystem swerveSubsystem, Supplier<Integer> aprilTagSupplier,
-            AlignLocation alignLocation, CANdleSubsystem caNdleSubsystem) {
+            AlignLocation alignLocation, CANdleSubsystem caNdleSubsystem, int driveTag) {
         // Require the swerve subsystem for this command.
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
@@ -132,13 +132,17 @@ public class DriveToLocationAdvanced extends Command {
         // } else {
             // For human player alignment (alignLocation 3 or 4), use humanPlayerTagIds.
             // Otherwise, use reefTagIds.
-            if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
-                idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
-            } else if (alignLocation == AlignLocation.BARGE_LEFT || alignLocation == AlignLocation.BARGE_MIDDLE
-                    || alignLocation == AlignLocation.BARGE_RIGHT) {
-                idSeen = swerveSubsystem.getVision().hasID(bargeTagIds);
+            if (alignLocation != AlignLocation.H1){
+                if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
+                    idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
+                } else if (alignLocation == AlignLocation.BARGE_LEFT || alignLocation == AlignLocation.BARGE_MIDDLE
+                        || alignLocation == AlignLocation.BARGE_RIGHT) {
+                    idSeen = swerveSubsystem.getVision().hasID(bargeTagIds);
+                } else {
+                    idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
+                }
             } else {
-                idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
+                idSeen = 13;
             }
         // }
 
@@ -162,8 +166,8 @@ public class DriveToLocationAdvanced extends Command {
             } else if (alignLocation == AlignLocation.MIDDLE_ALGAE) {
                 // Align to the middle (algae pole): no lateral offset.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(0.55, 0, new Rotation2d(Math.toRadians(180))));
-            } else if (alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
+                        new Transform2d(0.57, 0, new Rotation2d(Math.toRadians(180))));
+            } else if (alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT || alignLocation == AlignLocation.H1) {
                 // Align to the human player on the right:
                 // Apply a negative human player offset and rotate 180°.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,

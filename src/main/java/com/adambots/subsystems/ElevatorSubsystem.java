@@ -73,7 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setInverted(true);
 
         elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
-        elevatorMotor.configureCurrentLimits(40.0, 30.0, 1000.0);
+        elevatorMotor.configureCurrentLimits(40.0, 30.0, 1500.0);
         elevatorMotor.enableVoltageCompensation(12.0);
     }
 
@@ -83,9 +83,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         double rotations = properties.position();
 
         setPosition(rotations);
-        // double gravityFeedForward = 0.05;
-        // ((TalonFXMotor)elevatorMotor).setPositionWithArbFeedForward(rotations,
-        // gravityFeedForward);
+        double gravityFeedForward = 0.05;
+        ((TalonFXMotor)elevatorMotor).setPositionWithArbFeedForward(rotations,
+        gravityFeedForward);
     }
 
     /**

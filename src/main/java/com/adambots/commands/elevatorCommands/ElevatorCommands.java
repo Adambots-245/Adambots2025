@@ -7,6 +7,7 @@ package com.adambots.commands.elevatorCommands;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.subsystems.ElevatorSubsystem;
+import com.adambots.subsystems.IntakeSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.WristSubsystem;
 import com.adambots.subsystems.WristSubsystem.WristState;
@@ -20,13 +21,15 @@ public class ElevatorCommands extends Command {
     ElevatorSubsystem elevatorSubsystem;
     WristSubsystem wristSubsystem;
     IntakeCommands intakeCommands;
+    IntakeSubsystem intakeSubsystem;
 
     public ElevatorCommands(ElevatorSubsystem elevatorSubsystem, WristSubsystem wristSubsystem,
-            IntakeCommands intakeCommands) {
+            IntakeCommands intakeCommands, IntakeSubsystem intakeSubsystem) {
         // Use addRequirements() here to declare subsystem dependencies.
         this.elevatorSubsystem = elevatorSubsystem;
         this.wristSubsystem = wristSubsystem;
         this.intakeCommands = intakeCommands;
+        this.intakeSubsystem = intakeSubsystem;
     }
 
     public Command moveToIntakeCommand() {
@@ -39,7 +42,10 @@ public class ElevatorCommands extends Command {
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
                 .andThen(Commands.waitSeconds(0.75))
                 .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE)))
-                .andThen(intakeCommands.intakeCoral()), 
+                .andThen(Commands.either(
+                    Commands.runOnce(()-> System.out.println("Already Have Coral")), 
+                    intakeCommands.intakeCoral(),
+                    ()-> intakeSubsystem.isDetectingCoral())),
             ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));
     }
 
@@ -83,17 +89,18 @@ public class ElevatorCommands extends Command {
         return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.L4), wristSubsystem)
-                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.waitSeconds(0.75))
                         .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.L4))));
     }
 
     public Command moveToAlgaeStateCommand(ElevatorState elevatorState, WristState wristState) {
-        return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(elevatorState), wristSubsystem)
                         .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
                         .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(wristState))))
                 .andThen(intakeCommands.intakeAlgae());
+        
     }
 
     public Command moveToStateCommand(ElevatorState elevatorState, WristState wristState) {

@@ -141,7 +141,7 @@ public final class Constants {
         // public static final double kITranslationController = 0; 
         // public static final double kDTranslationController = 0.11;
 
-        public static final double kPTranslationController = 3; 
+        public static final double kPTranslationController = 3.5; 
         public static final double kITranslationController = 0; 
         public static final double kDTranslationController = 0.05;
 
@@ -185,9 +185,9 @@ public final class Constants {
         public static final double kElevatorPositionTolerance = 0.5;
         public static final double kWristPositionTolerance = 2.0;
         
-        public static final double kPElevatorController = 0.5;
+        public static final double kPElevatorController = 1;
         public static final double kIElevatorController = 0.000;
-        public static final double kDElevatorController = 0.005;
+        public static final double kDElevatorController = 0.04;
         public static final double kFElevatorController = 0.0;
 
         public static final double kWristPositionIncrement = 3.7;
@@ -197,13 +197,13 @@ public final class Constants {
         public static final double kDWristController = 0.0001;
 
         // Elevator Positions
-        public static final double kElevatorIntakePosition = 0.0;
+        public static final double kElevatorIntakePosition = -1.5;
         public static final double kElevatorL1Position = 21.01;
         public static final double kElevatorL2Position = 32.3;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 91;
-        public static final double kElevatorHighAlgaePosition = 61;
-        public static final double kElevatorLowAlgaePosition = 32;
+        public static final double kElevatorHighAlgaePosition = 65;
+        public static final double kElevatorLowAlgaePosition = 40;
         public static final double kElevatorProcessorPosition = 0;
 
         public static final double kElevatorMaxHeight = 90;
@@ -219,8 +219,8 @@ public final class Constants {
         public static final double kWristL3Position = 66;
         public static final double kWristL4Position = 74;
         public static final double kWristHighAlgaePosition = 5;
-        public static final double kWristLowAlgaePosition = 5;
-        public static final double kWristProcessorPosition = 12;
+        public static final double kWristLowAlgaePosition = 359;
+        public static final double kWristProcessorPosition = 359;
         public static final double kWristGroundIntakePosition = 350;
         public static final double kWristHangPosition = 71;
 
@@ -235,10 +235,10 @@ public final class Constants {
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
-        public static double kVelocityFeedforward = 0.1;
-        public static double kElevatorCruiseVelocity = 80.0;
-        public static double kElevatorAcceleration = 200.0;
-        public static double kElevatorJerk = 1000.0;
+        public static double kVelocityFeedforward = 0.15;
+        public static double kElevatorCruiseVelocity = 40000.0;
+        public static double kElevatorAcceleration = 80000.0;
+        public static double kElevatorJerk = 400000.0;
         }
     // Command Constants go here
 }

@@ -42,12 +42,12 @@ public class HangCommands {
                 new InstantCommand(
                         () -> {
                             hangSubsystem.toggleSolenoids();
-                            hangSubsystem.setMotorSpeed(1);
+                            hangSubsystem.setMotorSpeed(0.6);
                         },
                         hangSubsystem),
                 new InstantCommand(
                         () -> {
-                            hangSubsystem.setMotorSpeed(1);
+                            hangSubsystem.setMotorSpeed(0.6);
                         },
                         hangSubsystem),
                 () -> hangSubsystem.getSolenoid());
