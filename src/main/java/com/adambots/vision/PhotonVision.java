@@ -404,7 +404,13 @@ public class PhotonVision {
      */
     CENTER_CAM("Middle",
     new Rotation3d(0, Units.degreesToRadians(40), 0),
-    new Translation3d(Units.inchesToMeters(6),
+    new Translation3d(Units.inchesToMeters(2),
+    Units.inchesToMeters(0),
+    Units.inchesToMeters(41)),
+    VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+    BACK_CAM("Back",
+    new Rotation3d(0, Units.degreesToRadians(-45), Units.degreesToRadians(180)),
+    new Translation3d(Units.inchesToMeters(-2),
     Units.inchesToMeters(0),
     Units.inchesToMeters(41)),
     VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1));

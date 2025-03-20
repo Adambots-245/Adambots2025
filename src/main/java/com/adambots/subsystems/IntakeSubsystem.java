@@ -98,10 +98,12 @@ public class IntakeSubsystem extends SubsystemBase {
       if (counter >= (IntakeConstants.kAlgaeIntakePulseSeconds * 1000/20)) {
         algaeGripper.set(algaeIntakeSpeed);
         algaeRunner.set(0);
+        algaeGripper.set(0);
         counter = 0;
       } else {
-        algaeRunner.set(-algaeIntakeSpeed);
-        algaeGripper.set(0);
+        algaeRunner.set(algaeIntakeSpeed);
+        algaeGripper.set(-algaeIntakeSpeed);
+
         counter++;
       }
 

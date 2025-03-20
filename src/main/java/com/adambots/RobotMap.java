@@ -15,9 +15,13 @@ import com.adambots.sensors.BaseAbsoluteEncoder;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.sensors.CANRangeSensor;
 import com.adambots.sensors.Gyro;
+import com.adambots.sensors.LimitSwitch;
 import com.adambots.sensors.ThroughBoreEncoder;
 import com.ctre.phoenix.led.CANdle;
 import com.revrobotics.servohub.ServoHub;
+
+import javax.naming.LimitExceededException;
+
 import com.adambots.actuators.BaseActuator;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseSolenoid;
@@ -66,6 +70,8 @@ public class RobotMap {
     public static final int kCANrangePort = 35;
     public static final int kServoHubPort = 45;
     public static final int kMinionPort = 48;
+    public static final int kClimbMotorPort = 19;
+    public static final int kClimbLimitSwitchPort = 4; 
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
@@ -95,9 +101,10 @@ public class RobotMap {
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);
     public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
     public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, false);
-    public static final BaseMotor climbMotor = new TalonFXMotor(19, true, kBottomCoralServoChannel, false);
+    public static final BaseMotor climbMotor = new TalonFXMotor(kClimbMotorPort, true, 40, true);
     public static final BaseServo climbServo = new DirectServo(0, ServoMode.ANGULAR);
     public static final BaseSolenoid climbSolenoid = new ElectricalSolenoid(0);
+    public static final LimitSwitch hangLimitSwitch = new LimitSwitch(kClimbLimitSwitchPort, false);
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

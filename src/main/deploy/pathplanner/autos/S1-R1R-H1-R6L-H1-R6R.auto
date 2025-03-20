@@ -37,22 +37,9 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 2.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "DriveToRight"
-                }
-              }
-            ]
+            "name": "DriveToReefRight"
           }
         },
         {
@@ -66,15 +53,41 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "IntakePosition"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakePosition"
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "R1R-H1"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "R1R-H1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "DriveToH1"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -85,9 +98,130 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "IntakeCoral"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "WaitForIntake"
+                      }
+                    },
+                    {
+                      "type": "parallel",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "H1-R6L"
+                            }
+                          },
+                          {
+                            "type": "sequential",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "wait",
+                                  "data": {
+                                    "waitTime": 0.55
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "L4Position"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToReefLeft"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakePosition"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "R6L-H1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "DriveToH1"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitForIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "H1-R6L"
+                  "pathName": "H1-R6R"
                 }
               },
               {
@@ -97,13 +231,31 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.1
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToReefRight"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]

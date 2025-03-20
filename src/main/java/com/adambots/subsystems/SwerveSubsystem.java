@@ -31,8 +31,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import swervelib.SwerveDrive;
+import swervelib.SwerveDriveTest;
 import swervelib.imu.SwerveIMU;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
@@ -176,15 +179,13 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param driveCfg      SwerveDriveConfiguration for the swerve.
    * @param controllerCfg Swerve Controller.
    */
-  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg)
-  {
+  public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
     swerveDrive = new SwerveDrive(driveCfg,
-                                  controllerCfg,
-                                  DriveConstants.kMaxSpeedMetersPerSecond,
-                                  new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
-                                             Rotation2d.fromDegrees(0)));
+        controllerCfg,
+        DriveConstants.kMaxSpeedMetersPerSecond,
+        new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+            Rotation2d.fromDegrees(0)));
   }
-
 
   /**
    * Setup the photon vision class.
@@ -224,8 +225,10 @@ public class SwerveSubsystem extends SubsystemBase {
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic
               // drive trains
-              new PIDConstants(AutoConstants.kPTranslationController, AutoConstants.kITranslationController, AutoConstants.kDTranslationController), // Translation PID constants
-              new PIDConstants(AutoConstants.kPThetaController, AutoConstants.kIThetaController, AutoConstants.kDThetaController) // Rotation PID constants
+              new PIDConstants(AutoConstants.kPTranslationController, AutoConstants.kITranslationController,
+                  AutoConstants.kDTranslationController), // Translation PID constants
+              new PIDConstants(AutoConstants.kPThetaController, AutoConstants.kIThetaController,
+                  AutoConstants.kDThetaController) // Rotation PID constants
           // Rotation PID constants
           ),
           config,
@@ -417,8 +420,6 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.driveFieldOriented(velocity);
   }
 
- 
-
   /**
    * Get the chassis speeds based on controller input of 1 joystick and one angle.
    * Control the robot at an offset of
@@ -532,12 +533,37 @@ public class SwerveSubsystem extends SubsystemBase {
   public PhotonVision getVision() {
     return vision;
   }
-  
 
   /**
    * Add a fake vision reading for testing purposes.
    */
   public void addFakeVisionReading() {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
+  }
+
+  /**
+   * Command to characterize the robot drive motors using SysId
+   * 
+   * @return SysId Drive Command
+   */
+  public Command sysIdDriveMotorCommand() {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setDriveSysIdRoutine(
+            new Config(),
+            this, swerveDrive, 12, true),
+        3.0, 5.0, 3.0);
+  }
+
+  /**
+   * Command to characterize the robot angle motors using SysId
+   * 
+   * @return SysId Angle Command
+   */
+  public Command sysIdAngleMotorCommand() {
+    return SwerveDriveTest.generateSysIdCommand(
+        SwerveDriveTest.setAngleSysIdRoutine(
+            new Config(),
+            this, swerveDrive),
+        3.0, 5.0, 3.0);
   }
 }

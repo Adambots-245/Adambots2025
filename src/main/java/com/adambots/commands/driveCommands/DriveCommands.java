@@ -374,6 +374,27 @@ public class DriveCommands {
                 Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0))));
     }
 
+    // fixed
+    public Command driveToDistanceCommandFieldOrientated(double distanceInMeters, double speedInMetersPerSecond) {
+        // Translation2d startPos = swerveDrive.getPose().getTranslation();
+        // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: "
+        // +startPos.getY());
+
+                return Commands.sequence(
+                    Commands.runOnce(() -> {
+                        startPose = swerveDrive.getPose();
+                    }),
+                    Commands.run(() -> subsystem.drive(ChassisSpeeds.fromFieldRelativeSpeeds(new ChassisSpeeds(speedInMetersPerSecond, 0,0), subsystem.getSwerveDrive().getOdometryHeading())))
+                            .until(() -> {
+                                // Translation2d startPos = swerveDrive.getPose().getTranslation();
+                                // System.out.println("STARTING POSE X: " + startPos.getX() + "Y: "
+                                // +startPos.getY());
+                                return (swerveDrive.getPose().getTranslation()
+                                        .getDistance(startPose.getTranslation()) > distanceInMeters);
+                            }),
+                    Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0))));
+    }
+
     /**
      * Command to drive the robot using translative values and heading as angular
      * velocity.
