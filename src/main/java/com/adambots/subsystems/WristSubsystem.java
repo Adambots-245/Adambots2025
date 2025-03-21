@@ -71,7 +71,7 @@ public class WristSubsystem extends SubsystemBase {
         false // Not using position control
     );
 
-    goalWristAngle = 40;
+    goalWristAngle = ElevatorConstants.kWristStowedPosition;
   }
 
   // public static void setWristAngle()_{

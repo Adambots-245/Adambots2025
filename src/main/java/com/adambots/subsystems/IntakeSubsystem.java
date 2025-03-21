@@ -36,6 +36,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     this.CANrange = CANrange;
     this.minionMotor = minionMotor;
+    minionMotor.setBrakeMode(true);
 
     this.algaeGripper = algaeGripper;
     this.algaeRunner = algaeRunner;
@@ -45,6 +46,12 @@ public class IntakeSubsystem extends SubsystemBase {
     System.out.println("Calling Intake");
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
   }
+
+  public void intakeCoral(double speed) {
+    System.out.println("Calling Intake");
+    coralIntakeSpeed = speed;
+  }
+
 
   public void stopCoralIntake() {
     coralIntakeSpeed = 0;

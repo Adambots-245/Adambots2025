@@ -145,6 +145,7 @@ public class PhotonVision {
        */
       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
     }
+    // System.out.println("CHeckpoint 0");
     for (Cameras camera : Cameras.values()) {
       Cameras.updatedCache = false;
       // System.out.println("Checkpoints 1");
@@ -181,6 +182,7 @@ public class PhotonVision {
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera) {
     Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
+    // System.out.println("Checkpoint 1");
     if (Robot.isSimulation()) {
       Field2d debugField = visionSim.getDebugField();
       // Uncomment to enable outputting of vision targets in sim.
@@ -402,17 +404,17 @@ public class PhotonVision {
      * Center Camera
      * //
      */
-    CENTER_CAM("Middle",
-    new Rotation3d(0, Units.degreesToRadians(40), 0),
-    new Translation3d(Units.inchesToMeters(2),
-    Units.inchesToMeters(0),
-    Units.inchesToMeters(41)),
+    LEFT_CAM("Left",
+    new Rotation3d(0, 0, Units.degreesToRadians(-30)),
+    new Translation3d(Units.inchesToMeters(15),
+    Units.inchesToMeters(11.75),
+    Units.inchesToMeters(8)),
     VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
-    BACK_CAM("Back",
-    new Rotation3d(0, Units.degreesToRadians(-45), Units.degreesToRadians(180)),
-    new Translation3d(Units.inchesToMeters(-2),
-    Units.inchesToMeters(0),
-    Units.inchesToMeters(41)),
+    RIGHT_CAM("Right",
+    new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(30)),
+    new Translation3d(Units.inchesToMeters(15),
+    Units.inchesToMeters(-11.75),
+    Units.inchesToMeters(8)),
     VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1));
 
     /**

@@ -41,7 +41,7 @@ public class ScoringCommands {
         //         // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED ANOTHER THRESHOLD
         //         .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
 
-        return Commands.runOnce(intakeSubsystem::intakeCoral, intakeSubsystem).andThen(()-> caNdleSubsystem.setAnimation(AnimationTypes.Larson));
+        return Commands.runOnce(()-> intakeSubsystem.intakeCoral(-0.5), intakeSubsystem).andThen(()-> caNdleSubsystem.setAnimation(AnimationTypes.Larson));
     }
 
     public Command scoreCoralAuton() {

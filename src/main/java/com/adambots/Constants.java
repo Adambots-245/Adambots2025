@@ -163,11 +163,11 @@ public final class Constants {
 
     // Subystem Constants go here
     public final static class IntakeConstants {
-        public static final double kMaxSpeed = -0.15;
+        public static final double kMaxSpeed = -0.23;
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 1;
         public static final double kDistanceToDetect = 10;//cm
-        public static final double kTimerThreshold = 0.5; // number of seconds to wait before stopping the intake after detecting a coral
+        public static final double kTimerThreshold = 0; // number of seconds to wait before stopping the intake after detecting a coral
         public static final double kAlgaeIntakePulseSeconds = 0.2;
 
     }
@@ -212,17 +212,17 @@ public final class Constants {
         public static final double kElevatorDangerZoneEnd = 40;
 
         // Wrist Positions
-        public static final double kWristStowedPosition = 55;
-        public static final double kWristIntakePosition = 80.7;
-        public static final double kWristL1Position = 66;
-        public static final double kWristL2Position = 66;
-        public static final double kWristL3Position = 66;
-        public static final double kWristL4Position = 74;
-        public static final double kWristHighAlgaePosition = 5;
-        public static final double kWristLowAlgaePosition = 359;
-        public static final double kWristProcessorPosition = 359;
-        public static final double kWristGroundIntakePosition = 350;
-        public static final double kWristHangPosition = 71;
+        public static final double kWristStowedPosition = 218; //55
+        public static final double kWristIntakePosition = 240; //80.7
+        public static final double kWristL1Position = 229; //66
+        public static final double kWristL2Position = 229; //66
+        public static final double kWristL3Position = 229; //66
+        public static final double kWristL4Position = 237; //74
+        public static final double kWristHighAlgaePosition = 168; //5
+        public static final double kWristLowAlgaePosition = 162; //359
+        public static final double kWristProcessorPosition = 162; //359
+        public static final double kWristGroundIntakePosition = 153; //350
+        public static final double kWristHangPosition = 234; //71
 
 
         public static final double kWristMinAngle = 355;
