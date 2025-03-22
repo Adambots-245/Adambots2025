@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private BaseActuator algaeGripper;
   private BaseActuator algaeRunner;
 
-  private PIDController intakePID = new PIDController(0.06, 0, 0);
+  private PIDController intakePID = new PIDController(0.03, 0, 0.001);
   private double goalVelocity = 0;
 
 
@@ -51,14 +51,14 @@ public class IntakeSubsystem extends SubsystemBase {
     System.out.println("Calling Intake");
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
 
-    goalVelocity = 6;
+    goalVelocity = 8.25;
   }
 
   public void intakeCoral(double speed) {
     System.out.println("Calling Intake");
     coralIntakeSpeed = speed;
 
-    goalVelocity = 25;
+    goalVelocity = 19;
   }
 
 
@@ -107,6 +107,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // if (bottomCoralActuator != null) {
     //   bottomCoralActuator.set(coralIntakeSpeed); // run CCW to intake coral
     // }
+    
 
     SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());
     SmartDashboard.putNumber("Intake/Minion Speed", minionMotor.getVelocity());

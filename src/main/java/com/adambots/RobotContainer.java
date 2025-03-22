@@ -185,7 +185,7 @@ public class RobotContainer {
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
                         candleSubsytem)
                         .andThen(new WaitCommand(0.2))
-                        .andThen(driveCommands.driveToDistanceCommandFieldOrientated(0.5, -0.5))
+                        .andThen(driveCommands.driveToDistanceFieldOriented(0.5, -0.5))
                         .andThen(elevatorCommands.moveToIntakeCommand()));
         // Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringCoral());
 
@@ -194,7 +194,7 @@ public class RobotContainer {
                         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
                                 candleSubsytem)
                                 .andThen(scoringCommands.scoreCoralAuton())
-                                .andThen(driveCommands.driveToDistanceCommandFieldOrientated(1.0, -0.5))
+                                .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -1))
                                 .andThen(elevatorCommands.moveToIntakeCommand()));
         Buttons.JoystickButton6.onFalse(scoringCommands.stopScoringCoral());
 
@@ -203,7 +203,7 @@ public class RobotContainer {
                         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
                                 candleSubsytem)
                                 .andThen(scoringCommands.scoreCoralAuton())
-                                .andThen(driveCommands.driveToDistanceCommandFieldOrientated(1.0, -0.5))
+                                .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -1))
                                 .andThen(elevatorCommands.moveToIntakeCommand()));
         Buttons.JoystickButton7.onFalse(scoringCommands.stopScoringCoral());
 

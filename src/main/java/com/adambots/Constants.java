@@ -202,8 +202,8 @@ public final class Constants {
         public static final double kElevatorL2Position = 27;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 91;
-        public static final double kElevatorHighAlgaePosition = 65;
-        public static final double kElevatorLowAlgaePosition = 40;
+        public static final double kElevatorHighAlgaePosition = 58;
+        public static final double kElevatorLowAlgaePosition = 33;
         public static final double kElevatorProcessorPosition = 0;
 
         public static final double kElevatorMaxHeight = 90;
