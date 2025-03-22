@@ -163,7 +163,7 @@ public final class Constants {
 
     // Subystem Constants go here
     public final static class IntakeConstants {
-        public static final double kMaxSpeed = -0.23;
+        public static final double kMaxSpeed = -0.14;
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 1;
         public static final double kDistanceToDetect = 10;//cm
@@ -197,9 +197,9 @@ public final class Constants {
         public static final double kDWristController = 0.0001;
 
         // Elevator Positions
-        public static final double kElevatorIntakePosition = -1.5;
-        public static final double kElevatorL1Position = 21.01;
-        public static final double kElevatorL2Position = 32.3;
+        public static final double kElevatorIntakePosition = -1;
+        public static final double kElevatorL1Position = 21;
+        public static final double kElevatorL2Position = 27;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 91;
         public static final double kElevatorHighAlgaePosition = 65;
@@ -213,11 +213,11 @@ public final class Constants {
 
         // Wrist Positions
         public static final double kWristStowedPosition = 218; //55
-        public static final double kWristIntakePosition = 240; //80.7
-        public static final double kWristL1Position = 229; //66
-        public static final double kWristL2Position = 229; //66
-        public static final double kWristL3Position = 229; //66
-        public static final double kWristL4Position = 237; //74
+        public static final double kWristIntakePosition = 239; //80.7
+        public static final double kWristL1Position = 223; //66
+        public static final double kWristL2Position = 223; //66
+        public static final double kWristL3Position = 223; //66
+        public static final double kWristL4Position = 230; //74
         public static final double kWristHighAlgaePosition = 168; //5
         public static final double kWristLowAlgaePosition = 162; //359
         public static final double kWristProcessorPosition = 162; //359

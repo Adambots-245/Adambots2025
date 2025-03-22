@@ -24,7 +24,7 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 public class DriveToLocationAdvanced extends Command {
     public enum AlignLocation {
         RIGHT_POLE, LEFT_POLE, MIDDLE_ALGAE, HUMAN_PLAYER_RIGHT, HUMAN_PLAYER_LEFT, REEF_ANGLE, BARGE_LEFT,
-        BARGE_MIDDLE, BARGE_RIGHT, H1
+        BARGE_MIDDLE, BARGE_RIGHT, H1, H4
     }
 
     // Subsystem references.
@@ -74,7 +74,7 @@ public class DriveToLocationAdvanced extends Command {
      * @param caNdleSubsystem  The CANdle subsystem for LED feedback.
      */
     public DriveToLocationAdvanced(SwerveSubsystem swerveSubsystem, Supplier<Integer> aprilTagSupplier,
-            AlignLocation alignLocation, CANdleSubsystem caNdleSubsystem, int driveTag) {
+            AlignLocation alignLocation, CANdleSubsystem caNdleSubsystem) {
         // Require the swerve subsystem for this command.
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
@@ -132,7 +132,19 @@ public class DriveToLocationAdvanced extends Command {
         // } else {
             // For human player alignment (alignLocation 3 or 4), use humanPlayerTagIds.
             // Otherwise, use reefTagIds.
-            if (alignLocation != AlignLocation.H1){
+            if (alignLocation == AlignLocation.H1){
+                if (Robot.isOnRedAlliance()){
+                    idSeen = 1;
+                } else {
+                    idSeen = 13;
+                }
+            } else if (alignLocation == AlignLocation.H4){
+                if (Robot.isOnRedAlliance()){
+                    idSeen = 2;
+                } else {
+                    idSeen = 12;
+                }
+            } else {
                 if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
                     idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
                 } else if (alignLocation == AlignLocation.BARGE_LEFT || alignLocation == AlignLocation.BARGE_MIDDLE
@@ -141,8 +153,6 @@ public class DriveToLocationAdvanced extends Command {
                 } else {
                     idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
                 }
-            } else {
-                idSeen = 13;
             }
         // }
 

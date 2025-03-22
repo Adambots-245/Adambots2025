@@ -173,7 +173,7 @@ public class RobotContainer {
         Buttons.JoystickButton2
                 .whileTrue(
                         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT,
-                                candleSubsytem, -1));
+                                candleSubsytem));
 
         // Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
         Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem,
@@ -183,25 +183,28 @@ public class RobotContainer {
 
         Buttons.JoystickButton5
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
-                        candleSubsytem, -1)
+                        candleSubsytem)
                         .andThen(new WaitCommand(0.2))
                         .andThen(driveCommands.driveToDistanceCommandFieldOrientated(0.5, -0.5))
                         .andThen(elevatorCommands.moveToIntakeCommand()));
+        // Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringCoral());
 
         Buttons.JoystickButton6
                 .whileTrue(
                         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE,
-                                candleSubsytem, -1)
+                                candleSubsytem)
                                 .andThen(scoringCommands.scoreCoralAuton())
                                 .andThen(driveCommands.driveToDistanceCommandFieldOrientated(1.0, -0.5))
                                 .andThen(elevatorCommands.moveToIntakeCommand()));
-        // Buttons.JoystickButton6.onFalse(scoringCommands.stopScoringCoral());
+        Buttons.JoystickButton6.onFalse(scoringCommands.stopScoringCoral());
 
         Buttons.JoystickButton7
                 .whileTrue(
                         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE,
-                                candleSubsytem, -1)
-                                .andThen(scoringCommands.scoreCoral()));
+                                candleSubsytem)
+                                .andThen(scoringCommands.scoreCoralAuton())
+                                .andThen(driveCommands.driveToDistanceCommandFieldOrientated(1.0, -0.5))
+                                .andThen(elevatorCommands.moveToIntakeCommand()));
         Buttons.JoystickButton7.onFalse(scoringCommands.stopScoringCoral());
 
         Buttons.JoystickButton8.onTrue(hangCommands.pullInHang());
@@ -214,21 +217,21 @@ public class RobotContainer {
 
         Buttons.JoystickButton10
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
-                        candleSubsytem, -1));
+                        candleSubsytem));
 
         Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
         Buttons.JoystickButton14
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
-                        candleSubsytem, -1));
+                        candleSubsytem));
 
         Buttons.JoystickButton15
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
-                        candleSubsytem, -1));
+                        candleSubsytem));
 
         Buttons.JoystickButton16
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
-                        candleSubsytem, -1));
+                        candleSubsytem));
 
         Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
         Buttons.XboxAButton.onTrue(elevatorCommands.moveToL2Command());
@@ -327,17 +330,18 @@ public class RobotContainer {
     NamedCommands.registerCommand("IntakeCoral", intakeCommands.intakeCoral());
     NamedCommands.registerCommand("WaitForIntake", new RunCommand(()-> System.out.println("Waiting")).until(()-> intakesubsystem.isDetectingCoral()));
     NamedCommands.registerCommand("DriveToReefRight",
-    new SequentialCommandGroup(new PrintCommand("HELLLLP"),
-    new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem, -1)));
+    new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem));
     NamedCommands.registerCommand("DriveToReefLeft",
-    new SequentialCommandGroup(new PrintCommand("HELLLLP"),
-        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem, -1)));
+        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.LEFT_POLE, candleSubsytem));
     NamedCommands.registerCommand("DriveToHumanPlayer",
         new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT,
-            candleSubsytem, -1));
-NamedCommands.registerCommand("DriveToH1",
+            candleSubsytem));
+    NamedCommands.registerCommand("DriveToH1",
             new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.H1,
-                candleSubsytem, 1));
+                candleSubsytem));
+    NamedCommands.registerCommand("DriveToH4",
+            new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.H4,
+                candleSubsytem));
   }
 
     /**

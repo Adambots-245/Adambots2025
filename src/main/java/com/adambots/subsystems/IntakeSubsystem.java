@@ -9,6 +9,7 @@ import com.adambots.actuators.BaseActuator;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.sensors.BaseDistanceSensor;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -22,6 +23,10 @@ public class IntakeSubsystem extends SubsystemBase {
   private BaseDistanceSensor CANrange;
   private BaseActuator algaeGripper;
   private BaseActuator algaeRunner;
+
+  private PIDController intakePID = new PIDController(0.06, 0, 0);
+  private double goalVelocity = 0;
+
 
   /**
    * Constructor for IntakeSubsystem - used to intake coral and algae
@@ -45,16 +50,21 @@ public class IntakeSubsystem extends SubsystemBase {
   public void intakeCoral() {
     System.out.println("Calling Intake");
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
+
+    goalVelocity = 6;
   }
 
   public void intakeCoral(double speed) {
     System.out.println("Calling Intake");
     coralIntakeSpeed = speed;
+
+    goalVelocity = 25;
   }
 
 
   public void stopCoralIntake() {
     coralIntakeSpeed = 0;
+    goalVelocity = 0;
   }
 
   public void reverseCoralIntake() {
@@ -84,14 +94,23 @@ public class IntakeSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    double intakeSpeed = intakePID.calculate(minionMotor.getVelocity(), goalVelocity);
 
-    minionMotor.set(-coralIntakeSpeed); // run CW to intake coral
+    if (goalVelocity == 0) {
+      minionMotor.set(0);
+    } else {
+      minionMotor.set(intakeSpeed);
+    }
+
+    // minionMotor.set(-coralIntakeSpeed); // run CW to intake coral
 
     // if (bottomCoralActuator != null) {
     //   bottomCoralActuator.set(coralIntakeSpeed); // run CCW to intake coral
     // }
 
     SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());
+    SmartDashboard.putNumber("Intake/Minion Speed", minionMotor.getVelocity());
+
 
 
     // Algae intake logic - there two servos, one to grip the Algae and one to run the Algae into the intake.
