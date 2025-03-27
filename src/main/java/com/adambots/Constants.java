@@ -199,11 +199,11 @@ public final class Constants {
         // Elevator Positions
         public static final double kElevatorIntakePosition = -1;
         public static final double kElevatorL1Position = 21;
-        public static final double kElevatorL2Position = 27;
+        public static final double kElevatorL2Position = 28;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 91;
-        public static final double kElevatorHighAlgaePosition = 58;
-        public static final double kElevatorLowAlgaePosition = 33;
+        public static final double kElevatorHighAlgaePosition = 62.3;
+        public static final double kElevatorLowAlgaePosition = 36.5;
         public static final double kElevatorProcessorPosition = 0;
 
         public static final double kElevatorMaxHeight = 90;
@@ -214,14 +214,14 @@ public final class Constants {
         // Wrist Positions
         public static final double kWristStowedPosition = 218; //55
         public static final double kWristIntakePosition = 239; //80.7
-        public static final double kWristL1Position = 223; //66
-        public static final double kWristL2Position = 223; //66
-        public static final double kWristL3Position = 223; //66
-        public static final double kWristL4Position = 230; //74
-        public static final double kWristHighAlgaePosition = 168; //5
-        public static final double kWristLowAlgaePosition = 162; //359
-        public static final double kWristProcessorPosition = 162; //359
-        public static final double kWristGroundIntakePosition = 153; //350
+        public static final double kWristL1Position = 224; //66
+        public static final double kWristL2Position = 224; //66
+        public static final double kWristL3Position = 224; //66
+        public static final double kWristL4Position = 227; //74
+        public static final double kWristHighAlgaePosition = 159; //5
+        public static final double kWristLowAlgaePosition = 159; //359
+        public static final double kWristProcessorPosition = 166.5; //359
+        public static final double kWristGroundIntakePosition = 143.5; //350
         public static final double kWristHangPosition = 234; //71
 
 

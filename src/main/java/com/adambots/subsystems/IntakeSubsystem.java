@@ -41,6 +41,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     this.CANrange = CANrange;
     this.minionMotor = minionMotor;
+    // this.minionMotor.configureCurrentLimits(counter, coralIntakeSpeed, algaeIntakeSpeed);
+    this.minionMotor.enableVoltageCompensation(12.0);
     minionMotor.setBrakeMode(true);
 
     this.algaeGripper = algaeGripper;
@@ -51,14 +53,14 @@ public class IntakeSubsystem extends SubsystemBase {
     System.out.println("Calling Intake");
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
 
-    goalVelocity = 8.25;
+    goalVelocity = 8.8;
   }
 
   public void intakeCoral(double speed) {
     System.out.println("Calling Intake");
     coralIntakeSpeed = speed;
 
-    goalVelocity = 19;
+    goalVelocity = 12.5;
   }
 
 
@@ -111,6 +113,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());
     SmartDashboard.putNumber("Intake/Minion Speed", minionMotor.getVelocity());
+    SmartDashboard.putNumber("Intake/Minion Current", minionMotor.getCurrentDraw());
 
 
 

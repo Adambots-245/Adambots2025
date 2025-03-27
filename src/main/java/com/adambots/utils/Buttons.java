@@ -40,8 +40,8 @@ public class Buttons {
         public static final Trigger XboxRightStickButton = XboxController.rightStick();
 
         // Xbox Throttle triggers
-        public static final Trigger XboxLeftTriggerButton = XboxController.leftTrigger(0.5);
-        public static final Trigger XboxRightTriggerButton = XboxController.rightTrigger(0.5);
+        public static final Trigger XboxLeftTriggerButton = XboxController.leftTrigger(0.3);
+        public static final Trigger XboxRightTriggerButton = XboxController.rightTrigger(0.3);
 
         // Xbox Stick Throttles
         public static final Trigger rightStickUp = new Trigger(()-> XboxController.getRightY() < -0.8);

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.810999999999999,
-        "y": 3.8299999999999996
+        "x": 6.617213114754098,
+        "y": 3.899129098360655
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.8542499999999995,
-        "y": 3.5764999999999993
+        "x": 7.660463114754099,
+        "y": 3.6456290983606547
       },
       "isLocked": false,
       "linkedName": "R2L"
@@ -49,8 +49,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

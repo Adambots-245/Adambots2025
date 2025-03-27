@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.5
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -37,15 +43,21 @@
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "Score"
+            "waitTime": 1.5
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 7.0
+            "name": "DriveToReefLeft"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
           }
         }
       ]

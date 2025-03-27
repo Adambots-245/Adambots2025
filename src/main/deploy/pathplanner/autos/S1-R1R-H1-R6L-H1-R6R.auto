@@ -120,7 +120,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "H1-R6L"
+                              "pathName": "H1-R6R"
                             }
                           },
                           {
@@ -154,7 +154,7 @@
         {
           "type": "named",
           "data": {
-            "name": "DriveToReefLeft"
+            "name": "DriveToReefRight"
           }
         },
         {
@@ -209,19 +209,13 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "WaitForIntake"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "H1-R6R"
+                  "name": "IntakeCoral"
                 }
               },
               {
@@ -229,15 +223,41 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 0.5
+                        "name": "WaitForIntake"
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "parallel",
                       "data": {
-                        "name": "L4Position"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "H1-R6L"
+                            }
+                          },
+                          {
+                            "type": "sequential",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "wait",
+                                  "data": {
+                                    "waitTime": 0.55
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "L4Position"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
@@ -249,7 +269,7 @@
         {
           "type": "named",
           "data": {
-            "name": "DriveToReefRight"
+            "name": "DriveToReefLeft"
           }
         },
         {
