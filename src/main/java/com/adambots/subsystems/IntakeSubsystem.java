@@ -53,7 +53,8 @@ public class IntakeSubsystem extends SubsystemBase {
     System.out.println("Calling Intake");
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
 
-    goalVelocity = 8.8;
+    goalVelocity = IntakeConstants.kMaxPIDTarget;
+    // goalVelocity = 8.8;
   }
 
   public void intakeCoral(double speed) {
