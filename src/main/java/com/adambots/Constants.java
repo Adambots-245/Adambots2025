@@ -159,6 +159,8 @@ public final class Constants {
         public static final Pose2d S1_POSE2D = new Pose2d(new Translation2d(1.33, 6.76), new Rotation2d(Math.toRadians(44)));
         public static final Pose2d S2_POSE2D = new Pose2d(new Translation2d(1.40, 5.45), new Rotation2d(Math.toRadians(0)));
         public static final Pose2d S3_POSE2D = new Pose2d(new Translation2d(1.33, 4.26), new Rotation2d(Math.toRadians(-44)));
+
+        public static final double HumanPlayerCANrangeDist = 5.9;
     }
 
     // Subystem Constants go here
@@ -236,10 +238,10 @@ public final class Constants {
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
-        public static double kVelocityFeedforward = 0.15;
-        public static double kElevatorCruiseVelocity = 40000.0;
-        public static double kElevatorAcceleration = 80000.0;
-        public static double kElevatorJerk = 400000.0;
+        public static double kVelocityFeedforward = 0.45;
+        public static double kElevatorCruiseVelocity = 400;
+        public static double kElevatorAcceleration = 1000.0;
+        public static double kElevatorJerk = 4000.0;
         }
     // Command Constants go here
 }

@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
 import org.photonvision.targeting.PhotonPipelineResult;
 
+import com.adambots.RobotMap;
+import com.adambots.Constants.AutoConstants;
 import com.adambots.subsystems.SwerveSubsystem;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -462,6 +464,17 @@ public class DriveCommands {
                     true,
                     false);
         });
+    }
+
+    public Command driveUntilCANrangeCommand(double rangeDistanceinInches, double speedInMetersPerSecond) {
+        return Commands.run(() -> {
+            subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0));
+        }).until(() -> {
+            double currentDistance = RobotMap.HPSrange.getDistanceInInches();
+            return currentDistance <= rangeDistanceinInches;
+        }).andThen(
+            Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))
+        );
     }
 
     /**

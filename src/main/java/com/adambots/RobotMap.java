@@ -67,11 +67,13 @@ public class RobotMap {
     public static final int kBottomCoralServoChannel = 2;
     public static final int kGripperAlgaeServoChannel = 1;
     public static final int kRunnerAlgaeServoChannel = 2;
-    public static final int kCANrangePort = 35;
+    public static final int kCANrangePort = 60;
     public static final int kServoHubPort = 45;
     public static final int kMinionPort = 48;
     public static final int kClimbMotorPort = 19;
     public static final int kClimbLimitSwitchPort = 4; 
+
+    public static final int kHPSrangePort = 35;
 
     // Operator Interface Ports (Joystick and XBoxControllers)
     public static final int kJoystickControllerPort = 0;
@@ -96,6 +98,7 @@ public class RobotMap {
     public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
     public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, true);
+    public static final BaseDistanceSensor HPSrange = new CANRangeSensor(kHPSrangePort, true);
 
 
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);

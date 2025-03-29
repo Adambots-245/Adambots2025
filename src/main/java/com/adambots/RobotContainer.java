@@ -2,6 +2,7 @@ package com.adambots;
 
 import java.io.File;
 
+import com.adambots.Constants.AutoConstants;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.commands.HangCommands;
@@ -24,6 +25,7 @@ import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.revrobotics.spark.config.SmartMotionConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -284,6 +286,11 @@ public class RobotContainer {
 
         Buttons.leftStickUp.whileTrue(elevatorCommands.moveWristUp());
         Buttons.leftStickDown.whileTrue(elevatorCommands.moveWristDown());
+
+        // Buttons.XboxStartButton.whileTrue(driveCommands.driveUntilCANrangeCommand(AutoConstants.HumanPlayerCANrangeDist, 1));
+
+        Dash.add("HPS CANrange Dist", ()-> RobotMap.HPSrange.getDistanceInInches());
+
 
         SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
         SmartDashboard.putData("Stop Intake Coral", intakeCommands.stopIntakeCoral());

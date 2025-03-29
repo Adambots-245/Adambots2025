@@ -73,8 +73,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setInverted(true);
 
         elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
-        elevatorMotor.configureCurrentLimits(40.0, 30.0, 1500.0);
+        // elevatorMotor.configureCurrentLimits(40.0, 30.0, 1500.0);
         elevatorMotor.enableVoltageCompensation(12.0);
+        ((TalonFXMotor)elevatorMotor).enableFOC();
     }
 
     private void setElevatorPosition(ElevatorProperties properties) {
@@ -101,9 +102,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         double velocityFeedforward = 0;
 
         if (distance > 0.5) {
+            System.out.println("Feedforward Distance" + distance);
             // Apply velocity feedforward in the direction of movement
             velocityFeedforward = Math.signum(rotations - currentPos) *
                     ElevatorConstants.kVelocityFeedforward;
+
+            ((TalonFXMotor)elevatorMotor).setFeedForward(velocityFeedforward);
         }
 
         // Apply both position control and velocity feedforward
@@ -156,7 +160,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                     state,
                     state.properties,
                     () -> true, // No check needed for position control
-                    this::setElevatorPosition);
+                    this::setElevatorPositionWithMagic);
         } else {
             holdElevatorPosition();
         }

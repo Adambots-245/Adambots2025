@@ -46,6 +46,8 @@ import com.ctre.phoenix6.signals.*;
 public class TalonFXMotor implements BaseMotor {
     private final TalonFX motor;
     private final boolean isKraken;
+    private boolean focFlag = false;
+    private double feedForward = 0.0;
 
     /**
      * Constructs a TalonFXMotor instance.
@@ -102,16 +104,16 @@ public class TalonFXMotor implements BaseMotor {
     public void set(ControlMode mode, double value) {
         switch (mode) {
             case PERCENT_OUTPUT:
-                motor.setControl(new DutyCycleOut(value));
+                motor.setControl(new DutyCycleOut(value).withEnableFOC(focFlag));
                 break;
             case POSITION:
-                motor.setControl(new PositionDutyCycle(value).withSlot(0));
+                motor.setControl(new PositionDutyCycle(value).withSlot(0).withEnableFOC(focFlag));
                 break;
             case VELOCITY:
-                motor.setControl(new VelocityDutyCycle(value).withSlot(0));
+                motor.setControl(new VelocityDutyCycle(value).withSlot(0).withEnableFOC(focFlag));
                 break;
             case VOLTAGE:
-                motor.setControl(new DutyCycleOut(value));
+                motor.setControl(new DutyCycleOut(value).withEnableFOC(focFlag));
                 break;
             case CURRENT:
                 if (isKraken) {
@@ -120,11 +122,18 @@ public class TalonFXMotor implements BaseMotor {
                 } else {
                     // For standard TalonFX, use duty cycle control since direct current control
                     // isn't available
-                    motor.setControl(new DutyCycleOut(value));
+                    motor.setControl(new DutyCycleOut(value).withEnableFOC(focFlag));
                 }
                 break;
             case MOTION_MAGIC:
-                motor.setControl(new MotionMagicDutyCycle(value).withSlot(0));
+                if (feedForward != 0) {
+                    motor.setControl(new MotionMagicDutyCycle(value).withSlot(0).withEnableFOC(focFlag)
+                            .withFeedForward(feedForward));
+
+                } else {
+
+                    motor.setControl(new MotionMagicDutyCycle(value).withSlot(0).withEnableFOC(focFlag));
+                }
                 break;
             case FOLLOWER:
                 // Follow another Talon FX controller
@@ -132,6 +141,14 @@ public class TalonFXMotor implements BaseMotor {
                 motor.setControl(new com.ctre.phoenix6.controls.Follower(deviceID, false));
                 break;
         }
+    }
+
+    public void enableFOC() {
+        focFlag = true;
+    }
+
+    public void setFeedForward(double value){
+        feedForward = value;
     }
 
     /**
@@ -307,6 +324,7 @@ public class TalonFXMotor implements BaseMotor {
 
     /**
      * Set Position with an Arbitrary Feed Forward
+     * 
      * @param activePidSlot
      * @param rotations
      * @param arbFeedForward
