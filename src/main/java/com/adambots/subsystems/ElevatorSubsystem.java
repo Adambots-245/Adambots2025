@@ -112,6 +112,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Apply both position control and velocity feedforward
         elevatorMotor.set(ControlMode.MOTION_MAGIC, rotations);
+        // elevatorMotor.set(ControlMode.MOTION_MAGIC_FOC_TORQUE, rotations);
     }
 
     private void setPosition(double rotations) {

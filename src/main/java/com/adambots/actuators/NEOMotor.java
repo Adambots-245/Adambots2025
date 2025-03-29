@@ -67,6 +67,9 @@ public class NEOMotor implements BaseMotor {
                 // Use Smart Motion for motion profiling
                 closedLoopController.setReference(value, SparkBase.ControlType.kSmartMotion);
                 break;
+            case MOTION_MAGIC_FOC_TORQUE:
+                closedLoopController.setReference(value, SparkBase.ControlType.kSmartMotion);
+                break;
             case FOLLOWER:
                 config.follow((int) value);
                 break;

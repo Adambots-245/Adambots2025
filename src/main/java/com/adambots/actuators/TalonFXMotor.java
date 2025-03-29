@@ -131,9 +131,11 @@ public class TalonFXMotor implements BaseMotor {
                             .withFeedForward(feedForward));
 
                 } else {
-
                     motor.setControl(new MotionMagicDutyCycle(value).withSlot(0).withEnableFOC(focFlag));
                 }
+                break;
+            case MOTION_MAGIC_FOC_TORQUE:
+                motor.setControl(new MotionMagicTorqueCurrentFOC(value).withSlot(0).withFeedForward(feedForward));
                 break;
             case FOLLOWER:
                 // Follow another Talon FX controller

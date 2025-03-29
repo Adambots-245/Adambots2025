@@ -18,6 +18,7 @@ public interface BaseMotor extends BaseActuator{
         VOLTAGE,
         CURRENT,
         MOTION_MAGIC,
+        MOTION_MAGIC_FOC_TORQUE,
         FOLLOWER
     }
 
