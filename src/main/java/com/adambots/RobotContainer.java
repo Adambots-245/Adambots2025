@@ -448,6 +448,11 @@ public class RobotContainer {
         if (DriverStation.isTest()) {
             swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
         }
+
+        intakesubsystem.setDefaultCommand(
+                new RunCommand(
+                        () -> intakesubsystem.intakeCoral(Buttons.applyCurve(Buttons.XboxController.getLeftY(), Buttons.forwardCurve) * 0.25), 
+                intakesubsystem));
     }
 
     public static SwerveInputStream getDriveAngularVelocity() {
