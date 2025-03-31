@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import com.adambots.Robot;
@@ -146,12 +147,15 @@ public class DriveToLocationAdvanced extends Command {
                 }
             } else {
                 if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
-                    idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
+                    idSeen = findClosestId(humanPlayerTagIds);
+                    // idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
                 } else if (alignLocation == AlignLocation.BARGE_LEFT || alignLocation == AlignLocation.BARGE_MIDDLE
                         || alignLocation == AlignLocation.BARGE_RIGHT) {
-                    idSeen = swerveSubsystem.getVision().hasID(bargeTagIds);
+                    idSeen = findClosestId(bargeTagIds);
+                    // idSeen = swerveSubsystem.getVision().hasID(bargeTagIds);
                 } else {
-                    idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
+                    idSeen = findClosestId(reefTagIds);
+                    // idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
                 }
             }
         // }
@@ -292,5 +296,23 @@ public class DriveToLocationAdvanced extends Command {
         swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0, 0, 0));
         // Set the LED animation to a predefined pattern (Larson animation).
         caNdleSubsystem.setAnimation(AnimationTypes.Larson);
+    }
+
+    public int findClosestId(int[] tagIDs){
+        ArrayList<Integer> tagsSeenArray = new ArrayList<Integer>();
+        tagsSeenArray = swerveSubsystem.getVision().hasID(bargeTagIds);
+        if (tagsSeenArray.isEmpty()){
+            return -1;
+        }
+        int minDistId = tagsSeenArray.get(0);
+        double minDist = swerveSubsystem.getPose().getTranslation().getDistance(PhotonVision.getAprilTagPose(minDistId, new Transform2d()).getTranslation());
+        for (int id : tagsSeenArray){
+            double distance = swerveSubsystem.getPose().getTranslation().getDistance(PhotonVision.getAprilTagPose(id, new Transform2d()).getTranslation());
+            if (distance < minDist){
+                minDist = distance;
+                minDistId = id;
+            }
+        }
+        return minDistId;
     }
 }
