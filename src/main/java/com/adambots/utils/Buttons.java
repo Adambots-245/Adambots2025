@@ -7,6 +7,7 @@
 
 package com.adambots.utils;
 
+import java.util.ArrayList;
 import java.util.function.DoubleSupplier;
 
 import com.adambots.RobotMap;
@@ -59,6 +60,8 @@ public class Buttons {
         public static final Trigger XboxDPadSW = XboxController.pov(225);
         public static final Trigger XboxDPadW = XboxController.pov(270);
         public static final Trigger XboxDPadNW = XboxController.pov(315);
+
+        public static Curve forwardCurve = new Curve("0.0*,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0*,0.0,0.01,0.01,0.02,0.02,0.03,0.04,0.04,0.05,0.05*,0.06,0.06,0.07,0.07,0.08,0.08,0.09,0.09,0.1,0.1,0.11,0.11,0.12,0.12,0.13,0.13,0.14,0.14,0.15,0.15,0.16,0.16,0.17,0.17,0.18,0.18,0.19,0.19,0.2,0.2*,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4*,0.42,0.44,0.46,0.48,0.5,0.52,0.54,0.56,0.58,0.6*,0.62,0.64,0.66,0.68,0.7,0.72,0.74,0.76,0.78,0.8,0.82,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1.0*");
 
         // Joystick Buttons
         public static final Trigger JoystickButton1 = ex3dPro.button(1);
@@ -159,6 +162,14 @@ public class Buttons {
         // public static Curve rotateCurve = new
         // Curve("0.0*,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0*,0.0,0.01,0.01,0.02,0.02,0.02,0.03,0.03,0.04,0.04,0.04,0.05,0.05,0.06,0.06,0.06,0.07,0.07,0.08,0.08*,0.09,0.09,0.1,0.1,0.11,0.12,0.12,0.13,0.13,0.14,0.15,0.15,0.16,0.16,0.17,0.18,0.18,0.19,0.19,0.2*,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.3,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.4*,0.42,0.44,0.46,0.48,0.5,0.52,0.54,0.56,0.58,0.6,0.62,0.64,0.66,0.68,0.7,0.72,0.74,0.76,0.78,0.8,0.82,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1.0*");
 
+        /** 
+        Applies a custom curve to an input and returns the result
+        */
+        public static double applyCurve (double rawInput, Curve curve) {
+                return curve.lookup((int)Math.floor(Math.abs(rawInput)*100))*Math.signum(rawInput);          
+	}
+
+
         // Sigmoid Curve to smooth input values. Use this if you want a smooth curve.
         // Mr. B - DO NOT REMOVE THIS FUNCTION EVEN IF IT IS NOT USED
         public static double smoothInput(double input) {
@@ -220,6 +231,30 @@ public class Buttons {
                 // System.out.println("Rotate: " + ex3dPro.getZ());
                 return -applyCurve(ex3dPro.getZ());
         };
+
+        public static class Curve{
+                Double[] lookupTable;
+
+                //Parses data string into lookupTable on initialization
+                public Curve(String data){
+                        ArrayList<Double> vals = new ArrayList<Double>(); //Create empty ArrayList
+
+                        String[] input = data.trim().split(","); //Split string by comma to get each value
+                        for (String str : input) {
+                                if (str.contains("*")) {
+                                        vals.add(Double.valueOf(str.substring(0, str.length()-1))); //For each value remove the marker if there is one and append the number to vals
+                                } else {
+                                        vals.add(Double.valueOf(str));
+                                }
+                        }
+
+                        this.lookupTable = vals.toArray(new Double[vals.size()]); //Convert vals (ArrayList) to lookupTable (Double[]) for faster lookup time and ease of use
+                }
+
+                public double lookup(int index){
+                        return lookupTable[index];
+                }
+        }
 
         /**
          * Rumble the XBox Controller

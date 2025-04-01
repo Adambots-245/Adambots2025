@@ -50,7 +50,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void intakeCoral() {
-    System.out.println("Calling Intake");
+    // System.out.println("Calling Intake");
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
 
     goalVelocity = IntakeConstants.kMaxPIDTarget;
@@ -58,10 +58,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void intakeCoral(double speed) {
-    System.out.println("Calling Intake");
+    // System.out.println("Calling Intake");
     coralIntakeSpeed = speed;
 
     goalVelocity = 12.5;
+  }
+
+  public void setMotorSpeed(double speed) {
+    minionMotor.set(speed);
+    goalVelocity = -1;
   }
 
 
@@ -99,7 +104,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     double intakeSpeed = intakePID.calculate(minionMotor.getVelocity(), goalVelocity);
 
-    if (goalVelocity == 0) {
+    if (goalVelocity == -1){
+
+    } else if (goalVelocity == 0) {
       minionMotor.set(0);
     } else {
       minionMotor.set(intakeSpeed);

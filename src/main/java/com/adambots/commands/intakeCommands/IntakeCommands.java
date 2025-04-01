@@ -21,7 +21,7 @@ public class IntakeCommands {
 
     public Command intakeCoral() {
         return Commands.runOnce(() -> {
-                System.out.println("Intake Command Running");
+                // System.out.println("Intake Command Running");
                 intakeSubsystem.intakeCoral();
             }, intakeSubsystem)
             .andThen(Commands.waitUntil(intakeSubsystem::isDetectingCoral)).andThen(() -> System.out.println("DETECTED"))

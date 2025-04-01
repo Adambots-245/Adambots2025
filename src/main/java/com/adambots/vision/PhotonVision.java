@@ -275,7 +275,8 @@ public class PhotonVision {
 
   }
 
-  public int hasID(int[] tagIDs) {
+  public ArrayList<Integer> hasID(int[] tagIDs) {
+    ArrayList<Integer> tagsSeenArray = new ArrayList<Integer>();
     for (Cameras camera : Cameras.values()) {
       for (PhotonPipelineResult result : camera.resultsList) {
         // System.out.println("RESULTS " + result);
@@ -286,14 +287,14 @@ public class PhotonVision {
           for (PhotonTrackedTarget i : result.getTargets()) {
             for (int id : tagIDs) {
               if (i.getFiducialId() == id) {
-                return i.getFiducialId();
+                  tagsSeenArray.add(id);
               }
             }
           }
         }
       }
     }
-    return -1;
+    return tagsSeenArray;
   }
 
 
