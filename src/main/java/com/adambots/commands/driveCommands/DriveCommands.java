@@ -537,7 +537,7 @@ public class DriveCommands {
         return swerveDrive;
     }
 
-    public Command disableCenterCam(){
+    public Command disableBackCam(){
         return Commands.runOnce(
             ()->{
                 // PhotonVision.Cameras.CENTER_CAM.disableCamera();
@@ -546,11 +546,29 @@ public class DriveCommands {
         );
     }
 
-    public Command enableCenterCam(){
+    public Command enableBackCam(){
         return Commands.runOnce(
             () -> {
                 // PhotonVision.Cameras.CENTER_CAM.enableCamera();
                 PhotonVision.enableCenterCam();
+            }
+        );
+    }
+
+    public Command disableFrontCams(){
+        return Commands.runOnce(
+            () -> {
+                PhotonVision.Cameras.LEFT_CAM.disableCamera();
+                PhotonVision.Cameras.RIGHT_CAM.disableCamera();
+            }
+        );
+    }
+
+    public Command enableFrontCams(){
+        return Commands.runOnce(
+            () -> {
+                PhotonVision.Cameras.LEFT_CAM.enableCamera();
+                PhotonVision.Cameras.RIGHT_CAM.enableCamera();
             }
         );
     }

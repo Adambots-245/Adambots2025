@@ -232,8 +232,11 @@ public class RobotContainer {
                 .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
 
         Buttons.JoystickButton14
-                .onTrue(driveCommands.disableCenterCam());
-        Buttons.JoystickButton15.onTrue(driveCommands.enableCenterCam());
+                .onTrue(driveCommands.disableBackCam());
+                // .onTrue(driveCommands.disableFrontCams());
+        Buttons.JoystickButton15
+                .onTrue(driveCommands.enableBackCam());
+                // .onTrue(driveCommands.enableFrontCams());
 
         // Buttons.JoystickButton14
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
