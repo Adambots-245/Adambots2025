@@ -191,7 +191,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * Setup the photon vision class.
    */
   public void setupPhotonVision() {
-    vision = new PhotonVision(swerveDrive::getPose, swerveDrive.field);
+    vision = new PhotonVision(swerveDrive::getPose, swerveDrive.field, this);
   }
 
   private void setupPathPlanner() {
@@ -318,6 +318,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
+      vision.updateHeadingData(Timer.getFPGATimestamp(), getHeading()); // added for constrained SOLVE PNP
       vision.updatePoseEstimation(swerveDrive);
     }
 

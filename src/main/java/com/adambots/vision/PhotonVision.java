@@ -7,6 +7,7 @@ package com.adambots.vision;
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
+import org.photonvision.PhotonPoseEstimator.ConstrainedSolvepnpParams;
 
 import java.awt.Desktop;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.adambots.Robot;
+import com.adambots.subsystems.SwerveSubsystem;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -45,6 +47,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -82,6 +85,7 @@ public class PhotonVision {
    */
   private Field2d field2d;
   int counter = 0;
+  private static SwerveSubsystem driveSubsystem;
 
   /**
    * Constructor for the Vision class.
@@ -90,9 +94,10 @@ public class PhotonVision {
    *                    {@link SwerveDrive#getPose()}
    * @param field       Current field, should be {@link SwerveDrive#field}
    */
-  public PhotonVision(Supplier<Pose2d> currentPose, Field2d field) {
+  public PhotonVision(Supplier<Pose2d> currentPose, Field2d field, SwerveSubsystem subsystem) {
     this.currentPose = currentPose;
     this.field2d = field;
+    this.driveSubsystem = subsystem;
 
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
@@ -497,8 +502,10 @@ public class PhotonVision {
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
       poseEstimator = new PhotonPoseEstimator(PhotonVision.fieldLayout,
-          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          PoseStrategy.CONSTRAINED_SOLVEPNP,
           robotToCamTransform);
+
+      // Still use LOWEST_AMBIGUITY as a fallback strategy
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
       this.singleTagStdDevs = singleTagStdDevs;
@@ -643,9 +650,27 @@ public class PhotonVision {
      *         estimation.
      */
     private void updateEstimatedGlobalPose() {
+      // Create heading data
+      Rotation2d currentHeading = null;
+      if (Robot.isReal()) {
+        currentHeading = driveSubsystem.getHeading();
+        // Add heading data with timestamp
+        poseEstimator.addHeadingData(Timer.getFPGATimestamp(), currentHeading);
+      } else if (cameraSim != null) {
+         // For simulation, we can use the visionSim's robot pose if available
+          // var simPose = visionSim.getRobotPose();
+          // if (simPose != null) {
+          //     currentHeading = simPose.getRotation().toRotation2d();
+          //     poseEstimator.addHeadingData(Timer.getFPGATimestamp(), currentHeading);
+          // }
+      }
+
+      // Create constrained parameters for the solver
+      ConstrainedSolvepnpParams params = new ConstrainedSolvepnpParams(true, 0.0);
+
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
       for (var change : resultsList) {
-        visionEst = poseEstimator.update(change);
+        // visionEst = poseEstimator.update(change);
         // try {
         // if (visionEst != null)
         // // System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX()
@@ -654,6 +679,12 @@ public class PhotonVision {
         // // TODO: handle exception
         // System.out.println("Pose died!?! ( big problem !!!)");
         // }
+        visionEst = poseEstimator.update(
+            change, // PhotonPipelineResult
+            Optional.empty(), // Camera matrix (not needed)
+            Optional.empty(), // Distortion coefficients (not needed)
+            Optional.of(params) // Constrained parameters
+        );
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       estimatedRobotPose = visionEst;
@@ -724,6 +755,19 @@ public class PhotonVision {
       // camera.setPipelineIndex(0);
       camera.setDriverMode(false);
 
+    }
+  }
+
+  /**
+   * Updates the heading data for all cameras.
+   * Must be called periodically for CONSTRAINED_SOLVEPNP to work.
+   * 
+   * @param timestamp The current timestamp
+   * @param heading   The current robot heading
+   */
+  public void updateHeadingData(double timestamp, Rotation2d heading) {
+    for (Cameras camera : Cameras.values()) {
+      camera.poseEstimator.addHeadingData(timestamp, heading);
     }
   }
 }
