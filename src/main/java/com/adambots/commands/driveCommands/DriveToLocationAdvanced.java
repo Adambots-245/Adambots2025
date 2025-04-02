@@ -62,6 +62,8 @@ public class DriveToLocationAdvanced extends Command {
 
     private Pose2d currentPose;
 
+    private DriveCommands driveCommands;
+
     /**
      * Constructor for DriveToLocationAdvanced.
      *
@@ -74,13 +76,14 @@ public class DriveToLocationAdvanced extends Command {
      * @param caNdleSubsystem  The CANdle subsystem for LED feedback.
      */
     public DriveToLocationAdvanced(SwerveSubsystem swerveSubsystem, Supplier<Integer> aprilTagSupplier,
-            AlignLocation alignLocation, CANdleSubsystem caNdleSubsystem) {
+            AlignLocation alignLocation, CANdleSubsystem caNdleSubsystem, DriveCommands driveCommands) {
         // Require the swerve subsystem for this command.
         addRequirements(swerveSubsystem);
         this.swerveSubsystem = swerveSubsystem;
         this.caNdleSubsystem = caNdleSubsystem;
         this.alignLocation = alignLocation;
         this.aprilTagSupplierSim = aprilTagSupplier;
+        this.driveCommands = driveCommands;
 
         // Create PID constants for the drive controller tuning.
         PIDConstants translationConstants = new PIDConstants(2.0, 0.0, 0.0);
@@ -112,6 +115,17 @@ public class DriveToLocationAdvanced extends Command {
             reefTagIds = new int[] { 17, 18, 19, 20, 21, 22 };
             humanPlayerTagIds = new int[] { 12, 13 };
             bargeTagIds = new int[] { 14 };
+        }
+
+        if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE){
+            System.out.println("TEST");
+            driveCommands.enableFrontCams().schedule();
+            driveCommands.disableBackCam().schedule();
+        }
+
+        if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT){
+            driveCommands.disableFrontCams().schedule();
+            driveCommands.enableBackCam().schedule();
         }
     }
 
@@ -292,5 +306,18 @@ public class DriveToLocationAdvanced extends Command {
         swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0, 0, 0));
         // Set the LED animation to a predefined pattern (Larson animation).
         caNdleSubsystem.setAnimation(AnimationTypes.Larson);
+
+        driveCommands.enableFrontCams();
+        driveCommands.disableBackCam();
+
+        // if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE){
+        //     driveCommands.enableFrontCams();
+        //     driveCommands.disableBackCam();
+        // }
+
+        // if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT){
+        //     driveCommands.disableFrontCams();
+        //     driveCommands.enableBackCam();
+        // }
     }
 }

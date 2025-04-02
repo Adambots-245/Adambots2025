@@ -417,8 +417,8 @@ public class PhotonVision {
             Units.inchesToMeters(8)),
         VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
     CENTER_CAM("Middle",
-        new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(180)),
-        new Translation3d(Units.inchesToMeters(0),
+        new Rotation3d(0, Units.degreesToRadians(-50), Units.degreesToRadians(180)),
+        new Translation3d(Units.inchesToMeters(10),
             Units.inchesToMeters(0),
             Units.inchesToMeters(41)),
         VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),;
@@ -497,7 +497,7 @@ public class PhotonVision {
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
       poseEstimator = new PhotonPoseEstimator(PhotonVision.fieldLayout,
-          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          PoseStrategy.AVERAGE_BEST_TARGETS,
           robotToCamTransform);
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
@@ -716,13 +716,13 @@ public class PhotonVision {
     }
 
     public void disableCamera() {
-      // camera.setPipelineIndex(1);
-      camera.setDriverMode(true);
+      camera.setPipelineIndex(1);
+      // camera.setDriverMode(true);
     }
 
     public void enableCamera() {
-      // camera.setPipelineIndex(0);
-      camera.setDriverMode(false);
+      camera.setPipelineIndex(0);
+      // camera.setDriverMode(false);
 
     }
   }
