@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import swervelib.SwerveController;
+
+import com.adambots.vision.PhotonVision;
 import com.adambots.vision.PhotonVision.*;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -533,5 +535,23 @@ public class DriveCommands {
 
     public SwerveDrive getSwerveDrive() {
         return swerveDrive;
+    }
+
+    public Command disableCenterCam(){
+        return Commands.runOnce(
+            ()->{
+                // PhotonVision.Cameras.CENTER_CAM.disableCamera();
+                PhotonVision.disableCenterCam();
+            }
+        );
+    }
+
+    public Command enableCenterCam(){
+        return Commands.runOnce(
+            () -> {
+                // PhotonVision.Cameras.CENTER_CAM.enableCamera();
+                PhotonVision.enableCenterCam();
+            }
+        );
     }
 }

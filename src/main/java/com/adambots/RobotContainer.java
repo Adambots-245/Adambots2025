@@ -231,9 +231,9 @@ public class RobotContainer {
         Buttons.JoystickButton13
                 .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
 
-        // Buttons.JoystickButton14
-        //         .onTrue(new InstantCommand(PhotonVision.Cameras.LEFT_CAM));
-
+        Buttons.JoystickButton14
+                .onTrue(driveCommands.disableCenterCam());
+        Buttons.JoystickButton15.onTrue(driveCommands.enableCenterCam());
 
         // Buttons.JoystickButton14
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,

@@ -296,7 +296,6 @@ public class PhotonVision {
     return -1;
   }
 
-
   /**
    * Vision simulation.
    *
@@ -311,16 +310,17 @@ public class PhotonVision {
    * photon vision on localhost.
    */
   private void openSimCameraViews() {
-    // if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      // try
-      // {
-      // Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
-      // Desktop.getDesktop().browse(new URI("http://localhost:1184/"));
-      // Desktop.getDesktop().browse(new URI("http://localhost:1186/"));
-      // } catch (IOException | URISyntaxException e)
-      // {
-      // e.printStackTrace();
-      // }
+    // if (Desktop.isDesktopSupported() &&
+    // Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+    // try
+    // {
+    // Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
+    // Desktop.getDesktop().browse(new URI("http://localhost:1184/"));
+    // Desktop.getDesktop().browse(new URI("http://localhost:1186/"));
+    // } catch (IOException | URISyntaxException e)
+    // {
+    // e.printStackTrace();
+    // }
     // }
   }
 
@@ -405,23 +405,23 @@ public class PhotonVision {
      * //
      */
     LEFT_CAM("Left",
-    new Rotation3d(0, 0, Units.degreesToRadians(-30)),
-    new Translation3d(Units.inchesToMeters(15),
-    Units.inchesToMeters(11.75),
-    Units.inchesToMeters(8)),
-    VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+        new Rotation3d(0, 0, Units.degreesToRadians(-30)),
+        new Translation3d(Units.inchesToMeters(15),
+            Units.inchesToMeters(11.75),
+            Units.inchesToMeters(8)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
     RIGHT_CAM("Right",
-    new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(30)),
-    new Translation3d(Units.inchesToMeters(15),
-    Units.inchesToMeters(-11.75),
-    Units.inchesToMeters(8)),
-    VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+        new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(30)),
+        new Translation3d(Units.inchesToMeters(15),
+            Units.inchesToMeters(-11.75),
+            Units.inchesToMeters(8)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
     CENTER_CAM("Middle",
-    new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(180)),
-    new Translation3d(Units.inchesToMeters(0),
-    Units.inchesToMeters(0),
-    Units.inchesToMeters(41)),
-    VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),;
+        new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(180)),
+        new Translation3d(Units.inchesToMeters(0),
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(41)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),;
 
     /**
      * Latency alert to use when high latency is detected.
@@ -473,18 +473,22 @@ public class PhotonVision {
     private static boolean updatedCache = false;
 
     /**
-     * Construct a Photon Camera class with help. Standard deviations are fake values, experiment and determine
+     * Construct a Photon Camera class with help. Standard deviations are fake
+     * values, experiment and determine
      * estimation noise on an actual robot.
      *
-     * @param name                  Name of the PhotonVision camera found in the PV UI.
+     * @param name                  Name of the PhotonVision camera found in the PV
+     *                              UI.
      * @param robotToCamRotation    {@link Rotation3d} of the camera.
-     * @param robotToCamTranslation {@link Translation3d} relative to the center of the robot.
-     * @param singleTagStdDevs      Single AprilTag standard deviations of estimated poses from the camera.
-     * @param multiTagStdDevsMatrix Multi AprilTag standard deviations of estimated poses from the camera.
+     * @param robotToCamTranslation {@link Translation3d} relative to the center of
+     *                              the robot.
+     * @param singleTagStdDevs      Single AprilTag standard deviations of estimated
+     *                              poses from the camera.
+     * @param multiTagStdDevsMatrix Multi AprilTag standard deviations of estimated
+     *                              poses from the camera.
      */
     Cameras(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation,
-            Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix)
-    {
+        Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix) {
       latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 
       camera = new PhotonCamera(name);
@@ -493,21 +497,22 @@ public class PhotonVision {
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
 
       poseEstimator = new PhotonPoseEstimator(PhotonVision.fieldLayout,
-                                              PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                                              robotToCamTransform);
+          PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+          robotToCamTransform);
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
       this.singleTagStdDevs = singleTagStdDevs;
       this.multiTagStdDevs = multiTagStdDevsMatrix;
 
-      if (Robot.isSimulation())
-      {
+      if (Robot.isSimulation()) {
         SimCameraProperties cameraProp = new SimCameraProperties();
         // A 640 x 480 camera with a 100 degree diagonal FOV.
         cameraProp.setCalibration(960, 720, Rotation2d.fromDegrees(100));
-        // Approximate detection noise with average and standard deviation error in pixels.
+        // Approximate detection noise with average and standard deviation error in
+        // pixels.
         cameraProp.setCalibError(0.25, 0.08);
-        // Set the camera image capture framerate (Note: this is limited by robot loop rate).
+        // Set the camera image capture framerate (Note: this is limited by robot loop
+        // rate).
         cameraProp.setFPS(30);
         // The average and standard deviation in milliseconds of image data latency.
         cameraProp.setAvgLatencyMs(35);
@@ -710,6 +715,23 @@ public class PhotonVision {
       }
     }
 
+    public void disableCamera() {
+      // camera.setPipelineIndex(1);
+      camera.setDriverMode(true);
+    }
+
+    public void enableCamera() {
+      // camera.setPipelineIndex(0);
+      camera.setDriverMode(false);
+
+    }
   }
 
+  public static void disableCenterCam(){
+    Cameras.CENTER_CAM.disableCamera();
+  }
+
+  public static void enableCenterCam(){
+    Cameras.CENTER_CAM.enableCamera();
+  }
 }
