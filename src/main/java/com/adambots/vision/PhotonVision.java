@@ -726,12 +726,4 @@ public class PhotonVision {
 
     }
   }
-
-  public static void disableCenterCam(){
-    Cameras.CENTER_CAM.disableCamera();
-  }
-
-  public static void enableCenterCam(){
-    Cameras.CENTER_CAM.enableCamera();
-  }
 }

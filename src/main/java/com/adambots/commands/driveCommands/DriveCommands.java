@@ -540,8 +540,7 @@ public class DriveCommands {
     public Command disableBackCam(){
         return Commands.runOnce(
             ()->{
-                // PhotonVision.Cameras.CENTER_CAM.disableCamera();
-                PhotonVision.disableCenterCam();
+                PhotonVision.Cameras.CENTER_CAM.disableCamera();
             }
         );
     }
@@ -549,8 +548,7 @@ public class DriveCommands {
     public Command enableBackCam(){
         return Commands.runOnce(
             () -> {
-                // PhotonVision.Cameras.CENTER_CAM.enableCamera();
-                PhotonVision.enableCenterCam();
+                PhotonVision.Cameras.CENTER_CAM.enableCamera();
             }
         );
     }
