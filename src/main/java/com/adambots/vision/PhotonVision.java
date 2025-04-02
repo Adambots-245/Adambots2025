@@ -414,19 +414,19 @@ public class PhotonVision {
         new Translation3d(Units.inchesToMeters(15),
             Units.inchesToMeters(11.75),
             Units.inchesToMeters(8)),
-        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), null),
     RIGHT_CAM("Right",
         new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(30)),
         new Translation3d(Units.inchesToMeters(15),
             Units.inchesToMeters(-11.75),
             Units.inchesToMeters(8)),
-        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), null),
     CENTER_CAM("Middle",
         new Rotation3d(0, Units.degreesToRadians(-40), Units.degreesToRadians(180)),
         new Translation3d(Units.inchesToMeters(0),
             Units.inchesToMeters(0),
             Units.inchesToMeters(41)),
-        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),;
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), getHumanPlayerTagIDs());
 
     /**
      * Latency alert to use when high latency is detected.
@@ -478,6 +478,13 @@ public class PhotonVision {
     private static boolean updatedCache = false;
 
     /**
+     * Array of tag IDs that this camera is allowed to use for pose estimation.
+     * If null, all tags are allowed.
+     */
+    private final int[] allowedTagIDs;
+
+
+    /**
      * Construct a Photon Camera class with help. Standard deviations are fake
      * values, experiment and determine
      * estimation noise on an actual robot.
@@ -493,10 +500,12 @@ public class PhotonVision {
      *                              poses from the camera.
      */
     Cameras(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation,
-        Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix) {
+        Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix, int[] allowedTagIDs) {
       latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 
       camera = new PhotonCamera(name);
+
+      this.allowedTagIDs = allowedTagIDs;
 
       // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
       robotToCamTransform = new Transform3d(robotToCamTranslation, robotToCamRotation);
@@ -657,37 +666,75 @@ public class PhotonVision {
         // Add heading data with timestamp
         poseEstimator.addHeadingData(Timer.getFPGATimestamp(), currentHeading);
       } else if (cameraSim != null) {
-         // For simulation, we can use the visionSim's robot pose if available
-          // var simPose = visionSim.getRobotPose();
-          // if (simPose != null) {
-          //     currentHeading = simPose.getRotation().toRotation2d();
-          //     poseEstimator.addHeadingData(Timer.getFPGATimestamp(), currentHeading);
-          // }
+        // For simulation, we can use the visionSim's robot pose if available
+        // var simPose = visionSim.getRobotPose();
+        // if (simPose != null) {
+        // currentHeading = simPose.getRotation().toRotation2d();
+        // poseEstimator.addHeadingData(Timer.getFPGATimestamp(), currentHeading);
+        // }
       }
 
       // Create constrained parameters for the solver
       ConstrainedSolvepnpParams params = new ConstrainedSolvepnpParams(true, 0.0);
 
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
-      for (var change : resultsList) {
-        // visionEst = poseEstimator.update(change);
-        // try {
-        // if (visionEst != null)
-        // // System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX()
-        // + "y: " + visionEst.get().estimatedPose.getY());
-        // } catch (Exception e) {
-        // // TODO: handle exception
-        // System.out.println("Pose died!?! ( big problem !!!)");
-        // }
-        visionEst = poseEstimator.update(
-            change, // PhotonPipelineResult
-            Optional.empty(), // Camera matrix (not needed)
-            Optional.empty(), // Distortion coefficients (not needed)
-            Optional.of(params) // Constrained parameters
-        );
-        updateEstimationStdDevs(visionEst, change.getTargets());
-      }
-      estimatedRobotPose = visionEst;
+        for (var result : resultsList) {
+            // Skip this result if there are no targets
+            if (!result.hasTargets()) {
+                continue;
+            }
+            
+            // Check if this camera has tag filtering
+            if (allowedTagIDs != null && allowedTagIDs.length > 0) {
+                // Check if any of the targets match our allowed tag IDs
+                boolean hasAllowedTag = false;
+                for (PhotonTrackedTarget target : result.getTargets()) {
+                    for (int id : allowedTagIDs) {
+                        if (target.getFiducialId() == id) {
+                            hasAllowedTag = true;
+                            break;
+                        }
+                    }
+                    if (hasAllowedTag) break;
+                }
+                
+                // Skip this result if it doesn't have any allowed tags
+                if (!hasAllowedTag) {
+                    continue;
+                }
+            }
+            
+            // Update with the result
+            visionEst = poseEstimator.update(
+                result,
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(params)
+            );
+            
+            // After getting the pose estimate, verify it used allowed tags if filtering is enabled
+            if (visionEst.isPresent() && allowedTagIDs != null && allowedTagIDs.length > 0) {
+                boolean usedAllowedTag = false;
+                for (PhotonTrackedTarget usedTarget : visionEst.get().targetsUsed) {
+                    for (int id : allowedTagIDs) {
+                        if (usedTarget.getFiducialId() == id) {
+                            usedAllowedTag = true;
+                            break;
+                        }
+                    }
+                    if (usedAllowedTag) break;
+                }
+                
+                // If the pose didn't use any allowed tags, discard it
+                if (!usedAllowedTag) {
+                    visionEst = Optional.empty();
+                    continue;
+                }
+            }
+            
+            updateEstimationStdDevs(visionEst, result.getTargets());
+        }
+        estimatedRobotPose = visionEst;
     }
 
     /**
@@ -769,5 +816,46 @@ public class PhotonVision {
     for (Cameras camera : Cameras.values()) {
       camera.poseEstimator.addHeadingData(timestamp, heading);
     }
+  }
+
+  /**
+   * Gets a list of tag IDs that are on the human player station.
+   * 
+   * @return Array of human player station tag IDs
+   */
+  public static int[] getHumanPlayerTagIDs() {
+    // In the 2025 Reefscape field, tags 1,2,12,13 are human player station tags
+    // Modify these values based on the actual game field
+    return new int[] { 1, 2, 12, 13};
+  }
+
+  /**
+   * Filters the targets in the pipeline result to only include specified tag IDs.
+   * This method doesn't create a new result but returns a filtered list of
+   * targets.
+   * 
+   * @param result        The original pipeline result
+   * @param allowedTagIDs The tag IDs that should be included
+   * @return A list containing only the allowed targets
+   */
+  private List<PhotonTrackedTarget> filterTargetsByID(PhotonPipelineResult result, int[] allowedTagIDs) {
+    if (!result.hasTargets()) {
+      return new ArrayList<>(); // No targets to filter
+    }
+
+    // Create a list to hold only the allowed targets
+    List<PhotonTrackedTarget> filteredTargets = new ArrayList<>();
+
+    // Filter the targets
+    for (PhotonTrackedTarget target : result.getTargets()) {
+      for (int id : allowedTagIDs) {
+        if (target.getFiducialId() == id) {
+          filteredTargets.add(target);
+          break;
+        }
+      }
+    }
+
+    return filteredTargets;
   }
 }
