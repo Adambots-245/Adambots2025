@@ -23,6 +23,7 @@ import com.adambots.subsystems.WristSubsystem;
 import com.adambots.subsystems.WristSubsystem.WristState;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
+import com.adambots.vision.PhotonVision;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.revrobotics.spark.config.SmartMotionConfig;
@@ -229,6 +230,9 @@ public class RobotContainer {
                 .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
         Buttons.JoystickButton13
                 .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
+
+        // Buttons.JoystickButton14
+        //         .onTrue(new InstantCommand(PhotonVision.Cameras.LEFT_CAM));
 
 
         // Buttons.JoystickButton14
@@ -449,10 +453,10 @@ public class RobotContainer {
             swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
         }
 
-        intakesubsystem.setDefaultCommand(
-                new RunCommand(
-                        () -> intakesubsystem.intakeCoral(Buttons.applyCurve(Buttons.XboxController.getLeftY(), Buttons.forwardCurve) * 0.25), 
-                intakesubsystem));
+        // intakesubsystem.setDefaultCommand(
+        //         new RunCommand(
+        //                 () -> intakesubsystem.intakeCoral(Buttons.applyCurve(Buttons.XboxController.getLeftY(), Buttons.forwardCurve) * 0.25), 
+        //         intakesubsystem));
     }
 
     public static SwerveInputStream getDriveAngularVelocity() {

@@ -166,7 +166,7 @@ public final class Constants {
     // Subystem Constants go here
     public final static class IntakeConstants {
         public static final double kMaxSpeed = -0.14;//Not used
-        public static final double kMaxPIDTarget = 15.5;//PID Max Velocity
+        public static final double kMaxPIDTarget = 11;//PID Max Velocity
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 1;
         public static final double kDistanceToDetect = 10;//cm
