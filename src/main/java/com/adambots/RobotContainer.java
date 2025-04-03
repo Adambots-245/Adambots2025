@@ -238,8 +238,8 @@ public class RobotContainer {
                 .onTrue(driveCommands.enableFrontCams());
                 // .onTrue(driveCommands.enableFrontCams());
 
-                Buttons.JoystickButton16
-                .onTrue(driveCommands.enableBackCam());
+                // Buttons.JoystickButton16
+                // .onTrue(driveCommands.enableBackCam());
 
         // Buttons.JoystickButton14
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_LEFT,
@@ -325,6 +325,8 @@ public class RobotContainer {
         SmartDashboard.putData("Wrist Down", elevatorCommands.moveWristDown());
         SmartDashboard.putData("Wrist Up", elevatorCommands.moveWristUp());
 
+        // SmartDashboard.putBoolean("Flag", ()-> PhotonVision.);
+
         SmartDashboard.putNumber("IMU", swerveSubsystem.getGyro().getRawRotation3d().getZ());
 
         SmartDashboard.putData("Elevator L1",
@@ -354,9 +356,10 @@ public class RobotContainer {
     .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
     .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
     .andThen(Commands.waitSeconds(0.75))
-    .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE))));
+    .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE)))
+    .andThen(intakeCommands.intakeCoral()));
     NamedCommands.registerCommand("IntakeCoral", intakeCommands.intakeCoral());
-    NamedCommands.registerCommand("WaitForIntake", new RunCommand(()-> System.out.println("Waiting")).until(()-> intakesubsystem.isDetectingCoral()));
+    NamedCommands.registerCommand("WaitForIntake", new RunCommand(()-> System.out.println("Waiting")).until(()-> intakesubsystem.isDetectingCoral()).andThen(Commands.waitSeconds(1)));
     NamedCommands.registerCommand("DriveToReefRight",
     new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.RIGHT_POLE, candleSubsytem, driveCommands));
     NamedCommands.registerCommand("DriveToReefLeft",

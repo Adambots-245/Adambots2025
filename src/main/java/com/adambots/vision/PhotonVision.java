@@ -83,7 +83,7 @@ public class PhotonVision {
   private Field2d field2d;
   int counter = 0;
 
-  private boolean humanPlayerFlag = false;
+  private static boolean humanPlayerFlag = false;
 
   /**
    * Constructor for the Vision class.
@@ -163,14 +163,19 @@ public class PhotonVision {
         // System.out.println(pose.estimatedPose.getX() + "Y " +
         // pose.estimatedPose.getY());
         // System.err.println("Checkpoint 4");
-        if (!humanPlayerFlag && !camera.name().equals("CENTER_CAM")){
+        // System.out.println(camera);
+        if (!humanPlayerFlag && camera != Cameras.CENTER_CAM){
           swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
           pose.timestampSeconds,
           camera.curStdDevs);
-        } else if (camera.name().equals("CENTER_CAM")){
+          // System.out.println("REEF UPDATE for " + camera.name());
+        }
+        
+        if (camera == Cameras.CENTER_CAM && humanPlayerFlag){
           swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
           pose.timestampSeconds,
           camera.curStdDevs);
+          // System.out.println("CENTER UPDATE for " + camera.name());
         }
       }
     }
@@ -424,8 +429,9 @@ public class PhotonVision {
             Units.inchesToMeters(8)),
         VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
     CENTER_CAM("Middle",
-        new Rotation3d(0, Units.degreesToRadians(-50), Units.degreesToRadians(180)),
-        new Translation3d(Units.inchesToMeters(10),
+        new Rotation3d(Units.degreesToRadians(0
+        ), Units.degreesToRadians(-43), Units.degreesToRadians(177)),
+        new Translation3d(Units.inchesToMeters(8),
             Units.inchesToMeters(0),
             Units.inchesToMeters(41)),
         VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),;
