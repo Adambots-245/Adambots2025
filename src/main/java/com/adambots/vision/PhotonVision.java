@@ -421,20 +421,20 @@ public class PhotonVision {
         new Translation3d(Units.inchesToMeters(15),
             Units.inchesToMeters(11.75),
             Units.inchesToMeters(8)),
-        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), getReefTagIDs()),
     RIGHT_CAM("Right",
         new Rotation3d(0, Units.degreesToRadians(0), Units.degreesToRadians(30)),
         new Translation3d(Units.inchesToMeters(15),
             Units.inchesToMeters(-11.75),
             Units.inchesToMeters(8)),
-        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), getReefTagIDs()),
     CENTER_CAM("Middle",
         new Rotation3d(Units.degreesToRadians(0
         ), Units.degreesToRadians(-43), Units.degreesToRadians(177)),
         new Translation3d(Units.inchesToMeters(8),
             Units.inchesToMeters(0),
             Units.inchesToMeters(41)),
-        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1)),;
+        VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), getHumanPlayerTagIDs());
 
     /**
      * Latency alert to use when high latency is detected.
@@ -485,6 +485,8 @@ public class PhotonVision {
 
     private static boolean updatedCache = false;
 
+    private int[] allowedTagIDs;
+
     /**
      * Construct a Photon Camera class with help. Standard deviations are fake
      * values, experiment and determine
@@ -501,7 +503,7 @@ public class PhotonVision {
      *                              poses from the camera.
      */
     Cameras(String name, Rotation3d robotToCamRotation, Translation3d robotToCamTranslation,
-        Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix) {
+        Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevsMatrix, int[] allowedTagIDs) {
       latencyAlert = new Alert("'" + name + "' Camera is experiencing high latency.", AlertType.kWarning);
 
       camera = new PhotonCamera(name);
@@ -657,19 +659,74 @@ public class PhotonVision {
      */
     private void updateEstimatedGlobalPose() {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
-      for (var change : resultsList) {
-        visionEst = poseEstimator.update(change);
-        // try {
-        // if (visionEst != null)
-        // // System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX()
-        // + "y: " + visionEst.get().estimatedPose.getY());
-        // } catch (Exception e) {
-        // // TODO: handle exception
-        // System.out.println("Pose died!?! ( big problem !!!)");
-        // }
-        updateEstimationStdDevs(visionEst, change.getTargets());
-      }
-      estimatedRobotPose = visionEst;
+      // for (var change : resultsList) {
+      //   visionEst = poseEstimator.update(change);
+      //   // try {
+      //   // if (visionEst != null)
+      //   // // System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX()
+      //   // + "y: " + visionEst.get().estimatedPose.getY());
+      //   // } catch (Exception e) {
+      //   // // TODO: handle exception
+      //   // System.out.println("Pose died!?! ( big problem !!!)");
+      //   // }
+      //   updateEstimationStdDevs(visionEst, change.getTargets());
+      // }
+      // estimatedRobotPose = visionEst;
+
+      // If you don't need target filtering, comment everything below this and uncomment the top part.
+
+        for (var result : resultsList) {
+            // Skip this result if there are no targets
+            if (!result.hasTargets()) {
+                continue;
+            }
+            
+            // Check if this camera has tag filtering
+            if (allowedTagIDs != null && allowedTagIDs.length > 0) {
+                // Check if any of the targets match our allowed tag IDs
+                boolean hasAllowedTag = false;
+                for (PhotonTrackedTarget target : result.getTargets()) {
+                    for (int id : allowedTagIDs) {
+                        if (target.getFiducialId() == id) {
+                            hasAllowedTag = true;
+                            break;
+                        }
+                    }
+                    if (hasAllowedTag) break;
+                }
+                
+                // Skip this result if it doesn't have any allowed tags
+                if (!hasAllowedTag) {
+                    continue;
+                }
+            }
+            
+            // Update with the result
+            visionEst = poseEstimator.update(result);
+            
+            // After getting the pose estimate, verify it used allowed tags if filtering is enabled
+            if (visionEst.isPresent() && allowedTagIDs != null && allowedTagIDs.length > 0) {
+                boolean usedAllowedTag = false;
+                for (PhotonTrackedTarget usedTarget : visionEst.get().targetsUsed) {
+                    for (int id : allowedTagIDs) {
+                        if (usedTarget.getFiducialId() == id) {
+                            usedAllowedTag = true;
+                            break;
+                        }
+                    }
+                    if (usedAllowedTag) break;
+                }
+                
+                // If the pose didn't use any allowed tags, discard it
+                if (!usedAllowedTag) {
+                    visionEst = Optional.empty();
+                    continue;
+                }
+            }
+            
+            updateEstimationStdDevs(visionEst, result.getTargets());
+        }
+        estimatedRobotPose = visionEst;
     }
 
     /**
@@ -739,6 +796,26 @@ public class PhotonVision {
       // camera.setDriverMode(false);
 
     }
+  }
+
+  /**
+   * Gets a list of tag IDs that are on the human player station (both sides)
+   * 
+   * @return Array of human player station tag IDs
+   */
+  public static int[] getHumanPlayerTagIDs() {
+    // In the 2025 Reefscape field, tags 1,2,12,13 are human player station tags
+    // Modify these values based on the actual game field
+    return new int[] { 1, 2, 12, 13};
+  }
+
+  /**
+   * Gets a list of tag IDs that are on the Reefs (both sides)
+   * @return
+   */
+  public static int[] getReefTagIDs(){
+    // 2025 reefscape field - tags 6-11 on red side, 17-22 on blue side
+    return new int[] {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
   }
 
   public void disableFrontCameras(){
