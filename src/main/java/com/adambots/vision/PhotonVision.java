@@ -653,6 +653,22 @@ public class PhotonVision {
      */
     private void updateEstimatedGlobalPose() {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
+      // for (var change : resultsList) {
+      //   visionEst = poseEstimator.update(change);
+      //   // try {
+      //   // if (visionEst != null)
+      //   // // System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX()
+      //   // + "y: " + visionEst.get().estimatedPose.getY());
+      //   // } catch (Exception e) {
+      //   // // TODO: handle exception
+      //   // System.out.println("Pose died!?! ( big problem !!!)");
+      //   // }
+      //   updateEstimationStdDevs(visionEst, change.getTargets());
+      // }
+      // estimatedRobotPose = visionEst;
+
+      // If you don't need target filtering, comment everything below this and uncomment the top part.
+
         for (var result : resultsList) {
             // Skip this result if there are no targets
             if (!result.hasTargets()) {
