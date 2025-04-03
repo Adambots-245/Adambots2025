@@ -123,7 +123,7 @@ public class DriveToLocationAdvanced extends Command {
             driveCommands.disableBackCam().schedule();
         }
 
-        if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT){
+        if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT || alignLocation == AlignLocation.H1 || alignLocation == AlignLocation.H4){
             driveCommands.disableFrontCams().schedule();
             driveCommands.enableBackCam().schedule();
         }
@@ -307,8 +307,8 @@ public class DriveToLocationAdvanced extends Command {
         // Set the LED animation to a predefined pattern (Larson animation).
         caNdleSubsystem.setAnimation(AnimationTypes.Larson);
 
-        driveCommands.enableFrontCams();
-        driveCommands.disableBackCam();
+        driveCommands.enableFrontCams().schedule();
+        // driveCommands.disableBackCam();
 
         // if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE){
         //     driveCommands.enableFrontCams();

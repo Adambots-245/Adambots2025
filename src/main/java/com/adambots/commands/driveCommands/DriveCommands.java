@@ -556,8 +556,9 @@ public class DriveCommands {
     public Command disableFrontCams(){
         return Commands.runOnce(
             () -> {
-                PhotonVision.Cameras.LEFT_CAM.disableCamera();
-                PhotonVision.Cameras.RIGHT_CAM.disableCamera();
+                subsystem.getVision().disableFrontCameras();
+                // PhotonVision.Cameras.LEFT_CAM.disableCamera();
+                // PhotonVision.Cameras.RIGHT_CAM.disableCamera();
             }
         );
     }
@@ -565,8 +566,10 @@ public class DriveCommands {
     public Command enableFrontCams(){
         return Commands.runOnce(
             () -> {
-                PhotonVision.Cameras.LEFT_CAM.enableCamera();
-                PhotonVision.Cameras.RIGHT_CAM.enableCamera();
+                subsystem.getVision().enableFrontCameras();
+
+                // PhotonVision.Cameras.LEFT_CAM.enableCamera();
+                // PhotonVision.Cameras.RIGHT_CAM.enableCamera();
             }
         );
     }

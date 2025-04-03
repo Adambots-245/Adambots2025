@@ -83,6 +83,8 @@ public class PhotonVision {
   private Field2d field2d;
   int counter = 0;
 
+  private boolean humanPlayerFlag = false;
+
   /**
    * Constructor for the Vision class.
    *
@@ -161,10 +163,15 @@ public class PhotonVision {
         // System.out.println(pose.estimatedPose.getX() + "Y " +
         // pose.estimatedPose.getY());
         // System.err.println("Checkpoint 4");
-
-        swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-            pose.timestampSeconds,
-            camera.curStdDevs);
+        if (!humanPlayerFlag && !camera.name().equals("CENTER_CAM")){
+          swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+          pose.timestampSeconds,
+          camera.curStdDevs);
+        } else if (camera.name().equals("CENTER_CAM")){
+          swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+          pose.timestampSeconds,
+          camera.curStdDevs);
+        }
       }
     }
 
@@ -716,14 +723,23 @@ public class PhotonVision {
     }
 
     public void disableCamera() {
-      camera.setPipelineIndex(1);
+      // camera.setPipelineIndex(1);
       // camera.setDriverMode(true);
     }
 
     public void enableCamera() {
-      camera.setPipelineIndex(0);
+      // camera.setPipelineIndex(0);
+      
       // camera.setDriverMode(false);
 
     }
+  }
+
+  public void disableFrontCameras(){
+    humanPlayerFlag = true;
+  }
+
+  public void enableFrontCameras(){
+    humanPlayerFlag = false;
   }
 }
