@@ -468,16 +468,16 @@ public class DriveCommands {
         });
     }
 
-    public Command driveUntilCANrangeCommand(double rangeDistanceinInches, double speedInMetersPerSecond) {
-        return Commands.run(() -> {
-            subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0));
-        }).until(() -> {
-            double currentDistance = RobotMap.HPSrange.getDistanceInInches();
-            return currentDistance <= rangeDistanceinInches;
-        }).andThen(
-            Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))
-        );
-    }
+    // public Command driveUntilCANrangeCommand(double rangeDistanceinInches, double speedInMetersPerSecond) {
+    //     return Commands.run(() -> {
+    //         subsystem.drive(new ChassisSpeeds(speedInMetersPerSecond, 0, 0));
+    //     }).until(() -> {
+    //         double currentDistance = RobotMap.HPSrange.getDistanceInInches();
+    //         return currentDistance <= rangeDistanceinInches;
+    //     }).andThen(
+    //         Commands.runOnce(() -> subsystem.drive(new ChassisSpeeds(0, 0, 0)))
+    //     );
+    // }
 
     /**
      * Command to drive the robot using translative values and heading as a

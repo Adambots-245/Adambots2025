@@ -2,6 +2,7 @@ package com.adambots.commands.driveCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import com.adambots.Robot;
@@ -33,10 +35,10 @@ public class DriveToLocationAdvanced extends Command {
 
     // Offsets used for different alignment strategies.
     private double reefOffset = 0.18; // Offset for aligning to the reef/april tag pole.
-    private double humanPlayerOffset = 0; // Offset for aligning to the human player station.  0.6
+    private double humanPlayerOffset = 0; // Offset for aligning to the human player station. 0.6
     private double robotReefOffset = 0.455; // Offset for positioning the robot relative to the tag.
-    private double bargeXOffset = 0.07; 
-    private double bargeYOffset = 1.15; 
+    private double bargeXOffset = 0.07;
+    private double bargeYOffset = 1.15;
 
     // Arrays holding the AprilTag IDs for different field elements.
     private int[] reefTagIds; // AprilTag IDs for the reef (pole) targets.
@@ -63,6 +65,8 @@ public class DriveToLocationAdvanced extends Command {
     private Pose2d currentPose;
 
     private DriveCommands driveCommands;
+
+    private static boolean isFirstCoralAuton = true;
 
     /**
      * Constructor for DriveToLocationAdvanced.
@@ -117,15 +121,19 @@ public class DriveToLocationAdvanced extends Command {
             bargeTagIds = new int[] { 14 };
         }
 
-        if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE){
-            System.out.println("TEST");
-            driveCommands.enableFrontCams().schedule();
-            driveCommands.disableBackCam().schedule();
+        if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE) {
+            // System.out.println("TEST");
+            swerveSubsystem.getVision().enableFrontCameras();
+            // swerveSubsystem.getVision().enableFrontCameras();
+            // driveCommands.enableFrontCams().schedule();
+            // driveCommands.disableBackCam().schedule();
         }
 
-        if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT || alignLocation == AlignLocation.H1 || alignLocation == AlignLocation.H4){
-            driveCommands.disableFrontCams().schedule();
-            driveCommands.enableBackCam().schedule();
+        if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT
+                || alignLocation == AlignLocation.H1 || alignLocation == AlignLocation.H4) {
+            swerveSubsystem.getVision().disableFrontCameras();
+            // driveCommands.disableFrontCams().schedule();
+            // driveCommands.enableBackCam().schedule();
         }
     }
 
@@ -142,32 +150,48 @@ public class DriveToLocationAdvanced extends Command {
         // Determine the detected AprilTag ID.
         // Use the simulated supplier if running in simulation; otherwise, use vision.
         // if (Robot.isSimulation()) {
-        //     idSeen = aprilTagSupplierSim.get();
+        // idSeen = aprilTagSupplierSim.get();
         // } else {
-            // For human player alignment (alignLocation 3 or 4), use humanPlayerTagIds.
-            // Otherwise, use reefTagIds.
-            if (alignLocation == AlignLocation.H1){
-                if (Robot.isOnRedAlliance()){
-                    idSeen = 1;
+        // For human player alignment (alignLocation 3 or 4), use humanPlayerTagIds.
+        // Otherwise, use reefTagIds.
+        if (isFirstCoralAuton == true) {
+            if (DriverStation.isAutonomous()) {
+                if (Robot.isOnRedAlliance()) {
+                    idSeen = 11;
                 } else {
-                    idSeen = 13;
-                }
-            } else if (alignLocation == AlignLocation.H4){
-                if (Robot.isOnRedAlliance()){
-                    idSeen = 2;
-                } else {
-                    idSeen = 12;
-                }
-            } else {
-                if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
-                    idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
-                } else if (alignLocation == AlignLocation.BARGE_LEFT || alignLocation == AlignLocation.BARGE_MIDDLE
-                        || alignLocation == AlignLocation.BARGE_RIGHT) {
-                    idSeen = swerveSubsystem.getVision().hasID(bargeTagIds);
-                } else {
-                    idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
+                    idSeen = 20;
                 }
             }
+            isFirstCoralAuton = false;
+        } else if (alignLocation == AlignLocation.H1) {
+            if (Robot.isOnRedAlliance()) {
+                idSeen = 1;
+            } else {
+                idSeen = 13;
+            }
+        } else if (alignLocation == AlignLocation.H4) {
+            if (Robot.isOnRedAlliance()) {
+                idSeen = 2;
+            } else {
+                idSeen = 12;
+            }
+        } else {
+            if (!isSeen) {
+                if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT
+                        || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT) {
+                    // idSeen = swerveSubsystem.getVision().hasID(humanPlayerTagIds);
+                    idSeen = getClosestTagIdBlind(humanPlayerTagIds);
+                } else if (alignLocation == AlignLocation.BARGE_LEFT || alignLocation == AlignLocation.BARGE_MIDDLE
+                        || alignLocation == AlignLocation.BARGE_RIGHT) {
+                    // idSeen = swerveSubsystem.getVision().hasID(bargeTagIds);
+                    idSeen = getClosestTagIdBlind(bargeTagIds);
+                } else {
+                    // idSeen = swerveSubsystem.getVision().hasID(reefTagIds);
+                    idSeen = getClosestTagIdBlind(reefTagIds);
+                }
+            }
+        }
+        isFirstCoralAuton = false;
         // }
 
         // If a valid tag is detected (idSeen greater than -1), set the isSeen flag.
@@ -190,7 +214,7 @@ public class DriveToLocationAdvanced extends Command {
             } else if (alignLocation == AlignLocation.MIDDLE_ALGAE) {
                 // Align to the middle (algae pole): no lateral offset.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(0.595, 0, new Rotation2d(Math.toRadians(180))));
+                        new Transform2d(0.61, 0, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT || alignLocation == AlignLocation.H1) {
                 // Align to the human player on the right:
                 // Apply a negative human player offset and rotate 180°.
@@ -259,8 +283,9 @@ public class DriveToLocationAdvanced extends Command {
                 // If the robot is within 2 centimeters of the target position, set LED to
                 // green.
                 // Otherwise, set LED to red.
-                // if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.10) {
-                //     scoringCommands.scoreCoral();
+                // if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) <
+                // 0.10) {
+                // scoringCommands.scoreCoral();
                 // }
 
                 if (currentPose.getTranslation().getDistance(targetPose.getTranslation()) < 0.07) {
@@ -307,17 +332,61 @@ public class DriveToLocationAdvanced extends Command {
         // Set the LED animation to a predefined pattern (Larson animation).
         caNdleSubsystem.setAnimation(AnimationTypes.Larson);
 
-        driveCommands.enableFrontCams().schedule();
+        swerveSubsystem.getVision().enableFrontCameras();
+        // driveCommands.enableFrontCams().schedule();
         // driveCommands.disableBackCam();
 
-        // if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE){
-        //     driveCommands.enableFrontCams();
-        //     driveCommands.disableBackCam();
+        // if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation ==
+        // AlignLocation.LEFT_POLE){
+        // driveCommands.enableFrontCams();
+        // driveCommands.disableBackCam();
         // }
 
-        // if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation == AlignLocation.HUMAN_PLAYER_RIGHT){
-        //     driveCommands.disableFrontCams();
-        //     driveCommands.enableBackCam();
+        // if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT || alignLocation ==
+        // AlignLocation.HUMAN_PLAYER_RIGHT){
+        // driveCommands.disableFrontCams();
+        // driveCommands.enableBackCam();
         // }
+    }
+
+    private int getClosestTagId(int[] targetTagIds) {
+        List<Integer> detectedTagIds = PhotonVision.getAllDetectedTags(); // Use the updated method returning
+                                                                          // List<Integer>
+        int closestTagId = -1;
+        double minDistance = Double.MAX_VALUE;
+
+        for (int tagId : detectedTagIds) {
+            if (java.util.Arrays.stream(targetTagIds).anyMatch(id -> id == tagId)) {
+                // Assuming we have a way to get the pose of a tag from its ID
+                Pose2d tagPose = PhotonVision.getAprilTagPose(tagId, new Transform2d()); // Replace with actual method
+                                                                                         // to get pose from ID
+                if (tagPose != null) {
+                    double distance = tagPose.getTranslation().getDistance(swerveSubsystem.getPose().getTranslation());
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestTagId = tagId;
+                    }
+                }
+            }
+        }
+        return closestTagId;
+    }
+
+    private int getClosestTagIdBlind(int[] targetTagIds) { // List<Integer>
+        int closestTagId = -1;
+        double minDistance = Double.MAX_VALUE;
+
+        for (int tagId : targetTagIds) {
+            Pose2d tagPose = PhotonVision.getAprilTagPose(tagId, new Transform2d()); // Replace with actual method
+                                                                                     // to get pose from ID
+            if (tagPose != null) {
+                double distance = tagPose.getTranslation().getDistance(swerveSubsystem.getPose().getTranslation());
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestTagId = tagId;
+                }
+            }
+        }
+        return closestTagId;
     }
 }

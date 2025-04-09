@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1-R1R"
+                  "pathName": "S3-R3L"
                 }
               },
               {
@@ -49,7 +49,7 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -78,13 +78,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "R1R-H1"
+                        "pathName": "R3L-H4"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "DriveToH1"
+                        "name": "DriveToH4"
                       }
                     }
                   ]
@@ -98,80 +98,9 @@
           "data": {
             "commands": [
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "parallel",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "H1-R6R"
-                            }
-                          },
-                          {
-                            "type": "sequential",
-                            "data": {
-                              "commands": [
-                                {
-                                  "type": "wait",
-                                  "data": {
-                                    "waitTime": 0.7
-                                  }
-                                },
-                                {
-                                  "type": "named",
-                                  "data": {
-                                    "name": "L4Position"
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "DriveToReefRight"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakePosition"
-                      }
-                    }
-                  ]
+                  "name": "IntakeCoral"
                 }
               },
               {
@@ -179,31 +108,11 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "R6L-H1"
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
-                        "name": "DriveToH1"
+                        "name": "WaitForIntake"
                       }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
+                    },
                     {
                       "type": "parallel",
                       "data": {
@@ -211,7 +120,7 @@
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "H1-R6L"
+                              "pathName": "H4-R4L"
                             }
                           },
                           {
@@ -221,7 +130,7 @@
                                 {
                                   "type": "wait",
                                   "data": {
-                                    "waitTime": 0.7
+                                    "waitTime": 0.55
                                   }
                                 },
                                 {
@@ -255,7 +164,7 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
@@ -265,7 +174,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.1
+                        "waitTime": 0.3
                       }
                     },
                     {
@@ -284,13 +193,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "R6R-H1"
+                        "pathName": "R4R-H4"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "DriveToH1"
+                        "name": "DriveToH4"
                       }
                     }
                   ]
@@ -298,11 +207,61 @@
               }
             ]
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitForIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "H4-R4R"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "L4Position"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToReefRight"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "S1",
+  "folder": "S3",
   "choreoAuto": false
 }

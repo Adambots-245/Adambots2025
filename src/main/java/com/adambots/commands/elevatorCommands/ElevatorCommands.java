@@ -73,6 +73,19 @@ public class ElevatorCommands extends Command {
             ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));
     }
 
+    public Command moveToGroundAlgaeCommand() {
+        return Commands.either(
+            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.GROUND_INTAKE)).andThen(intakeCommands.intakeAlgae())
+            , 
+            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+                .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+                .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
+                .andThen(Commands.waitSeconds(0.75))
+                .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.GROUND_INTAKE)))
+                .andThen(intakeCommands.intakeAlgae()),
+            ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));
+    }
+
     public Command moveToL1Command() {
         return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))

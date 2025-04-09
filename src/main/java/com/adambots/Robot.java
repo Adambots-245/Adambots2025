@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
     }
 
     System.out.println("Auton Selected: " + m_autonomousCommand.toString());
-    System.out.println("Init Auton.........");
+    // System.out.println("Init Auton.........");
 
     // Schedule the autonomous command
     if (m_autonomousCommand != null) {

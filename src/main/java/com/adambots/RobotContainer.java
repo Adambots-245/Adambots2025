@@ -188,8 +188,8 @@ public class RobotContainer {
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
                         candleSubsytem, driveCommands)
                         .andThen(new WaitCommand(0.2))
-                        .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -1))
-                        .andThen(elevatorCommands.moveToIntakeCommand()));
+                        .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -2))); //234
+                        // .andThen(elevatorCommands.moveToIntakeCommand()));
         Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringCoral());
 
         Buttons.JoystickButton6
@@ -253,7 +253,9 @@ public class RobotContainer {
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_RIGHT,
         //                 candleSubsytem));
 
-        Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
+        // Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
+        Buttons.XboxXButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.L4, WristState.BARGE));
+
         Buttons.XboxAButton.onTrue(elevatorCommands.moveToL2Command());
         Buttons.XboxBButton.onTrue(elevatorCommands.moveToL3Command());
         Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
@@ -268,11 +270,11 @@ public class RobotContainer {
         Buttons.XboxDPadN.onTrue(intakeCommands.intakeAlgae());
 
         Buttons.XboxDPadS
-                .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+                .onTrue(elevatorCommands.moveToGroundAlgaeCommand());
         Buttons.XboxDPadSW
-                .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+                .onTrue(elevatorCommands.moveToGroundAlgaeCommand());
         Buttons.XboxDPadSE
-                .onTrue(elevatorCommands.moveToAlgaeStateCommand(ElevatorState.INTAKE, WristState.GROUND_INTAKE));
+                .onTrue(elevatorCommands.moveToGroundAlgaeCommand());
 
         Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeCoral());
         Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
@@ -299,7 +301,7 @@ public class RobotContainer {
 
         // Buttons.XboxStartButton.whileTrue(driveCommands.driveUntilCANrangeCommand(AutoConstants.HumanPlayerCANrangeDist, 1));
 
-        Dash.add("HPS CANrange Dist", ()-> RobotMap.HPSrange.getDistanceInInches());
+        // Dash.add("HPS CANrange Dist", ()-> RobotMap.HPSrange.getDistanceInInches());
 
 
         SmartDashboard.putData("Intake Coral", intakeCommands.intakeCoral());
@@ -358,6 +360,11 @@ public class RobotContainer {
     .andThen(Commands.waitSeconds(0.75))
     .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE)))
     .andThen(intakeCommands.intakeCoral()));
+    NamedCommands.registerCommand("IntakeState", new InstantCommand(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+    .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
+    .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
+    .andThen(Commands.waitSeconds(0.75))
+    .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE))));
     NamedCommands.registerCommand("IntakeCoral", intakeCommands.intakeCoral());
     NamedCommands.registerCommand("WaitForIntake", new RunCommand(()-> System.out.println("Waiting")).until(()-> intakesubsystem.isDetectingCoral()).andThen(Commands.waitSeconds(1)));
     NamedCommands.registerCommand("DriveToReefRight",
@@ -373,6 +380,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("DriveToH4",
             new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.H4,
                 candleSubsytem, driveCommands));
+    NamedCommands.registerCommand("DriveToAlgae",
+           new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem, driveCommands));
+    NamedCommands.registerCommand("AlgaeStateLow",
+    elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
   }
 
     /**

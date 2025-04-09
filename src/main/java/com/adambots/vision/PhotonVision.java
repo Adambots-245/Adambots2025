@@ -308,6 +308,21 @@ public class PhotonVision {
     return -1;
   }
 
+  public static List<Integer> getAllDetectedTags() {
+    List<Integer> detectedTagIDs = new ArrayList<>();
+
+    for (Cameras camera : Cameras.values()) {
+        for (PhotonPipelineResult result : camera.resultsList) {
+            if (result.hasTargets()) {
+                for (PhotonTrackedTarget target : result.getTargets()) {
+                    detectedTagIDs.add(target.getFiducialId());
+                }
+            }
+        }
+    }
+
+    return detectedTagIDs;
+}
   /**
    * Vision simulation.
    *
@@ -373,6 +388,7 @@ public class PhotonVision {
     }
 
     field2d.getObject("tracked targets").setPoses(poses);
+    System.out.println(Cameras.CENTER_CAM.allowedTagIDs[0]);
   }
 
   /**
@@ -520,6 +536,7 @@ public class PhotonVision {
 
       this.singleTagStdDevs = singleTagStdDevs;
       this.multiTagStdDevs = multiTagStdDevsMatrix;
+      this.allowedTagIDs = allowedTagIDs;
 
       if (Robot.isSimulation()) {
         SimCameraProperties cameraProp = new SimCameraProperties();

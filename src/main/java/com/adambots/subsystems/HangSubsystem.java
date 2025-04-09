@@ -27,7 +27,7 @@ public class HangSubsystem extends SubsystemBase {
     this.hangSolenoid = hangSolenoid;
     this.hangServo = hangServo;
     this.hangLimitSwitch = hangLimitSwitch;
-    hangMotor.setInverted(false);
+    hangMotor.setInverted(true);
     hangMotor.setBrakeMode(true);
   }
 
