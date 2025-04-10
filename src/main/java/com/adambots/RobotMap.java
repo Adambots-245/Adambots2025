@@ -96,14 +96,14 @@ public class RobotMap {
     // public static final BaseActuator topCoralActuator = new CRHubServo(hub, kTopCoralServoChannel);
     // public static final BaseActuator bottomCoralActuator = new CRHubServo(hub, kBottomCoralServoChannel);
     public static final BaseMotor minionMotor = new MinionMotor(kMinionPort, "*");
-    public static final BaseMotor algaeLeftMotor = new MinionMotor(kMinionLeftPort, "*");
-    public static final BaseMotor algaeRightMotor = new MinionMotor(kMinionRightPort, "*");
+    public static final BaseMotor algaeLeftMotor = new MinionMotor(kMinionLeftPort);
+    public static final BaseMotor algaeRightMotor = new MinionMotor(kMinionRightPort);
 
     public static final BaseActuator algaeGripper = new DirectServo(kGripperAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
     public static final BaseDistanceSensor coralCANrange = new CANRangeSensor(kCANrangePort, true);
-    public static final BaseDistanceSensor algaeCANrange = new CANRangeSensor(kAlgaeCANrangePort, true);
+    public static final BaseDistanceSensor algaeCANrange = new CANRangeSensor(kAlgaeCANrangePort, false);
     // public static final BaseDistanceSensor HPSrange = new CANRangeSensor(kHPSrangePort, true);
 
 

@@ -54,11 +54,16 @@ public class IntakeSubsystem extends SubsystemBase {
     this.algaeMotorLeft = algaeMotorLeft;
     this.algaeMotorRight = algaeMotorRight;
 
+    this.algaeMotorRight.setInverted(true);
+
+    this.algaeMotorLeft.setBrakeMode(true);
+    this.algaeMotorRight.setBrakeMode(true);
+
     this.algaeMotorLeft.configureCurrentLimits(80, 20, 100000);
     this.algaeMotorRight.configureCurrentLimits(80, 20, 100000);
 
-    this.algaeMotorLeft.setPID(0, 1, 0, 0, 0);
-    this.algaeMotorRight.setPID(0, 1, 0, 0, 0);
+    this.algaeMotorLeft.setPID(0, 0.05, 0, 0, 0);
+    this.algaeMotorRight.setPID(0, 0.05, 0, 0, 0);
 
     this.algaeMotorLeft.enableVoltageCompensation(12.0);
     this.algaeMotorRight.enableVoltageCompensation(12.0);
@@ -103,11 +108,11 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean isDetectingAlgae() {
-    return algaeCANrange.getDistanceInCentimeters() < IntakeConstants.kDistanceToDetectAlgae;
+    return algaeCANrange.getDistanceInInches() < IntakeConstants.kDistanceToDetectAlgae;
   }
 
   public void intakeAlgae() {
-    algaeIntakeSpeed = IntakeConstants.kReverseSpeed;
+    algaeIntakeSpeed = IntakeConstants.kAlgaeSpeed;
     // counter = 0;
   }
 
@@ -116,7 +121,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void reverseAlgaeIntake() {
-    algaeIntakeSpeed = -IntakeConstants.kReverseSpeed;
+    algaeIntakeSpeed = -IntakeConstants.kAlgaeSpeed;
   } 
 
   @Override
@@ -140,6 +145,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("Intake/CoralCANrange", isDetectingCoral());
     SmartDashboard.putBoolean("Intake/AlgaeCANrange", isDetectingAlgae());
+    SmartDashboard.putNumber("Intake/AlgaeDistance", algaeCANrange.getDistanceInInches());
     SmartDashboard.putNumber("Intake/Minion Speed", minionMotor.getVelocity());
     SmartDashboard.putNumber("Intake/Minion Current", minionMotor.getCurrentDraw());
 
