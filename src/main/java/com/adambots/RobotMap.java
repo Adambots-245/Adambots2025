@@ -7,11 +7,17 @@
 
 package com.adambots;
 
-import com.adambots.actuators.TalonFXMotor;
-import com.adambots.actuators.BaseServo.ServoMode;
-import com.adambots.sensors.BaseDistanceSensor;
+import com.adambots.actuators.BaseActuator;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.BaseServo;
+import com.adambots.actuators.BaseServo.ServoMode;
+import com.adambots.actuators.BaseSolenoid;
+import com.adambots.actuators.DirectServo;
+import com.adambots.actuators.ElectricalSolenoid;
+import com.adambots.actuators.MinionMotor;
+import com.adambots.actuators.TalonFXMotor;
 import com.adambots.sensors.BaseAbsoluteEncoder;
+import com.adambots.sensors.BaseDistanceSensor;
 import com.adambots.sensors.BaseGyro;
 import com.adambots.sensors.CANRangeSensor;
 import com.adambots.sensors.Gyro;
@@ -19,16 +25,6 @@ import com.adambots.sensors.LimitSwitch;
 import com.adambots.sensors.ThroughBoreEncoder;
 import com.ctre.phoenix.led.CANdle;
 import com.revrobotics.servohub.ServoHub;
-
-import javax.naming.LimitExceededException;
-
-import com.adambots.actuators.BaseActuator;
-import com.adambots.actuators.BaseServo;
-import com.adambots.actuators.BaseSolenoid;
-import com.adambots.actuators.CRHubServo;
-import com.adambots.actuators.DirectServo;
-import com.adambots.actuators.ElectricalSolenoid;
-import com.adambots.actuators.MinionMotor;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -68,10 +64,16 @@ public class RobotMap {
     public static final int kGripperAlgaeServoChannel = 1;
     public static final int kRunnerAlgaeServoChannel = 2;
     public static final int kCANrangePort = 60;
+    public static final int kAlgaeCANrangePort = 35;
     public static final int kServoHubPort = 45;
     public static final int kMinionPort = 48;
+    public static final int kMinionLeftPort = 50;
+    public static final int kMinionRightPort = 51;
     public static final int kClimbMotorPort = 19;
     public static final int kClimbLimitSwitchPort = 4; 
+    public static final int kLowerKrakenLimitSwitchPort = 0; 
+    public static final int kUpperKrakenLimitSwitchPort = 1; 
+
 
     // public static final int kHPSrangePort = 35;
 
@@ -94,20 +96,28 @@ public class RobotMap {
     // public static final BaseActuator topCoralActuator = new CRHubServo(hub, kTopCoralServoChannel);
     // public static final BaseActuator bottomCoralActuator = new CRHubServo(hub, kBottomCoralServoChannel);
     public static final BaseMotor minionMotor = new MinionMotor(kMinionPort, "*");
+    public static final BaseMotor algaeLeftMotor = new MinionMotor(kMinionLeftPort, "*");
+    public static final BaseMotor algaeRightMotor = new MinionMotor(kMinionRightPort, "*");
+
     public static final BaseActuator algaeGripper = new DirectServo(kGripperAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
-    public static final BaseDistanceSensor CANrange = new CANRangeSensor(kCANrangePort, true);
+    public static final BaseDistanceSensor coralCANrange = new CANRangeSensor(kCANrangePort, true);
+    public static final BaseDistanceSensor algaeCANrange = new CANRangeSensor(kAlgaeCANrangePort, true);
     // public static final BaseDistanceSensor HPSrange = new CANRangeSensor(kHPSrangePort, true);
 
 
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);
     public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
-    public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, false);
+    public static final BaseMotor elevatorMotor = new TalonFXMotor(kElevatorMotorPort, true, 40, true);
     public static final BaseMotor climbMotor = new TalonFXMotor(kClimbMotorPort, true, 40, true);
     public static final BaseServo climbServo = new DirectServo(0, ServoMode.ANGULAR);
     public static final BaseSolenoid climbSolenoid = new ElectricalSolenoid(0);
     public static final LimitSwitch hangLimitSwitch = new LimitSwitch(kClimbLimitSwitchPort, false);
+
+    public static final LimitSwitch lowerElevatorLimitSwitch = new LimitSwitch(kLowerKrakenLimitSwitchPort, false);
+    public static final LimitSwitch upperElevatorLimitSwitch = new LimitSwitch(kUpperKrakenLimitSwitchPort, false);
+
     
 //     // Robot Swerve Modules
 //     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(

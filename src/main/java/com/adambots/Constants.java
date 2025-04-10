@@ -165,11 +165,12 @@ public final class Constants {
 
     // Subystem Constants go here
     public final static class IntakeConstants {
-        public static final double kMaxSpeed = -0.14;//Not used
+        public static final double kMaxSpeed = -0.14;//Not use\
         public static final double kMaxPIDTarget = 10;//PID Max Velocity
         public static final double kLowSpeed = .5;
-        public static final double kReverseSpeed = 1;
+        public static final double kReverseSpeed = 0.1;
         public static final double kDistanceToDetect = 10;//cm
+        public static final double kDistanceToDetectAlgae = 4;//cm
         public static final double kTimerThreshold = 0.0; // number of seconds to wait before stopping the intake after detecting a coral
         public static final double kAlgaeIntakePulseSeconds = 0.2;
 

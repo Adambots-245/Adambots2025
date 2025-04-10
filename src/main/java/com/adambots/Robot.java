@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
-  private TestContainer m_testContainer;
+  // private TestContainer m_testContainer;
   private final boolean TEST_CONTAINER = false;
 
   /**
@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
     if (TEST_CONTAINER) {
-      m_testContainer = new TestContainer();
+      // m_testContainer = new TestContainer();
     } else {
       m_robotContainer = new RobotContainer();
       FollowPathCommand.warmupCommand().schedule();
@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
 
     if (TEST_CONTAINER) {
-      m_testContainer.teleopInit();
+      // m_testContainer.teleopInit();
     } else {
       m_robotContainer.teleopInit();
     } 

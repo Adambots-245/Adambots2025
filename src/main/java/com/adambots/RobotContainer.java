@@ -2,7 +2,6 @@ package com.adambots;
 
 import java.io.File;
 
-import com.adambots.Constants.AutoConstants;
 import com.adambots.Constants.DriveConstants;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.commands.HangCommands;
@@ -23,10 +22,8 @@ import com.adambots.subsystems.WristSubsystem;
 import com.adambots.subsystems.WristSubsystem.WristState;
 import com.adambots.utils.Buttons;
 import com.adambots.utils.Dash;
-import com.adambots.vision.PhotonVision;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.revrobotics.spark.config.SmartMotionConfig;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -38,9 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import swervelib.SwerveInputStream;
 
@@ -58,8 +53,8 @@ public class RobotContainer {
             new File(Filesystem.getDeployDirectory(), "swerve/kraken"));
     private final CANdleSubsystem candleSubsytem = new CANdleSubsystem(RobotMap.candleLEDs);
     IntakeSubsystem intakesubsystem = new IntakeSubsystem(RobotMap.minionMotor,
-            RobotMap.algaeGripper, RobotMap.algaeRunner, RobotMap.CANrange);
-    ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor);
+            RobotMap.algaeLeftMotor, RobotMap.algaeRightMotor, RobotMap.coralCANrange, RobotMap.algaeCANrange);
+    ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(RobotMap.elevatorMotor, RobotMap.lowerElevatorLimitSwitch, RobotMap.upperElevatorLimitSwitch);
     WristSubsystem wristSubsystem = new WristSubsystem(RobotMap.wristMotor, RobotMap.wristEncoder);
     HangSubsystem hangSubsystem = new HangSubsystem(RobotMap.climbMotor, RobotMap.climbSolenoid, RobotMap.climbServo,
             RobotMap.hangLimitSwitch);
@@ -394,7 +389,7 @@ public class RobotContainer {
 
         // Adds various data to the dashboard that is useful for driving and debugging
         SmartDashboard.putData("Auton Mode", autoChooser);
-        Dash.add("CANrange Dist", () -> RobotMap.CANrange.getDistanceInInches());
+        Dash.add("CANrange Dist", () -> RobotMap.coralCANrange.getDistanceInInches());
     }
 
     private void setupDefaultCommands() {

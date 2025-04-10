@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseMotor.ControlMode;
+import com.adambots.sensors.LimitSwitch;
 import com.adambots.actuators.TalonFXMotor;
 import com.adambots.utils.StateMachine;
 import com.adambots.Constants.ElevatorConstants;
@@ -38,13 +39,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Hardware
     private final BaseMotor elevatorMotor;
 
-    double currentPosition;
+    private double currentPosition;
 
     // State Machines
     private final StateMachine<ElevatorState, ElevatorProperties> elevatorStateMachine;
 
-    public ElevatorSubsystem(BaseMotor elevatorMotor) {
+    private LimitSwitch lowerLimitSwitch;
+    private LimitSwitch upperLimitSwitch;
+
+    public ElevatorSubsystem(BaseMotor elevatorMotor, LimitSwitch lowerLimitSwitch, LimitSwitch upperLimitSwitch) {
         this.elevatorMotor = elevatorMotor;
+        this.lowerLimitSwitch = lowerLimitSwitch;
+        this.upperLimitSwitch = upperLimitSwitch;
 
         configureMotors();
 
@@ -72,7 +78,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setBrakeMode(false);
         elevatorMotor.setInverted(true);
 
-        elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
+        // elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
         // elevatorMotor.configureCurrentLimits(40.0, 30.0, 1500.0);
         elevatorMotor.enableVoltageCompensation(12.0);
         ((TalonFXMotor)elevatorMotor).enableFOC();
@@ -116,7 +122,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void setPosition(double rotations) {
-        elevatorMotor.setPosition(rotations);
+        // elevatorMotor.setPosition(rotations);
+        elevatorMotor.set(ControlMode.POSITION, rotations);
     }
 
     public double getCurrentPosition() {
@@ -136,8 +143,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         currentPosition = elevatorMotor.getPosition();
 
         // Update elevator state machine
-        elevatorStateMachine.periodic();
-
+        if (lowerLimitSwitch.isDetecting()){
+            // elevatorMotor.setPosition
+            
+            elevatorMotor.set(0);
+            // elevatorMotor.setPosition(currentPosition);
+        } else if (upperLimitSwitch.isDetecting()){
+            elevatorMotor.set(0);
+        } else {
+            elevatorStateMachine.periodic();
+        }
 
         SmartDashboard.putBoolean("Elevator/LimitForwardElevator", elevatorMotor.getForwardLimitSwitch());
         SmartDashboard.putBoolean("Elevator/LimitReverseElevator", elevatorMotor.getReverseLimitSwitch());

@@ -321,7 +321,8 @@ public class TalonFXMotor implements BaseMotor {
      */
     @Override
     public void setPosition(double rotations) {
-        set(ControlMode.POSITION, rotations);
+        motor.setPosition(rotations);
+        // set(ControlMode.POSITION, rotations);
     }
 
     /**

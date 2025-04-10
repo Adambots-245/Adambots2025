@@ -7,6 +7,7 @@ package com.adambots.subsystems;
 import com.adambots.Constants.IntakeConstants;
 import com.adambots.actuators.BaseActuator;
 import com.adambots.actuators.BaseMotor;
+import com.adambots.actuators.BaseMotor.ControlMode;
 import com.adambots.sensors.BaseDistanceSensor;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -19,10 +20,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private double coralIntakeSpeed = 0.0;
   private double algaeIntakeSpeed = 0.0;
 
-  private int counter = 0;
-  private BaseDistanceSensor CANrange;
-  private BaseActuator algaeGripper;
-  private BaseActuator algaeRunner;
+  // private int counter = 0;
+  private BaseDistanceSensor coralCANrange;
+  private BaseDistanceSensor algaeCANrange;
+  private BaseMotor algaeMotorLeft;
+  private BaseMotor algaeMotorRight;
+
+  private double currentLeftPosition = 0;
+  private double currentRightPosition = 0;
 
   private PIDController intakePID = new PIDController(0.03, 0, 0.001);
   private double goalVelocity = 0;
@@ -37,16 +42,26 @@ public class IntakeSubsystem extends SubsystemBase {
    * @param CANrange - distance sensor for detecting coral
    */
   public IntakeSubsystem(BaseMotor minionMotor,
-      BaseActuator algaeGripper, BaseActuator algaeRunner, BaseDistanceSensor CANrange) {
+  BaseMotor algaeMotorLeft, BaseMotor algaeMotorRight, BaseDistanceSensor coralCANrange, BaseDistanceSensor algaeCANrange) {
 
-    this.CANrange = CANrange;
+    this.coralCANrange = coralCANrange;
+    this.algaeCANrange = algaeCANrange;
     this.minionMotor = minionMotor;
     // this.minionMotor.configureCurrentLimits(counter, coralIntakeSpeed, algaeIntakeSpeed);
     this.minionMotor.enableVoltageCompensation(12.0);
-    minionMotor.setBrakeMode(true);
+    this.minionMotor.setBrakeMode(true);
 
-    this.algaeGripper = algaeGripper;
-    this.algaeRunner = algaeRunner;
+    this.algaeMotorLeft = algaeMotorLeft;
+    this.algaeMotorRight = algaeMotorRight;
+
+    this.algaeMotorLeft.configureCurrentLimits(80, 20, 100000);
+    this.algaeMotorRight.configureCurrentLimits(80, 20, 100000);
+
+    this.algaeMotorLeft.setPID(0, 1, 0, 0, 0);
+    this.algaeMotorRight.setPID(0, 1, 0, 0, 0);
+
+    this.algaeMotorLeft.enableVoltageCompensation(12.0);
+    this.algaeMotorRight.enableVoltageCompensation(12.0);
   }
 
   public void intakeCoral() {
@@ -84,12 +99,16 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public boolean isDetectingCoral() {
-    return CANrange.getDistanceInCentimeters() < IntakeConstants.kDistanceToDetect;
+    return coralCANrange.getDistanceInCentimeters() < IntakeConstants.kDistanceToDetect;
+  }
+
+  public boolean isDetectingAlgae() {
+    return algaeCANrange.getDistanceInCentimeters() < IntakeConstants.kDistanceToDetectAlgae;
   }
 
   public void intakeAlgae() {
-    algaeIntakeSpeed = -IntakeConstants.kMaxSpeed;
-    counter = 0;
+    algaeIntakeSpeed = IntakeConstants.kReverseSpeed;
+    // counter = 0;
   }
 
   public void stopAlgaeIntake() {
@@ -119,9 +138,21 @@ public class IntakeSubsystem extends SubsystemBase {
     // }
     
 
-    SmartDashboard.putBoolean("Intake/CANrange", isDetectingCoral());
+    SmartDashboard.putBoolean("Intake/CoralCANrange", isDetectingCoral());
+    SmartDashboard.putBoolean("Intake/AlgaeCANrange", isDetectingAlgae());
     SmartDashboard.putNumber("Intake/Minion Speed", minionMotor.getVelocity());
     SmartDashboard.putNumber("Intake/Minion Current", minionMotor.getCurrentDraw());
+
+    if (isDetectingAlgae()){
+      currentLeftPosition = algaeMotorLeft.getPosition();
+      currentRightPosition = algaeMotorRight.getPosition();
+      algaeMotorRight.set(ControlMode.POSITION, currentRightPosition);
+      algaeMotorLeft.set(ControlMode.POSITION, currentLeftPosition);
+    } else {
+      algaeMotorRight.set(algaeIntakeSpeed);
+      algaeMotorLeft.set(-algaeIntakeSpeed);
+    }
+
 
 
 
@@ -130,24 +161,24 @@ public class IntakeSubsystem extends SubsystemBase {
     // the runner is running in CR mode, so it will run the algae into the intake. However, it won't be able to keep gripping it.
     // Hence, wait for x number of secods (pulse) before stopping the runner and then restarting it. If you don't do this, the servo will stop the runner to prevent brownouts.
     // Do this only for positive speeds. If you want to reverse the intake, don't do this.
-    if (algaeIntakeSpeed > 0) { //intake the algae
+    // if (algaeIntakeSpeed > 0) { //intake the algae
 
-      // This loop will run every 20 ms. So, convert the seconds to milliseconds and divide by 20 to get the number of loops to run.
-      if (counter >= (IntakeConstants.kAlgaeIntakePulseSeconds * 1000/20)) {
-        algaeGripper.set(algaeIntakeSpeed);
-        algaeRunner.set(0);
-        algaeGripper.set(0);
-        counter = 0;
-      } else {
-        algaeRunner.set(algaeIntakeSpeed);
-        algaeGripper.set(-algaeIntakeSpeed);
+    //   // This loop will run every 20 ms. So, convert the seconds to milliseconds and divide by 20 to get the number of loops to run.
+    //   if (counter >= (IntakeConstants.kAlgaeIntakePulseSeconds * 1000/20)) {
+    //     algaeMotorLeft.set(algaeIntakeSpeed);
+    //     algaeMotorRight.set(0);
+    //     algaeMotorLeft.set(0);
+    //     counter = 0;
+    //   } else {
+    //     algaeMotorRight.set(algaeIntakeSpeed);
+    //     algaeMotorLeft.set(-algaeIntakeSpeed);
 
-        counter++;
-      }
+    //     counter++;
+    //   }
 
-    } else { // Reverse or stop the algae intake
-      algaeRunner.set(algaeIntakeSpeed);
-      algaeGripper.set(-algaeIntakeSpeed);
-    }
+    // } else { // Reverse or stop the algae intake
+    //   algaeMotorRight.set(algaeIntakeSpeed);
+    //   algaeMotorLeft.set(-algaeIntakeSpeed);
+    // }
   }
 }
