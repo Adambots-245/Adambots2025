@@ -175,9 +175,13 @@ public class RobotContainer {
 
         // Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
         Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem,
-        125));
-        Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem,
-        -125));
+        125, true));
+        // Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem,
+        // -125, true));
+        Buttons.JoystickButton4
+                .whileTrue(
+                        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
+                                candleSubsytem, driveCommands));
 
         Buttons.JoystickButton5
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
@@ -217,7 +221,7 @@ public class RobotContainer {
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
         //                 candleSubsytem));
         Buttons.JoystickButton10
-                .whileTrue(new RotateToAngleCommand(swerveSubsystem, 270));
+                .whileTrue(new RotateToAngleCommand(swerveSubsystem, 270, false));
 
         Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 

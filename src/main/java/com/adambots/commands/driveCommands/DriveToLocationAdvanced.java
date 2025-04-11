@@ -37,7 +37,7 @@ public class DriveToLocationAdvanced extends Command {
     private double reefOffset = 0.18; // Offset for aligning to the reef/april tag pole.
     private double humanPlayerOffset = 0; // Offset for aligning to the human player station. 0.6
     private double robotReefOffset = 0.455; // Offset for positioning the robot relative to the tag.
-    private double bargeXOffset = 0.07;
+    private double bargeXOffset = -1;
     private double bargeYOffset = 1.15;
 
     // Arrays holding the AprilTag IDs for different field elements.
@@ -114,11 +114,11 @@ public class DriveToLocationAdvanced extends Command {
         if (Robot.isOnRedAlliance()) {
             reefTagIds = new int[] { 6, 7, 8, 9, 10, 11 };
             humanPlayerTagIds = new int[] { 1, 2 };
-            bargeTagIds = new int[] { 15 };
+            bargeTagIds = new int[] { 15, 5 };
         } else {
             reefTagIds = new int[] { 17, 18, 19, 20, 21, 22 };
             humanPlayerTagIds = new int[] { 12, 13 };
-            bargeTagIds = new int[] { 14 };
+            bargeTagIds = new int[] { 14 , 4};
         }
 
         if (alignLocation == AlignLocation.RIGHT_POLE || alignLocation == AlignLocation.LEFT_POLE) {
@@ -227,7 +227,7 @@ public class DriveToLocationAdvanced extends Command {
                         new Transform2d(robotReefOffset, humanPlayerOffset, new Rotation2d(Math.toRadians(0))));
             } else if (alignLocation == AlignLocation.BARGE_MIDDLE) {
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(-bargeXOffset, 0, new Rotation2d(Math.toRadians(90))));
+                        new Transform2d(-bargeXOffset, 0, new Rotation2d(Math.toRadians(180))));
             } else if (alignLocation == AlignLocation.BARGE_LEFT) {
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
                         new Transform2d(-bargeXOffset, -bargeYOffset, new Rotation2d(Math.toRadians(90))));
@@ -276,6 +276,10 @@ public class DriveToLocationAdvanced extends Command {
                         currentPose,
                         targetState);
 
+                if (alignLocation == AlignLocation.BARGE_MIDDLE){
+                    targetSpeeds = new ChassisSpeeds(targetSpeeds.vxMetersPerSecond, -RobotContainer.getDriveAngularVelocity().get().vyMetersPerSecond, targetSpeeds.omegaRadiansPerSecond);
+                }
+    
                 // Command the swerve subsystem to drive at the calculated speeds.
                 swerveSubsystem.drive(targetSpeeds);
 

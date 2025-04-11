@@ -15,13 +15,16 @@ public class RotateToAngleCommand extends Command {
     private double drive_output;
     private double targetAngleRad;
 
-    public RotateToAngleCommand(SwerveSubsystem swerveSubsystem, double targetAngleDeg) {
+    private boolean isAutoHumanPlayer;
+
+    public RotateToAngleCommand(SwerveSubsystem swerveSubsystem, double targetAngleDeg, boolean isAutoHumanPlayer) {
         addRequirements(swerveSubsystem);
 
         angleTurningPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
         this.swerveSubsystem = swerveSubsystem;
         this.targetAngleRad = Math.toRadians(targetAngleDeg);
+        this.isAutoHumanPlayer = isAutoHumanPlayer;
     }
 
     @Override
@@ -33,6 +36,21 @@ public class RotateToAngleCommand extends Command {
     @Override
     public void execute() {
         // Calculates the drive rotation
+        if (isAutoHumanPlayer){
+            // if (Robot.isOnRedAlliance()){
+                if (swerveSubsystem.getPose().getY() > 4){
+                    targetAngleRad = Math.toRadians(-125);
+                } else {
+                    targetAngleRad = Math.toRadians(125);
+                }
+            // } else {
+            //     if (swerveSubsystem.getPose().getY() > 4){
+            //         targetAngleRad = Math.toRadians(-55);
+            //     } else {
+            //         targetAngleRad = Math.toRadians(55);
+            //     }
+            // }
+        }
         if (Robot.isOnRedAlliance()) {
             drive_output = angleTurningPIDController.calculate(swerveSubsystem.getHeading().getRadians(),targetAngleRad);
         } else {
