@@ -169,18 +169,18 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Prev Speed", prevAlgaeSpeed);
     SmartDashboard.putNumber("Set Speed", algaeIntakeSpeed);
 
-    if (isDetectingAlgae()) {
+    if (isDetectingAlgae() && algaeIntakeSpeed == IntakeConstants.kAlgaeSpeed) {
       currentLeftPosition = algaeMotorLeft.getPosition();
       currentRightPosition = algaeMotorRight.getPosition();
       holdPosition = true;
-      if (algaeIntakeSpeed != 0.05){
+      // if (algaeIntakeSpeed != 0.05){
         
-        prevAlgaeSpeed = algaeIntakeSpeed;
-      }
+        // prevAlgaeSpeed = algaeIntakeSpeed;
+      // }
 
-      if (algaeIntakeSpeed == IntakeConstants.kAlgaeSpeed){
-        algaeIntakeSpeed = 0.05;
-      }
+      // if (algaeIntakeSpeed == IntakeConstants.kAlgaeSpeed){
+        // algaeIntakeSpeed = 0.05;
+      // }
       counter = 0;
     } else {
       counter++;
@@ -188,23 +188,26 @@ public class IntakeSubsystem extends SubsystemBase {
         holdPosition = false;
       }
 
-      if (!holdPosition) {
-        algaeIntakeSpeed = prevAlgaeSpeed;
+      // if (!holdPosition) {
+        // algaeIntakeSpeed = prevAlgaeSpeed;
 
         // algaeMotorRight.set(algaeIntakeSpeed);
         // algaeMotorLeft.set(-algaeIntakeSpeed);
         // algaeMotorRight.set(ControlMode.POSITION, algaeIntakeSpeed * 10000);
         // algaeMotorLeft.set(ControlMode.POSITION, -algaeIntakeSpeed* 10000);
-      }
+      // }
 
     }
 
-    // if (holdPosition) {
+    if (!holdPosition) {
     // algaeMotorRight.set(ControlMode.POSITION, algaeMotorRight.getPosition());
     // algaeMotorLeft.set(ControlMode.POSITION, algaeMotorLeft.getPosition());
     algaeMotorLeft.set(-algaeIntakeSpeed);
     algaeMotorRight.set(algaeIntakeSpeed);
-    // }
+    } else {
+      // algaeMotorLeft.set(-0.05);
+      algaeMotorLeft.set(0.05);
+    }
 
     // Algae intake logic - there two servos, one to grip the Algae and one to run
     // the Algae into the intake.
