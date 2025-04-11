@@ -79,7 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setInverted(true);
 
         // elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
-        // elevatorMotor.configureCurrentLimits(40.0, 30.0, 1500.0);
+        elevatorMotor.configureCurrentLimits(80.0, 30.0, 1500.0);
         elevatorMotor.enableVoltageCompensation(12.0);
         ((TalonFXMotor)elevatorMotor).enableFOC();
     }
@@ -134,6 +134,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         setPosition(currentPosition);
     }
 
+    public boolean atLowerLimit() {
+        return !lowerLimitSwitch.isDetecting();
+    }
+
+    public boolean atUpperLimit() {
+        return !upperLimitSwitch.isDetecting();
+    }
+
     @Override
     public void periodic() {
 
@@ -143,19 +151,21 @@ public class ElevatorSubsystem extends SubsystemBase {
         currentPosition = elevatorMotor.getPosition();
 
         // Update elevator state machine
-        if (lowerLimitSwitch.isDetecting()){
-            // elevatorMotor.setPosition
+        if (atLowerLimit()){
+            elevatorMotor.setPosition(0);
             
             elevatorMotor.set(0);
-            // elevatorMotor.setPosition(currentPosition);
-        } else if (upperLimitSwitch.isDetecting()){
+            elevatorMotor.setPosition(currentPosition);
+        } else if (atUpperLimit()){
+            elevatorMotor.setPosition(ElevatorConstants.kElevatorMaxHeight);
             elevatorMotor.set(0);
         } else {
             elevatorStateMachine.periodic();
         }
 
-        SmartDashboard.putBoolean("Elevator/LimitForwardElevator", elevatorMotor.getForwardLimitSwitch());
-        SmartDashboard.putBoolean("Elevator/LimitReverseElevator", elevatorMotor.getReverseLimitSwitch());
+        SmartDashboard.putBoolean("Elevator/LimitForwardElevator", atLowerLimit());
+        SmartDashboard.putBoolean("Elevator/LimitReverseElevator", atUpperLimit());
+        SmartDashboard.putNumber("Elevator Temp", elevatorMotor.getTemperature());
 
 
         SmartDashboard.putNumber("Elevator/Speed", elevatorMotor.getVelocity());

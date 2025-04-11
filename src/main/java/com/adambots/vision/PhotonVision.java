@@ -85,6 +85,9 @@ public class PhotonVision {
 
   private static boolean humanPlayerFlag = false;
 
+  private static boolean isAllCameraDisable = false;
+
+
   /**
    * Constructor for the Vision class.
    *
@@ -164,18 +167,20 @@ public class PhotonVision {
         // pose.estimatedPose.getY());
         // System.err.println("Checkpoint 4");
         // System.out.println(camera);
-        if (!humanPlayerFlag && camera != Cameras.CENTER_CAM){
-          swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-          pose.timestampSeconds,
-          camera.curStdDevs);
-          // System.out.println("REEF UPDATE for " + camera.name());
-        }
-        
-        if (camera == Cameras.CENTER_CAM && humanPlayerFlag){
-          swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-          pose.timestampSeconds,
-          camera.curStdDevs);
-          // System.out.println("CENTER UPDATE for " + camera.name());
+        if (!isAllCameraDisable){
+          if (!humanPlayerFlag && camera != Cameras.CENTER_CAM) {
+            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+                pose.timestampSeconds,
+                camera.curStdDevs);
+            // System.out.println("REEF UPDATE for " + camera.name());
+          }
+  
+          if (camera == Cameras.CENTER_CAM && humanPlayerFlag) {
+            swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+                pose.timestampSeconds,
+                camera.curStdDevs);
+            // System.out.println("CENTER UPDATE for " + camera.name());
+          }
         }
       }
     }
@@ -312,17 +317,18 @@ public class PhotonVision {
     List<Integer> detectedTagIDs = new ArrayList<>();
 
     for (Cameras camera : Cameras.values()) {
-        for (PhotonPipelineResult result : camera.resultsList) {
-            if (result.hasTargets()) {
-                for (PhotonTrackedTarget target : result.getTargets()) {
-                    detectedTagIDs.add(target.getFiducialId());
-                }
-            }
+      for (PhotonPipelineResult result : camera.resultsList) {
+        if (result.hasTargets()) {
+          for (PhotonTrackedTarget target : result.getTargets()) {
+            detectedTagIDs.add(target.getFiducialId());
+          }
         }
+      }
     }
 
     return detectedTagIDs;
-}
+  }
+
   /**
    * Vision simulation.
    *
@@ -445,14 +451,13 @@ public class PhotonVision {
             Units.inchesToMeters(8)),
         VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), getReefTagIDs()),
     CENTER_CAM("Middle",
-        new Rotation3d(Units.degreesToRadians(0
-        ), Units.degreesToRadians(-43), Units.degreesToRadians(177)),
+        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(-43), Units.degreesToRadians(177)),
         new Translation3d(Units.inchesToMeters(8),
             Units.inchesToMeters(0),
             Units.inchesToMeters(41)),
         VecBuilder.fill(0.5, 0.5, 0.5), VecBuilder.fill(0.5, 0.5, 1), getHumanPlayerTagIDs());
 
-        //Aarush Gota was here :0
+    // Aarush Gota was here :0
 
     /**
      * Latency alert to use when high latency is detected.
@@ -679,73 +684,78 @@ public class PhotonVision {
     private void updateEstimatedGlobalPose() {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
       // for (var change : resultsList) {
-      //   visionEst = poseEstimator.update(change);
-      //   // try {
-      //   // if (visionEst != null)
-      //   // // System.out.println("Updated Pose " + visionEst.get().estimatedPose.getX()
-      //   // + "y: " + visionEst.get().estimatedPose.getY());
-      //   // } catch (Exception e) {
-      //   // // TODO: handle exception
-      //   // System.out.println("Pose died!?! ( big problem !!!)");
-      //   // }
-      //   updateEstimationStdDevs(visionEst, change.getTargets());
+      // visionEst = poseEstimator.update(change);
+      // // try {
+      // // if (visionEst != null)
+      // // // System.out.println("Updated Pose " +
+      // visionEst.get().estimatedPose.getX()
+      // // + "y: " + visionEst.get().estimatedPose.getY());
+      // // } catch (Exception e) {
+      // // // TODO: handle exception
+      // // System.out.println("Pose died!?! ( big problem !!!)");
+      // // }
+      // updateEstimationStdDevs(visionEst, change.getTargets());
       // }
       // estimatedRobotPose = visionEst;
 
-      // If you don't need target filtering, comment everything below this and uncomment the top part.
+      // If you don't need target filtering, comment everything below this and
+      // uncomment the top part.
 
-        for (var result : resultsList) {
-            // Skip this result if there are no targets
-            if (!result.hasTargets()) {
-                continue;
-            }
-            
-            // Check if this camera has tag filtering
-            if (allowedTagIDs != null && allowedTagIDs.length > 0) {
-                // Check if any of the targets match our allowed tag IDs
-                boolean hasAllowedTag = false;
-                for (PhotonTrackedTarget target : result.getTargets()) {
-                    for (int id : allowedTagIDs) {
-                        if (target.getFiducialId() == id) {
-                            hasAllowedTag = true;
-                            break;
-                        }
-                    }
-                    if (hasAllowedTag) break;
-                }
-                
-                // Skip this result if it doesn't have any allowed tags
-                if (!hasAllowedTag) {
-                    continue;
-                }
-            }
-            
-            // Update with the result
-            visionEst = poseEstimator.update(result);
-            
-            // After getting the pose estimate, verify it used allowed tags if filtering is enabled
-            if (visionEst.isPresent() && allowedTagIDs != null && allowedTagIDs.length > 0) {
-                boolean usedAllowedTag = false;
-                for (PhotonTrackedTarget usedTarget : visionEst.get().targetsUsed) {
-                    for (int id : allowedTagIDs) {
-                        if (usedTarget.getFiducialId() == id) {
-                            usedAllowedTag = true;
-                            break;
-                        }
-                    }
-                    if (usedAllowedTag) break;
-                }
-                
-                // If the pose didn't use any allowed tags, discard it
-                if (!usedAllowedTag) {
-                    visionEst = Optional.empty();
-                    continue;
-                }
-            }
-            
-            updateEstimationStdDevs(visionEst, result.getTargets());
+      for (var result : resultsList) {
+        // Skip this result if there are no targets
+        if (!result.hasTargets()) {
+          continue;
         }
-        estimatedRobotPose = visionEst;
+
+        // Check if this camera has tag filtering
+        if (allowedTagIDs != null && allowedTagIDs.length > 0) {
+          // Check if any of the targets match our allowed tag IDs
+          boolean hasAllowedTag = false;
+          for (PhotonTrackedTarget target : result.getTargets()) {
+            for (int id : allowedTagIDs) {
+              if (target.getFiducialId() == id) {
+                hasAllowedTag = true;
+                break;
+              }
+            }
+            if (hasAllowedTag)
+              break;
+          }
+
+          // Skip this result if it doesn't have any allowed tags
+          if (!hasAllowedTag) {
+            continue;
+          }
+        }
+
+        // Update with the result
+        visionEst = poseEstimator.update(result);
+
+        // After getting the pose estimate, verify it used allowed tags if filtering is
+        // enabled
+        if (visionEst.isPresent() && allowedTagIDs != null && allowedTagIDs.length > 0) {
+          boolean usedAllowedTag = false;
+          for (PhotonTrackedTarget usedTarget : visionEst.get().targetsUsed) {
+            for (int id : allowedTagIDs) {
+              if (usedTarget.getFiducialId() == id) {
+                usedAllowedTag = true;
+                break;
+              }
+            }
+            if (usedAllowedTag)
+              break;
+          }
+
+          // If the pose didn't use any allowed tags, discard it
+          if (!usedAllowedTag) {
+            visionEst = Optional.empty();
+            continue;
+          }
+        }
+
+        updateEstimationStdDevs(visionEst, result.getTargets());
+      }
+      estimatedRobotPose = visionEst;
     }
 
     /**
@@ -811,7 +821,7 @@ public class PhotonVision {
 
     public void enableCamera() {
       // camera.setPipelineIndex(0);
-      
+
       // camera.setDriverMode(false);
 
     }
@@ -825,23 +835,33 @@ public class PhotonVision {
   public static int[] getHumanPlayerTagIDs() {
     // In the 2025 Reefscape field, tags 1,2,12,13 are human player station tags
     // Modify these values based on the actual game field
-    return new int[] { 1, 2, 12, 13};
+    // return new int[] { 1, 2, 12, 13};
+    return new int[] { 1, 2, 4, 5, 12, 13, 14, 15 };
   }
 
   /**
    * Gets a list of tag IDs that are on the Reefs (both sides)
+   * 
    * @return
    */
-  public static int[] getReefTagIDs(){
+  public static int[] getReefTagIDs() {
     // 2025 reefscape field - tags 6-11 on red side, 17-22 on blue side
-    return new int[] {6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22};
+    return new int[] { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
   }
 
-  public void disableFrontCameras(){
+  public void disableFrontCameras() {
     humanPlayerFlag = true;
   }
 
-  public void enableFrontCameras(){
+  public void enableFrontCameras() {
     humanPlayerFlag = false;
+  }
+
+  public void disableAllCameras() {
+    isAllCameraDisable = true;
+  }
+
+  public void enableAllCameras() {
+    isAllCameraDisable = false;
   }
 }

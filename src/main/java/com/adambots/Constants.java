@@ -211,7 +211,7 @@ public final class Constants {
         public static final double kElevatorLowAlgaePosition = 39.5;
         public static final double kElevatorProcessorPosition = 0;
 
-        public static final double kElevatorMaxHeight = 90;
+        public static final double kElevatorMaxHeight = kElevatorL4Position;
         public static final double kElevatorMinHeight = 0;
         public static final double kElevatorDangerZoneStart = 20;
         public static final double kElevatorDangerZoneEnd = 40;

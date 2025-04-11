@@ -54,7 +54,7 @@ public class RotateToAngleCommand extends Command {
         if (Robot.isOnRedAlliance()) {
             drive_output = angleTurningPIDController.calculate(swerveSubsystem.getHeading().getRadians(),targetAngleRad);
         } else {
-            drive_output = angleTurningPIDController.calculate(swerveSubsystem.getHeading().getRadians(), Math.PI-targetAngleRad);
+            drive_output = angleTurningPIDController.calculate(swerveSubsystem.getHeading().getRadians(), Math.PI+targetAngleRad);
         }
 
         // Moves left or right depending on the angle

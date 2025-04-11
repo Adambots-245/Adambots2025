@@ -71,8 +71,8 @@ public class RobotMap {
     public static final int kMinionRightPort = 51;
     public static final int kClimbMotorPort = 19;
     public static final int kClimbLimitSwitchPort = 4; 
-    public static final int kLowerKrakenLimitSwitchPort = 0; 
-    public static final int kUpperKrakenLimitSwitchPort = 1; 
+    public static final int kLowerKrakenLimitSwitchPort = 1; 
+    public static final int kUpperKrakenLimitSwitchPort = 0; 
 
 
     // public static final int kHPSrangePort = 35;
@@ -92,20 +92,19 @@ public class RobotMap {
     public static final PowerDistribution PDM = new PowerDistribution(kPDMPort, ModuleType.kRev);
     public static final BaseGyro gyro = new Gyro(kGyroPort);
     public static final CANdle candleLEDs = new CANdle(kCANdlePort);
-    public static final ServoHub hub = new ServoHub(kServoHubPort);
+    // public static final ServoHub hub = new ServoHub(kServoHubPort);
     // public static final BaseActuator topCoralActuator = new CRHubServo(hub, kTopCoralServoChannel);
     // public static final BaseActuator bottomCoralActuator = new CRHubServo(hub, kBottomCoralServoChannel);
     public static final BaseMotor minionMotor = new MinionMotor(kMinionPort, "*");
-    public static final BaseMotor algaeLeftMotor = new MinionMotor(kMinionLeftPort);
-    public static final BaseMotor algaeRightMotor = new MinionMotor(kMinionRightPort);
+    public static final BaseMotor algaeLeftMotor = new MinionMotor(kMinionLeftPort, "*");
+    public static final BaseMotor algaeRightMotor = new MinionMotor(kMinionRightPort, "*");
 
-    public static final BaseActuator algaeGripper = new DirectServo(kGripperAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
-    public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
+    // public static final BaseActuator algaeGripper = new DirectServo(kGripperAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
+    // public static final BaseActuator algaeRunner = new DirectServo(kRunnerAlgaeServoChannel, ServoMode.CONTINUOUS_ROTATION);
     // public static final BaseActuator topCoralActuator = new TalonFXMotor(kIntakeMotorPort, true, 40, false);
     public static final BaseDistanceSensor coralCANrange = new CANRangeSensor(kCANrangePort, true);
-    public static final BaseDistanceSensor algaeCANrange = new CANRangeSensor(kAlgaeCANrangePort, false);
+    public static final BaseDistanceSensor algaeCANrange = new CANRangeSensor(kAlgaeCANrangePort, true);
     // public static final BaseDistanceSensor HPSrange = new CANRangeSensor(kHPSrangePort, true);
-
 
     public static final BaseMotor wristMotor = new TalonFXMotor(kWristMotorPort, true, 20, false);
     public static final BaseAbsoluteEncoder wristEncoder = new ThroughBoreEncoder(kEncoderPort);
@@ -117,45 +116,4 @@ public class RobotMap {
 
     public static final LimitSwitch lowerElevatorLimitSwitch = new LimitSwitch(kLowerKrakenLimitSwitchPort, false);
     public static final LimitSwitch upperElevatorLimitSwitch = new LimitSwitch(kUpperKrakenLimitSwitchPort, false);
-
-    
-//     // Robot Swerve Modules
-//     public static final HashMap<ModulePosition, SwerveModule> swerveModules = new HashMap<>(
-//         Map.of(
-//             ModulePosition.FRONT_LEFT,
-//             new SwerveModule(
-//                     ModulePosition.FRONT_LEFT,
-//                     RobotMap.kFrontLeftDriveMotorPort,
-//                     RobotMap.kFrontLeftTurningMotorPort,
-//                     RobotMap.kFrontLeftTurningEncoderPort,
-//                     DriveConstants.kFrontLeftDriveMotorReversed),
-
-//             ModulePosition.FRONT_RIGHT,
-//             new SwerveModule(
-//                     ModulePosition.FRONT_RIGHT,
-//                     RobotMap.kFrontRightDriveMotorPort,
-//                     RobotMap.kFrontRightTurningMotorPort,
-//                     RobotMap.kFrontRightTurningEncoderPort,
-//                     DriveConstants.kFrontRightDriveMotorReversed),
-
-//             ModulePosition.REAR_LEFT,
-//             new SwerveModule(
-//                     ModulePosition.REAR_LEFT,
-//                     RobotMap.kRearLeftDriveMotorPort,
-//                     RobotMap.kRearLeftTurningMotorPort,
-//                     RobotMap.kRearLeftTurningEncoderPort,
-//                     DriveConstants.kRearLeftDriveMotorReversed),
-
-//             ModulePosition.REAR_RIGHT,
-//             new SwerveModule(
-//                     ModulePosition.REAR_RIGHT,
-//                     RobotMap.kRearRightDriveMotorPort,
-//                     RobotMap.kRearRightTurningMotorPort,
-//                     RobotMap.kRearRightTurningEncoderPort,
-//                     DriveConstants.kRearRightDriveMotorReversed)       
-//         )
-//     );
-
-    // Subsystem related Ports go here
-
 }

@@ -135,6 +135,10 @@ public class DriveToLocationAdvanced extends Command {
             // driveCommands.disableFrontCams().schedule();
             // driveCommands.enableBackCam().schedule();
         }
+
+        if (alignLocation == AlignLocation.BARGE_MIDDLE){
+            swerveSubsystem.getVision().disableAllCameras();
+        }
     }
 
     /**
@@ -335,6 +339,10 @@ public class DriveToLocationAdvanced extends Command {
         swerveSubsystem.setChassisSpeeds(new ChassisSpeeds(0, 0, 0));
         // Set the LED animation to a predefined pattern (Larson animation).
         caNdleSubsystem.setAnimation(AnimationTypes.Larson);
+
+        swerveSubsystem.getVision().enableAllCameras();
+
+        
 
         swerveSubsystem.getVision().enableFrontCameras();
         // driveCommands.enableFrontCams().schedule();

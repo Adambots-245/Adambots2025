@@ -164,14 +164,17 @@ public class RobotContainer {
         Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
         Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
 
+        Buttons.JoystickButton2
+                .whileTrue(new RotateToAngleCommand(swerveSubsystem, 270, false));
+
         // Buttons.JoystickButton3
         //         .whileTrue(
         //                 new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_LEFT,
         //                         candleSubsytem));
-        Buttons.JoystickButton2
-                .whileTrue(
-                        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT,
-                                candleSubsytem, driveCommands));
+        // Buttons.JoystickButton2
+        //         .whileTrue(
+        //                 new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.HUMAN_PLAYER_RIGHT,
+        //                         candleSubsytem, driveCommands));
 
         // Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
         Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem,
@@ -220,8 +223,6 @@ public class RobotContainer {
         // Buttons.JoystickButton10
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
         //                 candleSubsytem));
-        Buttons.JoystickButton10
-                .whileTrue(new RotateToAngleCommand(swerveSubsystem, 270, false));
 
         Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
