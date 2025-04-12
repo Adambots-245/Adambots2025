@@ -80,7 +80,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorMotor.setInverted(true);
 
         // elevatorMotor.configureHardLimits(true, true, ElevatorConstants.kElevatorL4Position, 0);
-        elevatorMotor.configureCurrentLimits(80.0, 30.0, 1500.0);
+        elevatorMotor.configureCurrentLimits(60.0, 30.0, 2000.0);
         elevatorMotor.enableVoltageCompensation(12.0);
         ((TalonFXMotor)elevatorMotor).enableFOC();
     }

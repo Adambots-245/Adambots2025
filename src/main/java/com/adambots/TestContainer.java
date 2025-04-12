@@ -44,7 +44,7 @@ public class TestContainer {
   // private final DriveCommands driveCommands = new DriveCommands(swerveSubsystem);
   private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem, candleSubsytem);
   // private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem, intakeCommands);
-  private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem, candleSubsytem);
+  // private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem, ElevatorSubsystem, candleSubsytem);
 
   // Creates a SmartDashboard element to allow drivers to select differnt autons
   // private SendableChooser<Command> autoChooser = new SendableChooser<>();
@@ -87,7 +87,7 @@ public class TestContainer {
     }
     SmartDashboard.putData("Run Intake", intakeCommands.intakeCoral());
     SmartDashboard.putData("Stop Intake", intakeCommands.stopIntakeCoral());
-    SmartDashboard.putData("Shoot Coral", scoringCommands.scoreCoral());
+    // SmartDashboard.putData("Shoot Coral", scoringCommands.scoreCoral());
 
     if (DriverStation.isTest()) {
       

@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import swervelib.SwerveInputStream;
@@ -63,7 +64,7 @@ public class RobotContainer {
     private final IntakeCommands intakeCommands = new IntakeCommands(intakesubsystem, candleSubsytem);
     private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevatorSubsystem, wristSubsystem,
             intakeCommands, intakesubsystem);
-    private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem, candleSubsytem);
+    private final ScoringCommands scoringCommands = new ScoringCommands(intakesubsystem, elevatorSubsystem, candleSubsytem);
     private final HangCommands hangCommands = new HangCommands(hangSubsystem, candleSubsytem);
 
     // Creates a SmartDashboard element to allow drivers to select differnt autons
@@ -161,11 +162,15 @@ public class RobotContainer {
         // // .whileTrue(driveCommands.getDistanceFromAprilTag(17));
 
         // } else {
-        Buttons.JoystickButton1.onTrue(scoringCommands.scoreCoral());
+        Buttons.JoystickButton1.onTrue(scoringCommands.scoreAlgaeDynamic().andThen(scoringCommands.scoreCoral()));
         Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringCoral());
+        Buttons.JoystickButton1.onFalse(scoringCommands.stopScoringAlgae());
+
+        // Buttons.JoystickButton9.onTrue(scoringCommands.scoreAlgaeDynamic());
+        // Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
 
         Buttons.JoystickButton2
-                .whileTrue(new RotateToAngleCommand(swerveSubsystem, 270, false));
+                .whileTrue(new RotateToAngleCommand(swerveSubsystem, 90, false));
 
         // Buttons.JoystickButton3
         //         .whileTrue(
@@ -179,12 +184,12 @@ public class RobotContainer {
         // Buttons.JoystickButton2.whileTrue(new RotateToAngleCommand(swerveSubsystem, 90));
         Buttons.JoystickButton3.whileTrue(new RotateToAngleCommand(swerveSubsystem,
         125, true));
-        // Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem,
-        // -125, true));
-        Buttons.JoystickButton4
-                .whileTrue(
-                        new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
-                                candleSubsytem, driveCommands));
+        Buttons.JoystickButton4.whileTrue(new RotateToAngleCommand(swerveSubsystem,
+        180, false));
+        // Buttons.JoystickButton4
+        //         .whileTrue(
+        //                 new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.BARGE_MIDDLE,
+        //                         candleSubsytem, driveCommands));
 
         Buttons.JoystickButton5
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
@@ -217,8 +222,11 @@ public class RobotContainer {
         Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
         Buttons.JoystickButton8.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
 
-        Buttons.JoystickButton9.onTrue(scoringCommands.scoreAlgae());
-        Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
+        // Buttons.JoystickButton9.onTrue(scoringCommands.scoreAlgaeDynamic());
+        // Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
+
+        Buttons.JoystickButton9.onTrue(elevatorCommands.moveToL1Command());
+        // Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
 
         // Buttons.JoystickButton10
         //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
@@ -262,7 +270,7 @@ public class RobotContainer {
 
         Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
 
-        Buttons.XboxBackButton.onTrue(scoringCommands.scoreAlgae());
+        Buttons.XboxBackButton.onTrue(scoringCommands.scoreAlgaeDynamic());
         Buttons.XboxBackButton.onFalse(scoringCommands.stopScoringAlgae());
 
         Buttons.XboxDPadNE.onTrue(intakeCommands.intakeAlgae());
@@ -381,9 +389,14 @@ public class RobotContainer {
             new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.H4,
                 candleSubsytem, driveCommands));
     NamedCommands.registerCommand("DriveToAlgae",
-           new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem, driveCommands));
+           new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem, driveCommands)
+           .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -3)));
     NamedCommands.registerCommand("AlgaeStateLow",
     elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
+    NamedCommands.registerCommand("AlgaeStateHigh",
+    elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
+    NamedCommands.registerCommand("BargeState", elevatorCommands.moveToStateCommand(ElevatorState.BARGE, WristState.BARGE));
+    NamedCommands.registerCommand("BargeScore", new ParallelDeadlineGroup(new WaitCommand(0.2), scoringCommands.scoreAlgae()));
   }
 
     /**

@@ -31,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private double currentLeftPosition = 0;
   private double currentRightPosition = 0;
 
-  private PIDController intakePID = new PIDController(0.03, 0, 0.001);
+  private PIDController intakePID = new PIDController(0.025, 0, 0.001);
   private double goalVelocity = 0;
   private boolean holdPosition = false;
   private int counter = 0;
@@ -87,11 +87,10 @@ public class IntakeSubsystem extends SubsystemBase {
     // goalVelocity = 8.8;
   }
 
-  public void intakeCoral(double speed) {
+  public void intakeCoral(double newGoalVelocity) {
     // System.out.println("Calling Intake");
-    coralIntakeSpeed = speed;
 
-    goalVelocity = 12.5;
+    goalVelocity = newGoalVelocity;
   }
 
   public void setMotorSpeed(double speed) {
@@ -136,6 +135,11 @@ public class IntakeSubsystem extends SubsystemBase {
     prevAlgaeSpeed = algaeIntakeSpeed;
   }
 
+  public void reverseAlgaeIntake(double algaeSpeed) {
+    algaeIntakeSpeed = -algaeSpeed;
+    prevAlgaeSpeed = algaeIntakeSpeed;
+  }
+
   public boolean getHoldPosition() {
     return holdPosition;
   }
@@ -163,6 +167,7 @@ public class IntakeSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake/AlgaeDistance", algaeCANrange.getDistanceInInches());
     SmartDashboard.putNumber("Intake/Minion Speed", minionMotor.getVelocity());
     SmartDashboard.putNumber("Intake/Minion Current", minionMotor.getCurrentDraw());
+    SmartDashboard.putNumber("Intake/Minion Temp", minionMotor.getTemperature());
     SmartDashboard.putNumber("Intake/Left Position", algaeMotorLeft.getPosition());
     SmartDashboard.putNumber("Intake/Right Position", algaeMotorRight.getPosition());
     SmartDashboard.putNumber("Intake/Left Current Position", currentLeftPosition);

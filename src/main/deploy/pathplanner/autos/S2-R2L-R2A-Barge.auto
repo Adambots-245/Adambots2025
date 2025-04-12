@@ -49,18 +49,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -71,13 +59,13 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.2
+                        "waitTime": 0.001
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "IntakeState"
+                        "name": "AlgaeStateLow"
                       }
                     }
                   ]
@@ -95,13 +83,77 @@
         {
           "type": "named",
           "data": {
-            "name": "AlgaeStateLow"
+            "name": "DriveToAlgae"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.001
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "BargeState"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R2A-Barge"
+                }
+              }
+            ]
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BargeScore"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlgaeStateHigh"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Barge-R1R"
+                }
+              }
+            ]
           }
         },
         {
@@ -111,9 +163,73 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "R2A-Barge"
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.001
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "BargeState"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R1R-Barge"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.45
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "BargeScore"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "IntakePosition"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Barge-R1L"
+                }
+              }
+            ]
           }
         }
       ]

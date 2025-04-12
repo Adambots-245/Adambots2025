@@ -141,12 +141,12 @@ public final class Constants {
         // public static final double kITranslationController = 0; 
         // public static final double kDTranslationController = 0.11;
 
-        public static final double kPTranslationController = 3.5; 
+        public static final double kPTranslationController = 3; 
         public static final double kITranslationController = 0; 
         public static final double kDTranslationController = 0.05;
 
         // PD values for auton rotational movement
-        public static final double kPThetaController = 1.5; 
+        public static final double kPThetaController = 1; 
         public static final double kIThetaController = 0; 
         public static final double kDThetaController = 0.06;
 
@@ -166,7 +166,7 @@ public final class Constants {
     // Subystem Constants go here
     public final static class IntakeConstants {
         public static final double kMaxSpeed = -0.14;//Not use\
-        public static final double kMaxPIDTarget = 10;//PID Max Velocity
+        public static final double kMaxPIDTarget = 9.5;//PID Max Velocity
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 0.1;
         public static final double kAlgaeSpeed = 0.6;
@@ -206,7 +206,7 @@ public final class Constants {
         public static final double kElevatorL1Position = 21;
         public static final double kElevatorL2Position = 28;
         public static final double kElevatorL3Position = 55;
-        public static final double kElevatorL4Position = 91;
+        public static final double kElevatorL4Position = 92;
         public static final double kElevatorBargePosition = 75;
         public static final double kElevatorHighAlgaePosition = 65.3;
         public static final double kElevatorLowAlgaePosition = 39.5;
@@ -219,11 +219,11 @@ public final class Constants {
 
         // Wrist Positions
         public static final double kWristStowedPosition = 218; //55
-        public static final double kWristIntakePosition = 239; //80.7
+        public static final double kWristIntakePosition = 240.4; //239 //80.7
         public static final double kWristL1Position = 224; //66
         public static final double kWristL2Position = 224; //66
         public static final double kWristL3Position = 224; //66
-        public static final double kWristL4Position = 227; //74
+        public static final double kWristL4Position = 226; //74
         public static final double kWristHighAlgaePosition = 159; //5
         public static final double kWristLowAlgaePosition = 159; //359
         public static final double kWristProcessorPosition = 170; //359
@@ -238,7 +238,7 @@ public final class Constants {
 
         // Gear Ratio and Other Elevator Constants
         public static final double stateFirstChangeDelay = 0.15;
-        public static final double stateChangeDelay = 0.5;
+        public static final double stateChangeDelay = 0.6;
         public static final double kGearRatio = 10/1.0; //10:1
         public static final double kDrumCircumference = 2.0; // inches
         public static final double kInchesPerRotation = kDrumCircumference / kGearRatio;
