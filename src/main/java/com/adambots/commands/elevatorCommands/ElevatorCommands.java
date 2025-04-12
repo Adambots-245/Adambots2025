@@ -14,6 +14,8 @@ import com.adambots.subsystems.WristSubsystem.WristState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorCommands extends Command {
@@ -75,14 +77,18 @@ public class ElevatorCommands extends Command {
 
     public Command moveToGroundAlgaeCommand() {
         return Commands.either(
-            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.GROUND_INTAKE)).andThen(intakeCommands.intakeAlgae())
+            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.GROUND_INTAKE)).andThen(intakeCommands.intakeAlgae()) .andThen(new RunCommand(()-> System.out.println("Hello")).until(()-> intakeSubsystem.getHoldPosition()))
+            .andThen(moveToIntakeCommand())
+            
             , 
             Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
                 .andThen(Commands.waitSeconds(0.75))
                 .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.GROUND_INTAKE)))
-                .andThen(intakeCommands.intakeAlgae()),
+                .andThen(intakeCommands.intakeAlgae())
+                .andThen(new RunCommand(()-> System.out.println("Hello")).until(()-> intakeSubsystem.getHoldPosition()))
+                .andThen(moveToIntakeCommand()),
             ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));
     }
 

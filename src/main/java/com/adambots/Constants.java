@@ -169,9 +169,9 @@ public final class Constants {
         public static final double kMaxPIDTarget = 10;//PID Max Velocity
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 0.1;
-        public static final double kAlgaeSpeed = 0.4;
+        public static final double kAlgaeSpeed = 0.6;
         public static final double kDistanceToDetect = 10;//cm
-        public static final double kDistanceToDetectAlgae = 2;//in
+        public static final double kDistanceToDetectAlgae = 3.5;//in
         public static final double kTimerThreshold = 0.0; // number of seconds to wait before stopping the intake after detecting a coral
         public static final double kAlgaeIntakePulseSeconds = 0.2;
 
@@ -207,6 +207,7 @@ public final class Constants {
         public static final double kElevatorL2Position = 28;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 91;
+        public static final double kElevatorBargePosition = 75;
         public static final double kElevatorHighAlgaePosition = 65.3;
         public static final double kElevatorLowAlgaePosition = 39.5;
         public static final double kElevatorProcessorPosition = 0;
@@ -225,8 +226,8 @@ public final class Constants {
         public static final double kWristL4Position = 227; //74
         public static final double kWristHighAlgaePosition = 159; //5
         public static final double kWristLowAlgaePosition = 159; //359
-        public static final double kWristProcessorPosition = 174; //359
-        public static final double kWristGroundIntakePosition = 143.5; //350
+        public static final double kWristProcessorPosition = 170; //359
+        public static final double kWristGroundIntakePosition = 147; //350
         public static final double kWristBargePosition = 234; 
         public static final double kWristHangPosition = 234; //71
 

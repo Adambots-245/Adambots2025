@@ -132,8 +132,12 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void reverseAlgaeIntake() {
-    algaeIntakeSpeed = -IntakeConstants.kAlgaeSpeed;
+    algaeIntakeSpeed = -0.75;
     prevAlgaeSpeed = algaeIntakeSpeed;
+  }
+
+  public boolean getHoldPosition() {
+    return holdPosition;
   }
 
   @Override
@@ -206,7 +210,8 @@ public class IntakeSubsystem extends SubsystemBase {
     algaeMotorRight.set(algaeIntakeSpeed);
     } else {
       // algaeMotorLeft.set(-0.05);
-      algaeMotorLeft.set(0.05);
+      algaeMotorRight.set(-0.05);
+      algaeMotorLeft.set(-0.25);
     }
 
     // Algae intake logic - there two servos, one to grip the Algae and one to run

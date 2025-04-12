@@ -189,8 +189,8 @@ public class RobotContainer {
         Buttons.JoystickButton5
                 .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE,
                         candleSubsytem, driveCommands)
-                        .andThen(new WaitCommand(0.2))
-                        .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -2))); //234
+                        // .andThen(new WaitCommand(0.2))
+                        .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -3))); //234
                         // .andThen(elevatorCommands.moveToIntakeCommand()));
         Buttons.JoystickButton5.onFalse(scoringCommands.stopScoringCoral());
 
@@ -254,7 +254,7 @@ public class RobotContainer {
         //                 candleSubsytem));
 
         // Buttons.XboxXButton.onTrue(elevatorCommands.moveToL1Command());
-        Buttons.XboxXButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.L4, WristState.BARGE));
+        Buttons.XboxXButton.onTrue(elevatorCommands.moveToStateCommand(ElevatorState.BARGE, WristState.BARGE));
 
         Buttons.XboxAButton.onTrue(elevatorCommands.moveToL2Command());
         Buttons.XboxBButton.onTrue(elevatorCommands.moveToL3Command());
