@@ -31,7 +31,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private double currentLeftPosition = 0;
   private double currentRightPosition = 0;
 
-  private PIDController intakePID = new PIDController(0.025, 0, 0.001);
+  private PIDController intakePID = new PIDController(0.07, 0.00, 0.00);
   private double goalVelocity = 0;
   private boolean holdPosition = false;
   private int counter = 0;
@@ -81,6 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void intakeCoral() {
     // System.out.println("Calling Intake");
+    intakePID.reset();
     coralIntakeSpeed = IntakeConstants.kMaxSpeed;
 
     goalVelocity = IntakeConstants.kMaxPIDTarget;
@@ -89,7 +90,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void intakeCoral(double newGoalVelocity) {
     // System.out.println("Calling Intake");
-
+    intakePID.reset();
     goalVelocity = newGoalVelocity;
   }
 
@@ -152,7 +153,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
     } else if (goalVelocity == 0) {
       minionMotor.set(0);
-    } else {
+    } else if (goalVelocity == 20){
+      minionMotor.set(0.11);
+    } else if (goalVelocity == 9){
+      minionMotor.set(0.12);
+    }
+    else {
       minionMotor.set(intakeSpeed);
     }
 

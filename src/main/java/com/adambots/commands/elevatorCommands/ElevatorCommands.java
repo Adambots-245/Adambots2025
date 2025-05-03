@@ -42,7 +42,7 @@ public class ElevatorCommands extends Command {
             Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
-                .andThen(Commands.waitSeconds(0.75))
+                .andThen(Commands.waitSeconds(0.9))
                 .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.INTAKE)))
                 .andThen(Commands.either(
                     Commands.runOnce(()-> System.out.println("Already Have Coral")), 
@@ -55,7 +55,7 @@ public class ElevatorCommands extends Command {
         return Commands.either(
             Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.HANG))
             , 
-            Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
+        Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateFirstChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(ElevatorState.INTAKE), wristSubsystem))
                 .andThen(Commands.waitSeconds(0.75))
@@ -74,7 +74,7 @@ public class ElevatorCommands extends Command {
                 .andThen(Commands.waitSeconds(0.75))
                 .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.PROCESSOR)))
                 .andThen(intakeCommands.intakeAlgae()),
-            ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.PROCESSOR));
+            ()-> elevatorSubsystem.getCurrentElevatorState().equals(ElevatorState.INTAKE));
     }
 
     public Command moveToGroundAlgaeCommand() {
@@ -140,7 +140,7 @@ public class ElevatorCommands extends Command {
         return Commands.runOnce(() -> wristSubsystem.moveWristToState(WristState.STOWED), elevatorSubsystem)
                 .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
                 .andThen(Commands.runOnce(() -> elevatorSubsystem.moveElevatorToState(elevatorState), wristSubsystem)
-                        .andThen(Commands.waitSeconds(ElevatorConstants.stateChangeDelay))
+                        .andThen(Commands.waitSeconds(0.8))
                         .andThen(Commands.runOnce(() -> wristSubsystem.moveWristToState(wristState))));
     }
 

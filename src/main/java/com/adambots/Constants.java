@@ -166,7 +166,7 @@ public final class Constants {
     // Subystem Constants go here
     public final static class IntakeConstants {
         public static final double kMaxSpeed = -0.14;//Not use\
-        public static final double kMaxPIDTarget = 9.5;//PID Max Velocity
+        public static final double kMaxPIDTarget = 9;//PID Max Velocity
         public static final double kLowSpeed = .5;
         public static final double kReverseSpeed = 0.1;
         public static final double kAlgaeSpeed = 0.6;
@@ -196,14 +196,14 @@ public final class Constants {
         public static final double kFElevatorController = 0.0;
 
         public static final double kWristPositionIncrement = 3.7;
-        public static final double kPWristController = 0.022;
+        public static final double kPWristController = 0.03;
         public static final double kIWristController = 0.00;
 
         public static final double kDWristController = 0.0001;
 
         // Elevator Positions
         public static final double kElevatorIntakePosition = -1;
-        public static final double kElevatorL1Position = 21;
+        public static final double kElevatorL1Position = 3;
         public static final double kElevatorL2Position = 28;
         public static final double kElevatorL3Position = 55;
         public static final double kElevatorL4Position = 92;
@@ -219,8 +219,8 @@ public final class Constants {
 
         // Wrist Positions
         public static final double kWristStowedPosition = 218; //55
-        public static final double kWristIntakePosition = 240.4; //239 //80.7
-        public static final double kWristL1Position = 224; //66
+        public static final double kWristIntakePosition = 241.5; //239 //80.7
+        public static final double kWristL1Position = 246.8; //66
         public static final double kWristL2Position = 224; //66
         public static final double kWristL3Position = 224; //66
         public static final double kWristL4Position = 226; //74

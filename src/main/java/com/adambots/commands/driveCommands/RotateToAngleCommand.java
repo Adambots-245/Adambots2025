@@ -29,7 +29,7 @@ public class RotateToAngleCommand extends Command {
 
     @Override
     public void initialize() {
-
+        swerveSubsystem.getVision().disableAllCameras();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -37,19 +37,19 @@ public class RotateToAngleCommand extends Command {
     public void execute() {
         // Calculates the drive rotation
         if (isAutoHumanPlayer){
-            // if (Robot.isOnRedAlliance()){
+            if (Robot.isOnRedAlliance()){
                 if (swerveSubsystem.getPose().getY() > 4){
                     targetAngleRad = Math.toRadians(-125);
                 } else {
                     targetAngleRad = Math.toRadians(125);
                 }
-            // } else {
-            //     if (swerveSubsystem.getPose().getY() > 4){
-            //         targetAngleRad = Math.toRadians(-55);
-            //     } else {
-            //         targetAngleRad = Math.toRadians(55);
-            //     }
-            // }
+            } else {
+                if (swerveSubsystem.getPose().getY() > 4){
+                    targetAngleRad = Math.toRadians(125);
+                } else {
+                    targetAngleRad = Math.toRadians(-125);
+                }
+            }
         }
         if (Robot.isOnRedAlliance()) {
             drive_output = angleTurningPIDController.calculate(swerveSubsystem.getHeading().getRadians(),targetAngleRad);
@@ -67,6 +67,7 @@ public class RotateToAngleCommand extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        swerveSubsystem.getVision().enableAllCameras();             
         // driveTrainSubsystem.stop();
     }
 

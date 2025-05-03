@@ -48,7 +48,7 @@ public class ScoringCommands {
         // NEED ANOTHER THRESHOLD
         // .andThen(Commands.runOnce(intakeSubsystem::stopCoralIntake));
 
-        return Commands.runOnce(() -> intakeSubsystem.intakeCoral(13), intakeSubsystem)
+        return Commands.runOnce(() -> intakeSubsystem.intakeCoral(20), intakeSubsystem)
                 .andThen(() -> caNdleSubsystem.setAnimation(AnimationTypes.Larson));
     }
 
@@ -77,7 +77,7 @@ public class ScoringCommands {
         return Commands.either(
                 Commands.runOnce(() -> intakeSubsystem.reverseAlgaeIntake(0.1)),
                 Commands.either(
-                        Commands.runOnce(() -> intakeSubsystem.reverseAlgaeIntake(0.2)),
+                        Commands.runOnce(() -> intakeSubsystem.reverseAlgaeIntake(0.1)),
                         Commands.runOnce(() -> intakeSubsystem.reverseAlgaeIntake()),
                         () -> elevatorSubsystem.getCurrentElevatorState() == ElevatorState.L4),
                 () -> elevatorSubsystem.getCurrentElevatorState() == ElevatorState.PROCESSOR);

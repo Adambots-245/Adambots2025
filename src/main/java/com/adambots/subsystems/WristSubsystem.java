@@ -61,8 +61,9 @@ public class WristSubsystem extends SubsystemBase {
     this.wristPID.setTolerance(ElevatorConstants.kWristPositionTolerance);
     wristPID.enableContinuousInput(0.0, 360.0);
 
-
-    configureMotors();
+    wristMotor.setBrakeMode(true);
+    wristMotor.setInverted(true);
+    // configureMotors();
 
     // Initialize wrist state machine without position control
     wristStateMachine = new StateMachine<>(
@@ -79,11 +80,11 @@ public class WristSubsystem extends SubsystemBase {
   //   goalWristAngle = wristEncoder.getAbsolutePositionDegrees();
   // }
 
-  private void configureMotors() {
-    // Configure wrist motor
-    wristMotor.setBrakeMode(true);
-    wristMotor.setInverted(true);
-  }
+  // private void configureMotors() {
+  //   // Configure wrist motor
+  //   wristMotor.setBrakeMode(true);
+  //   wristMotor.setInverted(true);
+  // }
 
   private void setWristOutput(WristProperties properties) {
     setWristPosition(properties.angleDegrees());

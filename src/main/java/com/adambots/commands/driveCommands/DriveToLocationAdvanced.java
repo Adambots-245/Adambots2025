@@ -26,7 +26,7 @@ import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 public class DriveToLocationAdvanced extends Command {
     public enum AlignLocation {
         RIGHT_POLE, LEFT_POLE, MIDDLE_ALGAE, HUMAN_PLAYER_RIGHT, HUMAN_PLAYER_LEFT, REEF_ANGLE, BARGE_LEFT,
-        BARGE_MIDDLE, BARGE_RIGHT, H1, H4
+        BARGE_MIDDLE, BARGE_RIGHT, H1, H4, S2
     }
 
     // Subsystem references.
@@ -66,7 +66,7 @@ public class DriveToLocationAdvanced extends Command {
 
     private DriveCommands driveCommands;
 
-    private static boolean isFirstCoralAuton = true;
+    private static boolean isFirstCoralAuton = false;
 
     /**
      * Constructor for DriveToLocationAdvanced.
@@ -93,7 +93,7 @@ public class DriveToLocationAdvanced extends Command {
         PIDConstants translationConstants = new PIDConstants(2.0, 0.0, 0.0);
         PIDConstants rotationConstants = new PIDConstants(3.0, 0.0, 0.0);
         // Set the update period to 20ms (typical loop time).
-        double period = 0.02;
+        double period = 0.02; 
         // Instantiate the PPHolonomicDriveController with the defined PID constants.
         this.driveController = new PPHolonomicDriveController(translationConstants, rotationConstants, period);
     }
@@ -112,11 +112,11 @@ public class DriveToLocationAdvanced extends Command {
 
         // Set the appropriate AprilTag IDs based on the alliance color.
         if (Robot.isOnRedAlliance()) {
-            reefTagIds = new int[] { 6, 7, 8, 9, 10, 11 };
+            reefTagIds = new int[] { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
             humanPlayerTagIds = new int[] { 1, 2 };
             bargeTagIds = new int[] { 15, 5 };
         } else {
-            reefTagIds = new int[] { 17, 18, 19, 20, 21, 22 };
+            reefTagIds = new int[] { 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22 };
             humanPlayerTagIds = new int[] { 12, 13 };
             bargeTagIds = new int[] { 14 , 4};
         }
@@ -178,6 +178,14 @@ public class DriveToLocationAdvanced extends Command {
                 idSeen = 2;
             } else {
                 idSeen = 12;
+            }
+        } else if (alignLocation == AlignLocation.S2) {
+            if (Robot.isOnRedAlliance()) {
+                idSeen = 10;
+                alignLocation = AlignLocation.LEFT_POLE;
+            } else {
+                idSeen = 21;
+                alignLocation = AlignLocation.LEFT_POLE;
             }
         } else {
             if (!isSeen) {

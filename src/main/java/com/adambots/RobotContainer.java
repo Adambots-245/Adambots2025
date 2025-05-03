@@ -270,8 +270,8 @@ public class RobotContainer {
 
         Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
 
-        Buttons.XboxBackButton.onTrue(scoringCommands.scoreAlgaeDynamic());
-        Buttons.XboxBackButton.onFalse(scoringCommands.stopScoringAlgae());
+        // Buttons.XboxBackButton.onTrue(scoringCommands.scoreAlgaeDynamic());
+        // Buttons.XboxBackButton.onFalse(scoringCommands.stopScoringAlgae());
 
         Buttons.XboxDPadNE.onTrue(intakeCommands.intakeAlgae());
         Buttons.XboxDPadNW.onTrue(intakeCommands.intakeAlgae());
@@ -387,6 +387,9 @@ public class RobotContainer {
                 candleSubsytem, driveCommands));
     NamedCommands.registerCommand("DriveToH4",
             new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.H4,
+                candleSubsytem, driveCommands));
+    NamedCommands.registerCommand("DriveToS2",
+            new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.S2,
                 candleSubsytem, driveCommands));
     NamedCommands.registerCommand("DriveToAlgae",
            new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.MIDDLE_ALGAE, candleSubsytem, driveCommands)
