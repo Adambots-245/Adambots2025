@@ -2,11 +2,11 @@ package com.adambots.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.BaseMotor.ControlMode;
-import com.adambots.sensors.LimitSwitch;
-import com.adambots.actuators.TalonFXMotor;
-import com.adambots.utils.StateMachine;
+import com.adambots.lib.actuators.BaseMotor;
+import com.adambots.lib.actuators.BaseMotor.ControlMode;
+import com.adambots.lib.sensors.LimitSwitch;
+import com.adambots.lib.actuators.TalonFXMotor;
+import com.adambots.lib.utils.StateMachine;
 import com.adambots.Constants.ElevatorConstants;
 import com.adambots.RobotMap;
 

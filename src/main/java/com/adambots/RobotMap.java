@@ -7,22 +7,22 @@
 
 package com.adambots;
 
-import com.adambots.actuators.BaseActuator;
-import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.BaseServo;
-import com.adambots.actuators.BaseServo.ServoMode;
-import com.adambots.actuators.BaseSolenoid;
-import com.adambots.actuators.DirectServo;
-import com.adambots.actuators.ElectricalSolenoid;
-import com.adambots.actuators.MinionMotor;
-import com.adambots.actuators.TalonFXMotor;
-import com.adambots.sensors.BaseAbsoluteEncoder;
-import com.adambots.sensors.BaseDistanceSensor;
-import com.adambots.sensors.BaseGyro;
-import com.adambots.sensors.CANRangeSensor;
-import com.adambots.sensors.Gyro;
-import com.adambots.sensors.LimitSwitch;
-import com.adambots.sensors.ThroughBoreEncoder;
+import com.adambots.lib.actuators.BaseActuator;
+import com.adambots.lib.actuators.BaseMotor;
+import com.adambots.lib.actuators.BaseServo;
+import com.adambots.lib.actuators.BaseServo.ServoMode;
+import com.adambots.lib.actuators.BaseSolenoid;
+import com.adambots.lib.actuators.DirectServo;
+import com.adambots.lib.actuators.ElectricalSolenoid;
+import com.adambots.lib.actuators.MinionMotor;
+import com.adambots.lib.actuators.TalonFXMotor;
+import com.adambots.lib.sensors.BaseAbsoluteEncoder;
+import com.adambots.lib.sensors.BaseDistanceSensor;
+import com.adambots.lib.sensors.BaseGyro;
+import com.adambots.lib.sensors.CANRangeSensor;
+import com.adambots.lib.sensors.Gyro;
+import com.adambots.lib.sensors.LimitSwitch;
+import com.adambots.lib.sensors.ThroughBoreEncoder;
 import com.ctre.phoenix.led.CANdle;
 import com.revrobotics.servohub.ServoHub;
 

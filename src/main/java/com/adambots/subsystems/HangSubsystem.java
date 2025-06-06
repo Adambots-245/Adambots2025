@@ -4,10 +4,10 @@
 
 package com.adambots.subsystems;
 
-import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.BaseServo;
-import com.adambots.actuators.BaseSolenoid;
-import com.adambots.sensors.LimitSwitch;
+import com.adambots.lib.actuators.BaseMotor;
+import com.adambots.lib.actuators.BaseServo;
+import com.adambots.lib.actuators.BaseSolenoid;
+import com.adambots.lib.sensors.LimitSwitch;
 import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

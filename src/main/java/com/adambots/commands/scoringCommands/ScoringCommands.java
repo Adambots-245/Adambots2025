@@ -4,10 +4,10 @@
 
 package com.adambots.commands.scoringCommands;
 
-import com.adambots.subsystems.CANdleSubsystem;
+import com.adambots.lib.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
-import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
+import com.adambots.lib.subsystems.CANdleSubsystem.AnimationTypes;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
 import com.adambots.subsystems.WristSubsystem.WristState;
 

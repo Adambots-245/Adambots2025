@@ -1,10 +1,10 @@
 package com.adambots.commands;
 
 import com.adambots.Constants.HangConstants;
-import com.adambots.subsystems.CANdleSubsystem;
+import com.adambots.lib.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.HangSubsystem;
-import com.adambots.subsystems.SwerveSubsystem;
-import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
+import com.adambots.lib.subsystems.SwerveSubsystem;
+import com.adambots.lib.subsystems.CANdleSubsystem.AnimationTypes;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;

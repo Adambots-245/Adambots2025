@@ -7,10 +7,10 @@ package com.adambots.subsystems;
 import java.io.PrintStream;
 
 import com.adambots.Constants.IntakeConstants;
-import com.adambots.actuators.BaseActuator;
-import com.adambots.actuators.BaseMotor;
-import com.adambots.actuators.BaseMotor.ControlMode;
-import com.adambots.sensors.BaseDistanceSensor;
+import com.adambots.lib.actuators.BaseActuator;
+import com.adambots.lib.actuators.BaseMotor;
+import com.adambots.lib.actuators.BaseMotor.ControlMode;
+import com.adambots.lib.sensors.BaseDistanceSensor;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

@@ -3,9 +3,9 @@ package com.adambots.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.PIDController;
-import com.adambots.actuators.BaseMotor;
-import com.adambots.sensors.BaseAbsoluteEncoder;
-import com.adambots.utils.StateMachine;
+import com.adambots.lib.actuators.BaseMotor;
+import com.adambots.lib.sensors.BaseAbsoluteEncoder;
+import com.adambots.lib.utils.StateMachine;
 import com.adambots.Constants.ElevatorConstants;
 
 public class WristSubsystem extends SubsystemBase {

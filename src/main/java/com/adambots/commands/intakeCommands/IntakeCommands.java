@@ -3,7 +3,7 @@ package com.adambots.commands.intakeCommands;
 import java.awt.Color;
 
 import com.adambots.Constants.IntakeConstants;
-import com.adambots.subsystems.CANdleSubsystem;
+import com.adambots.lib.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.IntakeSubsystem;
 import com.ctre.phoenix.led.CANdle;
 

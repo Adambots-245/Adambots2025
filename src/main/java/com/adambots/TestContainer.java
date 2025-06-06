@@ -3,13 +3,13 @@ package com.adambots;
 import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
-import com.adambots.subsystems.CANdleSubsystem;
+import com.adambots.lib.subsystems.CANdleSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.WristSubsystem;
 
 import com.adambots.subsystems.IntakeSubsystem;
-import com.adambots.utils.Buttons;
-import com.adambots.utils.Dash;
+import com.adambots.lib.utils.Buttons;
+import com.adambots.lib.utils.Dash;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
