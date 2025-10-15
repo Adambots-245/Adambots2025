@@ -221,6 +221,7 @@ public class RobotContainer {
         Buttons.JoystickButton8.onTrue(elevatorCommands.moveToHangCommand());
         Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
         Buttons.JoystickButton8.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
+        Buttons.JoystickButton8.onTrue(new InstantCommand(() -> caNdleSubsystem.setAnimation(AnimationTypes.Fire)));
 
         // Buttons.JoystickButton9.onTrue(scoringCommands.scoreAlgaeDynamic());
         // Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
@@ -269,7 +270,7 @@ public class RobotContainer {
         Buttons.XboxYButton.onTrue(elevatorCommands.moveToL4Command());
 
         Buttons.XboxLeftStickButton.onTrue(intakeCommands.intakeCoral());
-
+        
         // Buttons.XboxBackButton.onTrue(scoringCommands.scoreAlgaeDynamic());
         // Buttons.XboxBackButton.onFalse(scoringCommands.stopScoringAlgae());
 
