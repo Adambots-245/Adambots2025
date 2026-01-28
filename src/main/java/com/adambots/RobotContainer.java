@@ -13,6 +13,7 @@ import com.adambots.commands.elevatorCommands.ElevatorCommands;
 import com.adambots.commands.intakeCommands.IntakeCommands;
 import com.adambots.commands.scoringCommands.ScoringCommands;
 import com.adambots.subsystems.CANdleSubsystem;
+import com.adambots.subsystems.CANdleSubsystem.AnimationTypes;
 import com.adambots.subsystems.ElevatorSubsystem;
 import com.adambots.subsystems.HangSubsystem;
 import com.adambots.subsystems.ElevatorSubsystem.ElevatorState;
@@ -221,16 +222,17 @@ public class RobotContainer {
         Buttons.JoystickButton8.onTrue(elevatorCommands.moveToHangCommand());
         Buttons.JoystickButton8.onTrue(new InstantCommand(() -> hangSubsystem.releaseServo()));
         Buttons.JoystickButton8.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
-
+        Buttons.JoystickButton8.onTrue(new InstantCommand(() ->candleSubsytem.setAnimation(AnimationTypes.Fire)));
+        
         // Buttons.JoystickButton9.onTrue(scoringCommands.scoreAlgaeDynamic());
         // Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
 
         Buttons.JoystickButton9.onTrue(elevatorCommands.moveToL1Command());
         // Buttons.JoystickButton9.onFalse(scoringCommands.stopScoringAlgae());
 
-        // Buttons.JoystickButton10
-        //         .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
-        //                 candleSubsytem));
+        Buttons.JoystickButton10
+                .whileTrue(new DriveToLocationAdvanced(swerveSubsystem, () -> aprilTagId, AlignLocation.REEF_ANGLE,
+                        candleSubsytem, driveCommands));
 
         Buttons.JoystickButton11.onTrue((Commands.runOnce(swerveSubsystem::zeroGyroWithAlliance)));
 
@@ -288,6 +290,7 @@ public class RobotContainer {
         Buttons.XboxRightStickButton.onTrue(intakeCommands.stopIntakeAlgae());
 
         Buttons.XboxLeftBumper.onTrue(hangCommands.pushOutHang());
+        Buttons.XboxLeftBumper.onTrue(new InstantCommand(() -> hangSubsystem.returnServo()));
         Buttons.XboxLeftBumper.onFalse(new InstantCommand(() -> hangSubsystem.setMotorSpeed(0.0)));
         // Buttons.XboxLeftBumper.onTrue(intakeCommands.reverseIntakeAlgae());
 
@@ -396,8 +399,12 @@ public class RobotContainer {
            .andThen(driveCommands.driveToDistanceFieldOriented(0.25, -3)));
     NamedCommands.registerCommand("AlgaeStateLow",
     elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgae));
+    NamedCommands.registerCommand("AlgaeStateLowAuton",
+    elevatorCommands.moveToAlgaeStateCommand(ElevatorState.LowAlgae, WristState.LowAlgaeAuton));
     NamedCommands.registerCommand("AlgaeStateHigh",
     elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgae));
+    NamedCommands.registerCommand("AlgaeStateHighAuton",
+    elevatorCommands.moveToAlgaeStateCommand(ElevatorState.HighAlgae, WristState.HighAlgaeAuton));
     NamedCommands.registerCommand("BargeState", elevatorCommands.moveToStateCommand(ElevatorState.BARGE, WristState.BARGE));
     NamedCommands.registerCommand("BargeScore", new ParallelDeadlineGroup(new WaitCommand(0.2), scoringCommands.scoreAlgae()));
   }

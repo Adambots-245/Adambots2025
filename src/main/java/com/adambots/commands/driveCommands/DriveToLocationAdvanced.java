@@ -231,7 +231,7 @@ public class DriveToLocationAdvanced extends Command {
                 // Align to the human player on the right:
                 // Apply a negative human player offset and rotate 180°.
                 targetPose = PhotonVision.getAprilTagPose(idSeen,
-                        new Transform2d(robotReefOffset, -humanPlayerOffset, new Rotation2d(Math.toRadians(0))));
+                        new Transform2d(robotReefOffset-0.1, -humanPlayerOffset, new Rotation2d(Math.toRadians(0))));
             } else if (alignLocation == AlignLocation.HUMAN_PLAYER_LEFT) {
                 // Align to the human player on the left:
                 // Apply a positive human player offset and rotate 180°.

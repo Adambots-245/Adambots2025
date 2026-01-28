@@ -56,7 +56,7 @@ public class ScoringCommands {
         return Commands.runOnce(() -> {
             System.out.println("Score Command Running");
             intakeSubsystem.intakeCoral(15);
-        }, intakeSubsystem).andThen(Commands.waitSeconds(0.25))
+        }, intakeSubsystem).andThen(Commands.waitSeconds(0.30))
                 // .andThen(Commands.waitUntil(() -> !intakeSubsystem.isDetectingCoral()))
                 // .andThen(Commands.waitSeconds(IntakeConstants.kTimerThreshold)) // DO WE NEED
                 // ANOTHER THRESHOLD

@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 2.0085,
-        "y": 6.443
+        "x": 1.17,
+        "y": 7.028
       },
       "prevControl": {
-        "x": 2.5820764363510476,
-        "y": 5.623847955711008
+        "x": 1.7435764363510473,
+        "y": 6.208847955711008
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "H1-Vision"
+      "linkedName": "H1"
     }
   ],
   "rotationTargets": [],
@@ -57,7 +57,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.0,
+    "velocity": 0.0,
     "rotation": -55.0
   },
   "reversed": false,

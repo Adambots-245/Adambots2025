@@ -4,6 +4,9 @@
 
 package com.adambots.subsystems;
 
+import java.io.Console;
+import java.io.PrintStream;
+
 import com.adambots.actuators.BaseMotor;
 import com.adambots.actuators.BaseServo;
 import com.adambots.actuators.BaseSolenoid;
@@ -53,6 +56,10 @@ public class HangSubsystem extends SubsystemBase {
 
   public void releaseServo() {
     hangServo.setAngle(50);
+  }
+
+  public void returnServo() {
+    hangServo.setAngle(130);
   }
 
   public boolean isLimitPressed(){

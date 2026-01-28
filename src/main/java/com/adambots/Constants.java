@@ -227,7 +227,7 @@ public final class Constants {
         public static final double kWristHighAlgaePosition = 159; //5
         public static final double kWristLowAlgaePosition = 159; //359
         public static final double kWristProcessorPosition = 170; //359
-        public static final double kWristGroundIntakePosition = 147; //350
+        public static final double kWristGroundIntakePosition = 152; //350
         public static final double kWristBargePosition = 234; 
         public static final double kWristHangPosition = 234; //71
 
